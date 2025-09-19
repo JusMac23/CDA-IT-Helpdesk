@@ -1,0 +1,61 @@
+services:
+  app:
+    build:
+      context: ./docker/php
+    container_name: cda-helpdesk-app
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - laravel
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:alpine
+    container_name: cda-helpdesk-nginx
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - laravel
+
+  db:
+    image: mariadb:10.11
+    container_name: cda-helpdesk-db
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: CD@it1432
+      MYSQL_DATABASE: cda-helpdesk
+      MYSQL_USER: cdauser
+      MYSQL_PASSWORD: CD@it1432
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - laravel
+
+  phpmyadmin:
+    image: phpmyadmin:5
+    container_name: cda-helpdesk-phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: cdauser
+      PMA_PASSWORD: CD@it1432
+    depends_on:
+      - db
+    networks:
+      - laravel
+
+volumes:
+  db_data:
+
+networks:
+  laravel:
+    driver: bridge
