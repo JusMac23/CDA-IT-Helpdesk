@@ -41,7 +41,7 @@
         }
         .interactive-link:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
     </style>
 </head>
@@ -62,6 +62,14 @@
 </header>
 
 <section class="p-8 max-w-6xl mx-auto bg-gray-200 rounded-2xl shadow-xl mt-10 mb-16 animate-fade-in-down">
+
+    {{-- Back Button --}}
+    <div class="mb-6">
+        <a href="{{ route('myrequested_tickets.index') }}" 
+           class="inline-flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600 hover:shadow-lg transition duration-300">
+            <i class="fas fa-arrow-left"></i> Back to Tickets
+        </a>
+    </div>
 
     {{-- Success Message --}}
     @if(session('success'))
@@ -96,8 +104,12 @@
 
         <form action="{{ route('tickets.saveClientSignature', $ticket->ticket_id) }}" method="POST" enctype="multipart/form-data">
             @csrf
-            <input type="file" name="client_signature" accept="image/*" required class="mb-4 border p-2 w-full rounded">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+            <input type="file" name="client_signature" accept="image/*" required 
+                class="mb-4 border p-2 w-full rounded">
+
+            <button type="submit" 
+                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow-md hover:shadow-lg transition duration-300 flex items-center gap-2">
+                <i class="fas fa-upload"></i> 
                 Upload Signature
             </button>
         </form>

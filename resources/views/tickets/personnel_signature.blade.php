@@ -63,6 +63,14 @@
 
 <section class="p-8 max-w-6xl mx-auto bg-gray-200 rounded-2xl shadow-xl mt-10 mb-16 animate-fade-in-down">
 
+    {{-- Back Button --}}
+    <div class="mb-6">
+        <a href="{{ route('tickets.index') }}" 
+           class="inline-flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-600 hover:shadow-lg transition duration-300">
+            <i class="fas fa-arrow-left"></i> Back to Tickets
+        </a>
+    </div>
+
     {{-- Success Message --}}
     @if(session('success'))
         <div class="bg-green-100 border-l-4 border-green-500 text-green-800 px-6 py-4 mb-6 rounded-lg">
@@ -96,8 +104,12 @@
 
         <form action="{{ route('tickets.savePersonnelSignature', $ticket->ticket_id) }}" method="POST" enctype="multipart/form-data">
             @csrf
-            <input type="file" name="personnel_signature" accept="image/*" required class="mb-4 border p-2 w-full rounded">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+            <input type="file" name="personnel_signature" accept="image/*" required 
+                class="mb-4 border p-2 w-full rounded">
+
+            <button type="submit" 
+                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow-md hover:shadow-lg transition duration-300 flex items-center gap-2">
+                <i class="fas fa-upload"></i>
                 Upload Signature
             </button>
         </form>
