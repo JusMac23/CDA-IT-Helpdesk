@@ -16,6 +16,9 @@ COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 # Copy application code
 COPY . /var/www/html
 
+# ✅ Copy PHP upload settings
+COPY uploads.ini /usr/local/etc/php/conf.d/uploads.ini
+
 # Ensure writable dirs exist and fix permissions
 RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache \
     && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
