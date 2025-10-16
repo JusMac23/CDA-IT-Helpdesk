@@ -2,7 +2,7 @@
     <div class="flex items-center justify-between px-4 py-3 bg-gray border-b border-gray-200">
         <a href="{{ route('dashboard') }}" class="flex items-center space-x-1 text-indigo-700 hover:text-indigo-800 transition overflow-hidden">
             <img src="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" alt="CDA Logo" class="h-10 w-auto logo">
-            <span class="text-lg font-bold whitespace-nowrap sidebar-label">CDA-Helpdesk</span>
+            <span class="text-lg font-bold whitespace-nowrap sidebar-label">CDA-ITHelpdesk</span>
         </a>
         <button id="collapseSidebar" aria-label="Toggle Sidebar" class="ml-auto flex items-center justify-center w-8 h-8 rounded-full text-indigo-600 hover:text-indigo-800 hover:bg-gray-100">
             <span class="material-icons-outlined text-2xl">menu_open</span>

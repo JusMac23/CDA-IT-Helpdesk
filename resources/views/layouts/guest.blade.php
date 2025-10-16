@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'CDA-Helpdesk') }}</title>
+        <title>{{ config('app.name', 'CDA-ITHelpdesk') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -30,7 +30,10 @@
                         @endphp
 
                         @if ($route === 'login')
-                            Sign In
+                            <div class="text-center">
+                                <h2 class="text-2xl font-bold text-gray-800">Welcome Back</h2>
+                                <p class="text-sm text-gray-500 mt-1">Sign in to continue to your account</p>
+                            </div>
                         @elseif ($route === 'register')
                             Sign Up User
                         @elseif ($route === 'forgot-password')
