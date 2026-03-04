@@ -12,83 +12,314 @@
     <title>CDA-DBRS</title>
     <link rel="icon" href="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" type="image/png">
 
-    <!-- Fonts & Material Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/js/app.js'])
 
     <style>
-        @keyframes fade-in-down {
+        /* CSS Variables for Theming */
+        :root {
+            --primary-blue: #2563eb;
+            --blue-hover: #1e40af;
+            --blue-light: #dbeafe;
+            --primary-red: #dc2626;
+            --red-hover: #b91c1c;
+            --text-main: #111827;
+            --text-muted: #4b5563;
+            --bg-body: #f9fafb;
+            --white: #ffffff;
+        }
+
+        /* Base Reset & Typography */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: 'Figtree', ui-sans-serif, system-ui, -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.5;
+        }
+        
+        a { text-decoration: none; }
+        ul { list-style: none; }
+        .hidden { display: none !important; }
+
+        /* Animations */
+        @keyframes fadeInDown {
             from { opacity: 0; transform: translateY(-20px); }
             to   { opacity: 1; transform: translateY(0); }
         }
-        .animate-fade-in-down {
-            animation: fade-in-down 0.9s ease-out both;
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
         }
-        .interactive-link {
+        @keyframes ping {
+            75%, 100% { transform: scale(2); opacity: 0; }
+        }
+
+        .animate-fade-in-down { animation: fadeInDown 0.9s ease-out both; }
+        .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        .animate-ping { animation: ping 3s cubic-bezier(0, 0, 0.2, 1) infinite; }
+
+        /* Header Styles */
+        .app-header {
+            background-color: var(--white);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .header-gradient {
+            height: 4px;
+            background: linear-gradient(to right, #2563eb, #6366f1, #a855f7);
+        }
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e40af;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            letter-spacing: -0.025em;
+        }
+        .brand img {
+            width: 48px; height: 48px; object-fit: contain;
+            transition: transform 0.3s;
+        }
+        .brand:hover img { transform: scale(1.05); }
+
+        /* Navigation */
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            font-weight: 500;
+        }
+        .nav-link {
+            color: var(--primary-blue);
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            color: var(--blue-hover);
+            background-color: var(--blue-light);
+        }
+        .nav-link-logout {
+            color: #ef4444; background: none; border: none; cursor: pointer; font: inherit;
+        }
+        .nav-link-logout:hover {
+            color: #b91c1c; background-color: #fee2e2;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: var(--white);
+        }
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(30,58,138,0.3), rgba(0,0,0,0.6));
+            backdrop-filter: blur(1px);
+        }
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 4rem 1.5rem;
+            max-width: 800px;
+        }
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            text-shadow: 0 5px 10px rgba(0,0,0,0.6);
+        }
+        .hero-title span { color: #60a5fa; }
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: #e5e7eb;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+        .btn-danger {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background-color: var(--primary-red);
+            color: var(--white);
+            padding: 1rem 2rem;
+            border-radius: 9999px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .btn-danger:hover {
+            background-color: var(--red-hover);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(248, 113, 113, 0.4);
+        }
+
+        /* Floating Shapes */
+        .shape { position: absolute; border-radius: 50%; }
+        .shape-1 {
+            top: 2.5rem; left: 2.5rem; width: 5rem; height: 5rem;
+            background-color: rgba(59, 130, 246, 0.2); filter: blur(20px);
+        }
+        .shape-2 {
+            bottom: 2.5rem; right: 4rem; width: 7rem; height: 7rem;
+            background-color: rgba(147, 197, 253, 0.2); filter: blur(24px);
+        }
+
+        /* Services Section */
+        .services {
+            padding: 4rem 0;
+            background-color: var(--white);
+        }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-main);
+        }
+        .service-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+        .service-card {
+            flex: 1 1 280px;
+            max-width: 350px;
+            background-color: var(--white);
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            text-align: center;
             transition: all 0.3s ease-in-out;
+            border: 1px solid #f3f4f6;
         }
-        .interactive-link:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
-        
-        body, button, input, select, textarea, h1, h2, h3, h4, p, a, span, li {
-            font-family: 'Figtree', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+        .icon-wrapper {
+            display: inline-flex;
+            padding: 1rem;
+            border-radius: 50%;
+            margin-bottom: 1rem;
         }
-        
-        .material-icons-outlined {
-            font-family: 'Material Icons Outlined' !important;
+        .icon-purple { background-color: #f3e8ff; color: #9333ea; }
+        .icon-yellow { background-color: #fef3c7; color: #d97706; }
+        .service-card h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .service-card p {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        /* Footer */
+        .app-footer {
+            background-color: #1f2937;
+            text-align: center;
+            padding: 2rem 0;
+            color: #d1d5db;
+            font-size: 0.875rem;
+            border-top: 1px solid #374151;
+        }
+        .app-footer a { color: #60a5fa; transition: color 0.2s; }
+        .app-footer a:hover { text-decoration: underline; color: #93c5fd; }
+
+        /* Scroll to Top */
+        .scroll-top-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 40;
+            background-color: var(--primary-blue);
+            color: var(--white);
+            padding: 1rem;
+            border-radius: 50%;
+            border: none;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .scroll-top-btn:hover {
+            background-color: var(--blue-hover);
+            transform: translateY(-4px);
+        }
+
+        /* Responsive */
+        @media (min-width: 768px) {
+            .hero-title { font-size: 4rem; }
+            .hero-subtitle { font-size: 1.25rem; }
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-900 antialiased">
+<body>
 
-<header class="bg-white shadow-lg sticky top-0 z-50 border-b border-gray-200">
-
-    <div class="h-1 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500"></div>
-
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-        <!-- Logo & Title -->
-        <h1 class="text-2xl lg:text-3xl font-bold text-blue-800 flex items-center gap-3">
-            <img src="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" 
-                 alt="Cooperative Development Authority Seal" 
-                 class="w-12 h-12 object-contain drop-shadow-sm transition-transform duration-300 hover:scale-105"/>
-            <span class="tracking-tight">CDA-DBRS</span>
+<header class="app-header">
+    <div class="header-gradient"></div>
+    <div class="container">
+        <h1 class="brand">
+            <img src="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" alt="Cooperative Development Authority Seal" />
+            <span>CDA-DBRS</span>
         </h1>
 
-        <!-- Navigation -->
         <nav>
-            <ul class="flex space-x-6 text-base font-medium items-center">
+            <ul class="nav-links">
                 @auth
-                    <!-- Dashboard Link -->
                     <li>
-                        <a href="{{ url('/dashboard') }}" 
-                           class="text-blue-600 hover:text-blue-800 hover:bg-blue-100 px-3 py-2 rounded-full flex items-center gap-2 transition-all duration-300 ease-in-out">
+                        <a href="{{ url('/dashboard') }}" class="nav-link">
                             <span class="material-icons-outlined text-lg">dashboard</span> Dashboard
                         </a>
                     </li>
-
-                    <!-- Logout Button -->
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" 
-                                    class="text-red-500 hover:text-red-700 hover:bg-red-100 px-3 py-2 rounded-full flex items-center gap-2 transition-all duration-300 ease-in-out">
+                            <button type="submit" class="nav-link nav-link-logout">
                                 <span class="material-icons-outlined text-lg">logout</span> Logout
                             </button>
                         </form>
                     </li>
                 @else
-                    <!-- Login Button -->
                     <li>
-                        <a href="{{ route('login') }}" 
-                           class="text-blue-600 hover:text-blue-800 hover:bg-blue-100 px-3 py-2 rounded-full flex items-center gap-2 font-medium transition-all duration-300 ease-in-out shadow-sm hover:shadow-md">
-                            <span class="material-icons-outlined text-lg">login</span>
-                            Login
+                        <a href="{{ route('login') }}" class="nav-link">
+                            <span class="material-icons-outlined text-lg">login</span> Login
                         </a>
                     </li>
                 @endauth
@@ -97,116 +328,74 @@
     </div>
 </header>
 
-<!-- Hero Section -->
-<section class="relative w-full min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat text-white"
-         style="background-image: url('{{ asset('images/hero-bg.jpg') }}');">
-    
-    <!-- Overlay -->
-    <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-blue-900/30 to-black/60 backdrop-blur-[1px]"></div>
+<section class="hero" style="background-image: url('{{ asset('images/hero-bg.jpg') }}');">
+    <div class="hero-overlay"></div>
 
-    <!-- Content -->
-    <div class="relative z-10 text-center px-6 py-16 lg:py-28 max-w-4xl animate-fade-in">
-        <h1 class="text-4xl md:text-6xl font-extrabold mb-6 drop-shadow-[0_5px_10px_rgba(0,0,0,0.6)] leading-tight">
-            Your Seamless Gateway to the <span class="text-blue-400">CDA Data Breach Reporting System</span>
+    <div class="hero-content animate-fade-in-down">
+        <h1 class="hero-title">
+            Your Seamless Gateway to the <br><span>CDA Data Breach Reporting System</span>
         </h1>
-
-        <p class="text-lg md:text-xl text-gray-200 mb-12 leading-relaxed">
+        <p class="hero-subtitle">
             Experience real-time, efficient, and nationwide monitoring of CDA’s incidents and data breach reports across all CDA offices.
         </p>
-
-        <div class="flex flex-col sm:flex-row justify-center gap-4">
-            <!--
-            <a href="{{ url('create_ticket') }}"
-               class="inline-flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-blue-400/40 transform hover:-translate-y-1 transition-all duration-300">
-                <i class="fa-solid fa-ticket text-white text-xl"></i>
-                Submit Tickets Report
-            </a>
-            -->
-            <a href="{{ url('create_incident') }}"
-               class="inline-flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-red-400/40 transform hover:-translate-y-1 transition-all duration-300">
-                <i class="fa-solid fa-shield-alt text-red text-xl"></i>
-                Submit Incident Report
-            </a>
-        </div>
-    </div>
-
-    <!-- Floating Animated Shapes -->
-    <div class="absolute top-10 left-10 w-20 h-20 bg-blue-500/20 rounded-full blur-2xl animate-pulse"></div>
-    <div class="absolute bottom-10 right-16 w-28 h-28 bg-blue-300/20 rounded-full blur-3xl animate-ping"></div>
-</section>
-
-<!-- Services -->
-<section class="py-2 bg-white">
-    <div class="container mx-auto px-6">
-        <h3 class="text-3xl lg:text-3xl font-bold text-gray-800 mb-10 text-center mb-2">How We Can Help You</h3>
         
-        <div class="flex flex-wrap justify-center gap-6">
-            <!-- Box 1 
-            <div class="flex-1 min-w-[280px] max-w-sm bg-white shadow-md rounded-xl p-6 flex flex-col items-center text-center interactive-link">
-                <div class="p-4 bg-blue-100 rounded-full mb-4">
-                    <span class="material-icons-outlined text-blue-600 text-4xl">computer</span>
-                </div>
-                <h4 class="text-xl font-bold text-gray-900 mb-2">Technical Support</h4>
-                <p class="text-gray-600 text-sm">Assistance with hardware, software, and system issues.</p>
-            </div>
-            -->
+        <div style="display: flex; justify-content: center; gap: 1rem;">
+            <a href="{{ url('create_incident') }}" class="btn-danger">
+                <i class="fa-solid fa-shield-alt"></i> Submit Incident Report
+            </a>
+        </div>
+    </div>
 
-            <!-- Box 2 
-            <div class="flex-1 min-w-[280px] max-w-sm bg-white shadow-md rounded-xl p-6 flex flex-col items-center text-center interactive-link">
-                <div class="p-4 bg-green-100 rounded-full mb-4">
-                    <span class="material-icons-outlined text-green-600 text-4xl">wifi</span>
-                </div>
-                <h4 class="text-xl font-bold text-gray-900 mb-2">Network & Connectivity</h4>
-                <p class="text-gray-600 text-sm">Resolving internet, LAN, and other network problems.</p>
-            </div>
-            -->
+    <div class="shape shape-1 animate-pulse"></div>
+    <div class="shape shape-2 animate-ping"></div>
+</section>
 
-            <!-- Box 3 -->
-            <div class="flex-1 min-w-[280px] max-w-sm bg-white shadow-md rounded-xl p-6 flex flex-col items-center text-center interactive-link">
-                <div class="p-4 bg-purple-100 rounded-full mb-4">
-                    <span class="material-icons-outlined text-purple-600 text-4xl">security</span>
+<section class="services">
+    <div class="container" style="flex-direction: column;">
+        <h3 class="section-title">How We Can Help You</h3>
+        
+        <div class="service-grid">
+            <div class="service-card">
+                <div class="icon-wrapper icon-purple">
+                    <span class="material-icons-outlined text-4xl">security</span>
                 </div>
-                <h4 class="text-xl font-bold text-gray-900 mb-2">Security & Incident Management</h4>
-                <p class="text-gray-600 text-sm">
-                    Essential guidance on data protection, incident handling, system backups, and access control.
-                </p>
+                <h4>Security & Incident Management</h4>
+                <p>Essential guidance on data protection, incident handling, system backups, and access control.</p>
             </div>
 
-            <!-- Box 4 -->
-            <div class="flex-1 min-w-[280px] max-w-sm bg-white shadow-md rounded-xl p-6 flex flex-col items-center text-center interactive-link">
-                <div class="p-4 bg-yellow-100 rounded-full mb-4">
-                    <span class="material-icons-outlined text-yellow-600 text-4xl">miscellaneous_services</span>
+            <div class="service-card">
+                <div class="icon-wrapper icon-yellow">
+                    <span class="material-icons-outlined text-4xl">miscellaneous_services</span>
                 </div>
-                <h4 class="text-xl font-bold text-gray-900 mb-2">Other ICT & Incident Services</h4>
-                <p class="text-gray-600 text-sm">
-                    Assistance with website management, database support, Google Workspace, and other ICT services related to incident reporting and resolution.
-                </p>
+                <h4>Other ICT & Incident Services</h4>
+                <p>Assistance with website management, database support, Google Workspace, and other ICT services related to incident reporting and resolution.</p>
             </div>
         </div>
     </div>
 </section>
 
-
-<!-- Footer -->
-<footer class="bg-gray-800 text-center text-sm text-gray-300 py-8 border-t border-gray-700">
-    <div class="container mx-auto px-6">
-        <p class="text-gray-400">© {{ $year }} CDA ICTD. All rights reserved.</p>
-        <p class="text-gray-400 mt-1">Contact us at <a href="mailto:ictd@cda.gov.ph" class="text-blue-400 hover:underline">ictd@cda.gov.ph</a></p>
+<footer class="app-footer">
+    <div class="container" style="flex-direction: column; gap: 0.5rem;">
+        <p>© {{ $year }} CDA ICTD. All rights reserved.</p>
+        <p>Contact us at <a href="mailto:ictd@cda.gov.ph">ictd@cda.gov.ph</a></p>
     </div>
 </footer>
 
-<!-- Scroll to Top Button -->
-<button id="scrollToTopBtn"
-        class="fixed bottom-6 right-6 z-40 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:-translate-y-1 hidden"
-        title="Back to top">
+<button id="scrollToTopBtn" class="scroll-top-btn hidden" title="Back to top">
     <span class="material-icons-outlined">arrow_upward</span>
 </button>
 
 <script>
     const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+    
     window.addEventListener('scroll', () => {
-        scrollToTopBtn.classList.toggle('hidden', window.scrollY < 300);
+        if (window.scrollY < 300) {
+            scrollToTopBtn.classList.add('hidden');
+        } else {
+            scrollToTopBtn.classList.remove('hidden');
+        }
     });
+
     scrollToTopBtn.addEventListener('click', () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });

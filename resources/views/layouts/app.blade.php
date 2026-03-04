@@ -5,303 +5,241 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>CDA-DBRS</title>
+    <title>{{ config('app.name', 'CDA-DBRS') }}</title>
     <link rel="icon" href="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" type="image/png">
 
-    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="/assets/js/sweetalert2.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
-    <!-- Styles & Scripts (Vite handles Tailwind + JS build) -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="/assets/js/sweetalert2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --sidebar-bg: #133e5e;
+            --sidebar-hover: rgba(255, 255, 255, 0.1);
+            --sidebar-active: rgba(255, 255, 255, 0.15);
+            --sidebar-text: #cbd5e1;
+            --sidebar-width: 256px;
+            --sidebar-collapsed-width: 80px;
+            --body-bg: #f9fafb;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --danger: #ef4444;
+            --danger-hover: #fee2e2;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Figtree', sans-serif; background-color: var(--body-bg); color: var(--text-main); overflow: hidden; }
+        a { text-decoration: none; }
+        button { background: none; border: none; cursor: pointer; font-family: inherit; }
+        [x-cloak] { display: none !important; }
+
+        /* Layout - Added 100dvh for mobile browser UI compatibility */
+        .app-wrapper { display: flex; height: 100vh; height: 100dvh; width: 100%; overflow: hidden; }
+        .main-content { display: flex; flex-direction: column; flex: 1; min-width: 0; overflow: hidden; transition: margin 0.3s ease; }
+        .content-area { flex: 1; padding: 24px; overflow-y: auto; }
+
+        /* Sidebar Base */
+        .sidebar { background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; transition: width 0.3s ease, transform 0.3s ease; z-index: 50; flex-shrink: 0; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
+        .sidebar-header { height: 64px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; overflow: hidden; }
+        .sidebar-logo { height: 32px; width: auto; background: rgba(255,255,255,0.1); padding: 4px; border-radius: 4px; }
+        .sidebar-brand { display: flex; flex-direction: column; margin-left: 12px; white-space: nowrap; }
+        .sidebar-brand-title { font-size: 18px; font-weight: bold; line-height: 1; }
+        .sidebar-brand-sub { font-size: 10px; font-weight: 600; color: #7dd3fc; text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px; }
+        .sidebar-nav { flex: 1; overflow-y: auto; padding: 24px 12px; }
+        
+        .sidebar-footer { height: 64px; display: flex; align-items: center; justify-content: center; padding: 0 16px; border-top: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
+        
+        .nav-label { font-size: 10px; font-weight: bold; color: #7dd3fc; text-transform: uppercase; letter-spacing: 1px; padding: 16px 12px 4px; margin-top: 8px; }
+
+        /* Navigation Links */
+        .nav-link { display: flex; align-items: center; padding: 10px 12px; color: var(--sidebar-text); border-radius: 8px; font-weight: 500; transition: all 0.2s ease; margin-bottom: 4px; white-space: nowrap; }
+        .nav-link:hover { background-color: var(--sidebar-hover); color: white; }
+        .nav-link.active { background-color: var(--sidebar-active); color: white; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        .nav-link .material-icons-outlined { font-size: 22px; margin-right: 12px; flex-shrink: 0; }
+        
+        .nav-link.logout { color: #fb7185; }
+        .nav-link.logout:hover { background-color: rgba(244, 63, 94, 0.1); color: #fda4af; }
+
+        /* Submenu */
+        .submenu { list-style: none; padding-left: 0; margin-top: 4px; margin-bottom: 8px; }
+        .submenu-link { display: flex; align-items: center; padding: 8px 12px 8px 44px; color: #94a3b8; font-size: 14px; border-radius: 8px; transition: 0.2s; }
+        .submenu-link:hover { background-color: rgba(255,255,255,0.05); color: white; }
+        .submenu-link.active { background-color: rgba(255,255,255,0.1); color: white; font-weight: 600; }
+        .submenu-dot { width: 6px; height: 6px; border-radius: 50%; background-color: #64748b; margin-right: 12px; }
+        .submenu-link.active .submenu-dot { background-color: #38bdf8; }
+        .chevron { margin-left: auto; transition: transform 0.2s; width: 16px; height: 16px; }
+        .chevron.open { transform: rotate(90deg); }
+
+        /* Header */
+        .top-header { height: 64px; background-color: white; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 24px; z-index: 30; flex-shrink: 0; }
+        .header-left, .header-right { display: flex; align-items: center; height: 100%; }
+        .icon-btn { padding: 8px; color: var(--text-muted); border-radius: 8px; transition: background 0.2s; display: flex; align-items: center; justify-content: center; }
+        .icon-btn:hover { background-color: var(--border-color); color: var(--text-main); }
+        
+        .clock-widget { display: flex; align-items: center; color: var(--text-muted); font-size: 14px; font-weight: 500; margin-right: 24px; white-space: nowrap; }
+        .clock-widget .material-icons-outlined { font-size: 18px; margin-right: 8px; }
+
+        /* Profile Dropdown */
+        .profile-dropdown { position: relative; }
+        .avatar-btn { width: 40px; height: 40px; border-radius: 50%; background-color: var(--sidebar-bg); color: white; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: 0.2s; flex-shrink: 0; }
+        .avatar-btn:hover { background-color: #1a537d; box-shadow: 0 0 0 2px white, 0 0 0 4px var(--sidebar-bg); }
+        .dropdown-menu { position: absolute; right: 0; top: 100%; margin-top: 8px; width: 220px; background: white; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid var(--border-color); z-index: 50; overflow: hidden; }
+        .dropdown-header { padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
+        .dropdown-name { font-weight: bold; color: var(--text-main); font-size: 14px; }
+        .dropdown-email { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dropdown-role { display: inline-block; padding: 2px 8px; background: #e0f2fe; color: var(--sidebar-bg); font-size: 10px; font-weight: bold; border-radius: 12px; margin-top: 6px; text-transform: uppercase; }
+        .dropdown-item { display: flex; align-items: center; width: 100%; padding: 10px 16px; color: var(--text-main); font-size: 14px; text-decoration: none; transition: 0.2s; background: transparent; text-align: left; }
+        .dropdown-item:hover { background-color: #f3f4f6; }
+        .dropdown-item .material-icons-outlined { font-size: 18px; margin-right: 10px; color: var(--text-muted); }
+        .dropdown-item.logout { color: var(--danger); }
+        .dropdown-item.logout:hover { background-color: var(--danger-hover); color: #b91c1c; }
+        .dropdown-item.logout .material-icons-outlined { color: inherit; }
+
+        /* App Footer Desktop */
+        .app-footer { height: 64px; background: white; border-top: 1px solid var(--border-color); padding: 0 24px; display: flex; justify-content: center; align-items: center; gap: 24px; font-size: 14px; color: var(--text-muted); flex-shrink: 0; }
+        .app-footer a { color: var(--text-muted); transition: color 0.2s; }
+        .app-footer a:hover { color: var(--sidebar-bg); }
+
+        /* Mobile Overlay */
+        .mobile-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(2px); z-index: 40; display: none; }
+
+        /* --- Media Queries --- */
+        @media (min-width: 768px) {
+            .mobile-only { display: none !important; }
+            .sidebar { width: var(--sidebar-width); position: relative; }
+            .sidebar.collapsed { width: var(--sidebar-collapsed-width); }
+            .sidebar.collapsed .sidebar-brand { display: none; }
+            .sidebar.collapsed .sidebar-header { justify-content: center; }
+            .sidebar.collapsed .nav-text { display: none; }
+            .sidebar.collapsed .nav-label { display: none; }
+            .sidebar.collapsed .nav-link { justify-content: center; padding-left: 0; padding-right: 0; }
+            .sidebar.collapsed .nav-link .material-icons-outlined { margin-right: 0; }
+            .sidebar.collapsed .chevron { display: none; }
+            .sidebar.collapsed hr { display: block !important; margin: 16px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.1); }
+        }
+
+        @media (max-width: 767px) {
+            .desktop-only { display: none !important; }
+            .sidebar { position: fixed; top: 0; bottom: 0; left: 0; width: var(--sidebar-width); transform: translateX(-100%); }
+            .sidebar.mobile-open { transform: translateX(0); }
+            .mobile-overlay.mobile-open { display: block; }
+            .header-left .icon-btn { margin-right: 8px; }
+            .top-header { padding: 0 16px; } 
+            
+            .clock-widget { font-size: 12px; margin-right: 12px;}
+            .clock-widget .material-icons-outlined { font-size: 16px; margin-right: 4px; }
+            
+            /* Responsive Mobile Footer adjustments for narrow screens */
+            .app-footer { height: auto; min-height: 64px; padding: 16px 12px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); flex-direction: column; gap: 8px; text-align: center; }
+            .app-footer p, .app-footer a { margin: 0; font-size: 12px; word-wrap: break-word; }
+            .sidebar-footer { height: auto; padding: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }}
+    </style>
 </head>
 
-<body class="font-sans antialiased bg-gray-100 text-gray-800">
-    <div class="min-h-screen">
+<body x-data="{ 
+        sidebarOpen: localStorage.getItem('sidebarOpen') !== 'false',
+        mobileSidebarOpen: false,
+        toggleSidebar() {
+            this.sidebarOpen = !this.sidebarOpen;
+            localStorage.setItem('sidebarOpen', this.sidebarOpen);
+        }
+    }">
+    
+    <div class="app-wrapper">
 
-        <!-- Sidebar -->
+        <div 
+            class="mobile-overlay" 
+            :class="{ 'mobile-open': mobileSidebarOpen }"
+            @click="mobileSidebarOpen = false"
+            x-transition.opacity
+        ></div>
+
         @include('layouts.navigation')
 
-        <!-- Main content area -->
-        <div id="main-content" class="flex-1 flex flex-col transition-all duration-300 ease-in-out">
-            <!-- Top bar -->
-            <div id="page-header" class="flex justify-end items-center h-16 px-6 bg-white dark:bg-gray-800 shadow-sm border-b dark:border-gray-700 transition-all duration-300 ease-in-out">
-                <div class="flex items-center space-x-2">
-                    @php
-                        $nowPH = \Carbon\Carbon::now('Asia/Manila')->format('M j, Y - h:i A');
-                        $user = Auth::user();
-                        $avatarUrl = 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=4F46E5&color=fff&size=64';
-                    @endphp
+        <div class="main-content">
+            
+            <header class="top-header">
+                <div class="header-left">
+                    <button @click="mobileSidebarOpen = true" class="icon-btn mobile-only">
+                        <span class="material-icons-outlined">menu</span>
+                    </button>
 
-                    <!-- Date Display -->
-                    <div class="flex items-center text-gray-500 dark:text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
-                        <span class="material-icons-outlined text-xl">today</span>
-                        <span class="text-sm mr-1">{{ $nowPH }}</span>
+                    <button @click="toggleSidebar()" class="icon-btn desktop-only" :title="sidebarOpen ? 'Collapse Sidebar' : 'Expand Sidebar'">
+                        <span class="material-icons-outlined" x-text="sidebarOpen ? 'menu_open' : 'menu'"></span>
+                    </button>
+                </div>
+
+                <div class="header-right">
+                    @php $user = Auth::user(); @endphp
+
+                    <div class="clock-widget" x-data="{ 
+                            time: '',
+                            init() {
+                                this.updateTime();
+                                setInterval(() => this.updateTime(), 1000);
+                                window.addEventListener('resize', () => this.updateTime());
+                            },
+                            updateTime() {
+                                const isMobile = window.innerWidth < 768;
+                                const options = isMobile 
+                                    ? { timeZone: 'Asia/Manila', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true } 
+                                    : { timeZone: 'Asia/Manila', weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true };
+                                
+                                this.time = new Date().toLocaleString('en-US', options);
+                            }
+                        }">
+                        <span class="material-icons-outlined">schedule</span>
+                        <span x-text="time"></span>
                     </div>
 
-                    <!-- Notifications Dropdown 
-                    <x-dropdown align="right">
-                        <x-slot name="trigger">
-                            <div class="relative" x-data="notificationHandler()" x-init="init()">
-                                <button @click="toggleNotifications()" 
-                                        class="flex items-center text-gray-500 dark:text-gray-400 relative p-1 rounded-lg transition-colors duration-200">
+                    <div class="profile-dropdown" x-data="{ open: false }" @click.away="open = false">
+                        <button @click="open = !open" class="avatar-btn" title="{{ $user->name ?? 'User' }}">
+                            {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
+                        </button>
 
-                                    <span class="material-icons-outlined text-1xl">notifications</span>
-                                    <template x-if="unreadCount > 0">
-                                        <span class="absolute top-0 right-0 w-4 h-4 bg-red-600 text-white rounded-full flex items-center justify-center shadow">
-                                            <span class="text-xs leading-none" x-text="unreadCount"></span>
-                                        </span>
-                                    </template>
-                                </button>
-                            </div>
-                        </x-slot>
-
-                        <x-slot name="content">
-                            <div class="p-4 border-b border-gray-200 dark:border-gray-700 min-w-[16rem] max-w-[28rem] w-auto">
-                                <div class="flex justify-between items-center">
-                                    <h3 class="font-semibold text-gray-800 dark:text-gray-200">Notifications</h3>
-                                    <template x-if="unreadCount > 0">
-                                        <button @click="deleteAll()" class="text-xs text-red-600 dark:text-red-400 hover:underline focus:outline-none">
-                                            Mark all as read
-                                        </button>
-                                    </template>
-                                </div>
-                            </div>
-                            
-                            <div class="max-h-96 overflow-y-auto min-w-[16rem] max-w-[28rem] w-auto" x-data="notificationHandler()" x-init="init()">
-                                <template x-if="unreadCount === 0 && notifications.length === 0">
-                                    <div class="p-6 text-center text-gray-500 dark:text-gray-400">
-                                        <span class="material-icons-outlined text-3xl opacity-50 mb-2">notifications_off</span>
-                                        <p class="text-sm">No new notifications</p>
-                                    </div>
-                                </template>
+                        <div x-show="open" x-transition.opacity style="display: none;" class="dropdown-menu">
+                            <div class="dropdown-header">
+                                <div class="dropdown-name">{{ $user->name }}</div>
+                                <div class="dropdown-email">{{ $user->email }}</div>
                                 
-                                <template x-for="notification in notifications" :key="notification.id">
-                                    <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
-                                        <div class="flex justify-between items-start">
-                                            
-                                            <p class="text-sm text-black break-words flex-1 mr-2" x-text="notification.message"></p>
-                                            <button @click="deleteNotification(notification.id)" 
-                                                    class="text-xs text-red-600 dark:text-red-400 hover:underline whitespace-nowrap ml-2 focus:outline-none">
-                                                Mark as read
-                                            </button>
-                                        </div>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" x-text="formatDate(notification.created_at)"></p>
-                                    </div>
-                                </template>
-                            </div>
-                        </x-slot>
-                    </x-dropdown>
-                    -->
-
-                    <!-- User Dropdown -->
-                    <x-dropdown align="right" width="64">
-            
-                        <x-slot name="trigger">
-                            <button class="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-indigo-600 dark:hover:text-indigo-400 focus:outline-none transition group">
-
-                                <!-- Avatar and Name -->
-                                <div class="flex items-center gap-2 ml-1">
-                                    <img src="{{ $avatarUrl }}" alt="User Avatar" class="w-8 h-8 rounded-full border border-gray-300 dark:border-gray-600" />
-                                    <span class="text-sm font-semibold text-gray-500 dark:text-gray-400 ml-1">{{ $user->name }}</span>
-                                </div>
-
-                                <!-- Dropdown Icon -->
-                                <svg class="h-4 w-4 text-gray-400 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5.23 7.21a1 1 0 011.41.02L10 10.58l3.36-3.35a1 1 0 111.41 1.42l-4.06 4.05a1 1 0 01-1.41 0L5.21 8.63a1 1 0 01.02-1.42z" clip-rule="evenodd" />
-                                </svg>
-                            </button>
-                        </x-slot>
-
-                        <x-slot name="content">
-                            <div class="px-4 py-3 text-sm text-gray-700 dark:text-gray-200">
-                                <div class="font-medium">{{ $user->name }}</div>
-                                <div class="text-gray-500 dark:text-gray-400">{{ $user->email }}</div>
-                                <div class="text-xs uppercase tracking-wide text-indigo-600 dark:text-indigo-400 mt-1">
-                                    @if($user->roles->isNotEmpty())
-                                        @foreach($user->roles as $role)
-                                            <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-indigo-100 text-indigo-700">
-                                                {{ $role->name }}
-                                            </span>
-                                        @endforeach
-                                    @else
-                                        <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-600">
-                                            No Role Assigned
-                                        </span>
-                                    @endif
-                                </div>
+                                @forelse($user->roles as $role)
+                                    <span class="dropdown-role">{{ $role->name }}</span>
+                                @empty
+                                    <span class="dropdown-role" style="background: #f3f4f6; color: #4b5563;">No Role</span>
+                                @endforelse
                             </div>
 
-                            <hr class="my-1 border-gray-200 dark:border-gray-700">
+                            <a href="{{ route('profile.edit') }}" class="dropdown-item">
+                                <span class="material-icons-outlined">person</span> Profile
+                            </a>
 
-                            <x-dropdown-link :href="route('profile.edit')">
-                                {{ __('Profile') }}
-                            </x-dropdown-link>
-
-                            <form method="POST" action="{{ route('logout') }}">
+                            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
                                 @csrf
-                                <x-dropdown-link :href="route('logout')" onclick="event.preventDefault(); this.closest('form').submit();">
-                                    {{ __('Log out') }}
-                                </x-dropdown-link>
+                                <button type="submit" class="dropdown-item logout">
+                                    <span class="material-icons-outlined">logout</span> Log out
+                                </button>
                             </form>
-                        </x-slot>
-                    </x-dropdown>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </header>
 
-            <!-- Page content -->
-            <main class="p-8 flex-1">
+            <main class="content-area">
                 {{ $slot }}
             </main>
 
-            <!-- Footer -->
-            <footer class="w-full border-t border-gray-300 bg-white">
-                <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between">
-                    <p class="text-gray-500 text-sm sm:text-base text-center sm:text-left">
-                        &copy; {{ date('Y') }} 2025 CDA ICTD. All rights reserved.
-                    </p>
-                    <div class="mt-2 sm:mt-0 flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-gray-600 text-sm sm:text-base">Contact us at ictd@cda.gov.ph</a>
-                    </div>
-                </div>
+            <footer class="app-footer">
+                <p>&copy; {{ date('Y') }} CDA ICTD. All rights reserved.</p>
+                <a href="mailto:ictd@cda.gov.ph">Contact us at ictd@cda.gov.ph</a>
             </footer>
 
         </div>
     </div>
-
-    <!-- Notifications 
-    <script>
-        function notificationHandler() {
-            return {
-                open: false,
-                unreadCount: 0,
-                notifications: [],
-                loading: false,
-                
-                init() {
-                    this.fetchNotifications();
-                    // Poll for new notifications every 30 seconds
-                    setInterval(() => {
-                        this.fetchNotifications();
-                    }, 30000);
-                    
-                    // Listen for new notification events if using websockets/broadcasting
-                    window.Echo && window.Echo.private('notifications.' + {{ auth()->id() }})
-                        .listen('.notification.created', (e) => {
-                            this.unreadCount++;
-                            this.notifications.unshift(e.notification);
-                        });
-                },
-                
-                toggleNotifications() {
-                    this.open = !this.open;
-                    if (this.open) {
-                        this.fetchNotifications();
-                    }
-                },
-                
-                async fetchNotifications() {
-                    try {
-                        this.loading = true;
-                        const response = await fetch('{{ route("notifications.index") }}');
-                        
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        
-                        const data = await response.json();
-                        
-                        this.notifications = data.notifications || [];
-                        this.unreadCount = data.unreadCount || 0;
-                        
-                        console.log('Fetched notifications:', this.notifications);
-                        console.log('Unread count:', this.unreadCount);
-                    } catch (error) {
-                        console.error('Error fetching notifications:', error);
-                        // Fallback to empty arrays if there's an error
-                        this.notifications = [];
-                        this.unreadCount = 0;
-                    } finally {
-                        this.loading = false;
-                    }
-                },
-                
-                // Delete one notification
-                async deleteNotification(notificationId) {
-                    try {
-                        const response = await fetch(`/notifications/${notificationId}`, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            }
-                        });
-                        
-                        if (!response.ok) {
-                            throw new Error('Failed to delete notification');
-                        }
-                        
-                        const data = await response.json();
-                        
-                        if (data.success) {
-                            this.notifications = this.notifications.filter(n => n.id !== notificationId);
-                            this.unreadCount = Math.max(0, this.notifications.length);
-                        }
-                    } catch (error) {
-                        console.error('Error deleting notification:', error);
-                        // Optimistic update
-                        this.notifications = this.notifications.filter(n => n.id !== notificationId);
-                        this.unreadCount = Math.max(0, this.notifications.length);
-                    }
-                },
-                
-                // Delete all notifications
-                async deleteAll() {
-                    try {
-                        const response = await fetch('/notifications/delete-all', {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            }
-                        });
-                        
-                        if (!response.ok) {
-                            throw new Error('Failed to delete all notifications');
-                        }
-                        
-                        const data = await response.json();
-                        
-                        if (data.success) {
-                            this.notifications = [];
-                            this.unreadCount = 0;
-                        }
-                    } catch (error) {
-                        console.error('Error deleting all notifications:', error);
-                        // Optimistic update
-                        this.notifications = [];
-                        this.unreadCount = 0;
-                    }
-                },
-                
-                formatDate(dateString) {
-                    try {
-                        const date = new Date(dateString);
-                        return date.toLocaleString();
-                    } catch (error) {
-                        return dateString;
-                    }
-                }
-            }
-        }
-    </script>
-    -->
-
 </body>
 </html>

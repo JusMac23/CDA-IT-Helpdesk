@@ -34,6 +34,18 @@ class TicketsController extends Controller
         // Handle filters
         $query = Tickets::query();
 
+        $ticketsCount = Tickets::count();
+
+
+        $overdueCount = Tickets::where('status', '!=', 'Resolved')
+            ->where('date_created', '<', Carbon::now()->subDays(3))
+            ->count();
+
+            if ($request->input('filter') === 'overdue') {
+                $query->where('status', '!=', 'Resolved')
+                    ->where('date_created', '<', Carbon::now()->subDays(3));
+            }
+
         if ($request->filled('it_area')) {
             $query->where('it_area', $request->it_area);
         }
@@ -97,6 +109,8 @@ class TicketsController extends Controller
 
         return view('tickets.index', compact(
             'request', 
+            'ticketsCount',
+            'overdueCount',
             'tickets', 
             'sections_divisions', 
             'technical_services', 

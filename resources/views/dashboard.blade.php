@@ -1,249 +1,286 @@
 <x-app-layout>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin']))
-    <div id="main-content" class="min-h-screen transition-all duration-300 ease-in-out">
-        <div id="dashboardContent">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-4 sm:p-8">
-                <div class="text-gray-900">
-                    <h3 class="text-xl sm:text-2xl font-bold mb-4">Tickets Overview</h3>
+    
+    <style>
+        /* Dashboard Container */
+        .dashboard-panel { background-color: #ffffff; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1.5rem; width: 100%; }
+        .dashboard-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 1.5rem; color: #1f2937; }
+        
+        /* Stats Cards */
+        .stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; border-left: 4px solid; transition: transform 0.2s, box-shadow 0.2s; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .stat-left { display: flex; align-items: center; gap: 1rem; }
+        .stat-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+        .stat-label { font-size: 1.125rem; font-weight: 600; margin: 0; }
+        .stat-value { font-size: 1.875rem; font-weight: 700; margin: 0; text-align: right; }
+        
+        /* Card Themes */
+        .card-indigo { background: #fff; border-left-color: #6366f1; }
+        .card-indigo .stat-icon { background: #e0e7ff; color: #4338ca; }
+        .card-indigo .stat-label { color: #3730a3; }
+        .card-indigo .stat-value { color: #4f46e5; }
+        
+        .card-green { background: #f0fdf4; border-left-color: #22c55e; }
+        .card-green .stat-icon { background: #dcfce7; color: #166534; }
+        .card-green .stat-label { color: #166534; }
+        .card-green .stat-value { color: #16a34a; }
+        
+        .card-blue { background: #eff6ff; border-left-color: #3b82f6; }
+        .card-blue .stat-icon { background: #dbeafe; color: #1e40af; }
+        .card-blue .stat-label { color: #1e40af; }
+        .card-blue .stat-value { color: #2563eb; }
+        
+        .card-red { background: #fef2f2; border-left-color: #ef4444; }
+        .card-red .stat-icon { background: #fee2e2; color: #991b1b; }
+        .card-red .stat-label { color: #991b1b; }
+        .card-red .stat-value { color: #dc2626; }
+        
+        /* Grid Tables (Middle Section) */
+        .tables-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .table-card { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1.5rem; border: 1px solid #f3f4f6; overflow-x: auto; }
+        .table-card-title { font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; color: #374151; display: flex; align-items: center; gap: 0.5rem; }
+        
+        .data-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .data-table th, .data-table td { padding: 0.75rem 1rem; }
+        .data-table thead tr { font-weight: 600; }
+        .data-table tbody tr { border-bottom: 1px solid #e5e7eb; transition: background-color 0.15s; }
+        .data-table tbody tr:nth-child(even) { background-color: #f9fafb; }
+        .data-table tbody tr:hover { background-color: #f3f4f6; }
+        .text-right { text-align: right; }
+        
+        /* Table Headers */
+        .th-indigo { background: #e0e7ff; color: #3730a3; }
+        .th-green { background: #dcfce7; color: #166534; }
+        .th-yellow { background: #fef9c3; color: #854d0e; }
+        .th-red { background: #fee2e2; color: #991b1b; }
+        
+        /* Bottom Full Table */
+        .full-table-container { background: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 8px; border: 1px solid #e5e7eb; overflow-x: auto; margin-top: 1rem; }
+        .full-table { width: 100%; border-collapse: collapse; text-align: left; white-space: nowrap; }
+        .full-table th { padding: 0.75rem 1.5rem; background: #f3f4f6; color: #374151; font-weight: 600; text-transform: uppercase; font-size: 0.875rem; border-bottom: 2px solid #e5e7eb; }
+        .full-table td { padding: 0.75rem 1.5rem; border-bottom: 1px solid #e5e7eb; color: #4b5563; }
+        .full-table tbody tr:hover { background: #f9fafb; }
+        
+        /* Badges */
+        .badge { padding: 0.35rem 1rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; display: inline-block; text-align: center; }
+        .badge-green { background: #dcfce7; color: #166534; }
+        .badge-yellow { background: #fef9c3; color: #854d0e; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .badge-gray { background: #f3f4f6; color: #374151; }
 
-                    {{-- Dashboard Cards --}}
-                    <div class="flex flex-col lg:flex-row gap-6 lg:gap-6 mb-8">
-                        @php
-                            $cards = [
-                                [
-                                    'label' => 'Total Tickets',
-                                    'icon' => 'fa-ticket',
-                                    'bg' => 'bg-white',
-                                    'border' => 'border-indigo-500',
-                                    'iconBg' => 'bg-indigo-100',
-                                    'textColor' => 'text-indigo-800',
-                                    'valueColor' => 'text-indigo-600',
-                                    'value' => $total,
-                                ],
-                                [
-                                    'label' => 'Pending Tickets',
-                                    'icon' => 'fa-hourglass-half',
-                                    'bg' => 'bg-green-50',
-                                    'border' => 'border-green-500',
-                                    'iconBg' => 'bg-green-100',
-                                    'textColor' => 'text-green-800',
-                                    'valueColor' => 'text-green-600',
-                                    'value' => $pending,
-                                ],
-                                [
-                                    'label' => 'Resolved Tickets',
-                                    'icon' => 'fa-check-circle',
-                                    'bg' => 'bg-blue-50',
-                                    'border' => 'border-blue-500',
-                                    'iconBg' => 'bg-blue-100',
-                                    'textColor' => 'text-blue-800',
-                                    'valueColor' => 'text-blue-600',
-                                    'value' => $resolved,
-                                ],
-                                [
-                                    'label' => 'Overdue Tickets',
-                                    'icon' => 'fa-exclamation-circle',
-                                    'bg' => 'bg-red-50',
-                                    'border' => 'border-red-500',
-                                    'iconBg' => 'bg-red-100',
-                                    'textColor' => 'text-red-800',
-                                    'valueColor' => 'text-red-600',
-                                    'value' => $overdue,
-                                ],
-                            ];
-                        @endphp
+        /* Responsive */
+        @media (max-width: 640px) {
+            .stat-card { flex-direction: column; text-align: center; gap: 1rem; }
+            .stat-left { flex-direction: column; }
+            .stat-value { text-align: center; }
+            .dashboard-panel { padding: 1rem; }
+        }
+    </style>
 
-                        @foreach ($cards as $card)
-                            <div class="flex-1 min-w-[200px] sm:min-w-[250px] {{ $card['bg'] }} {{ $card['border'] }} border-l-4 rounded-xl shadow-md p-4 sm:p-6 hover:shadow-lg transition-all duration-300">
-                                <!-- Use flex-col on small screens, flex-row on larger screens -->
-                                <div class="flex flex-col sm:flex-row items-center sm:justify-between gap-4 sm:gap-6">
-                                    <div class="flex items-center gap-3 sm:gap-4">
-                                        <div class="{{ $card['iconBg'] }} p-3 sm:p-4 rounded-full">
-                                            <i class="fa-solid {{ $card['icon'] }} text-xl sm:text-2xl {{ $card['textColor'] }}"></i>
-                                        </div>
-                                        <h4 class="text-md sm:text-lg font-semibold {{ $card['textColor'] }}">{{ $card['label'] }}</h4>
-                                    </div>
-                                    <p class="text-3xl font-bold {{ $card['valueColor'] }} mt-2 sm:mt-0 text-right">
-                                        {{ $card['value'] }}
-                                    </p>
+    <div id="main-content">
+        <div id="dashboardContent" class="dashboard-wrapper">
+            <div class="dashboard-panel">
+                <h3 class="dashboard-title">Tickets Overview</h3>
+
+                {{-- Dashboard Cards --}}
+                <div class="stat-cards">
+                    @php
+                        $cards = [
+                            ['label' => 'Total Tickets', 'icon' => 'fa-ticket', 'theme' => 'indigo', 'value' => $total],
+                            ['label' => 'Pending Tickets', 'icon' => 'fa-hourglass-half', 'theme' => 'green', 'value' => $pending],
+                            ['label' => 'Resolved Tickets', 'icon' => 'fa-check-circle', 'theme' => 'blue', 'value' => $resolved],
+                            ['label' => 'Overdue Tickets', 'icon' => 'fa-exclamation-circle', 'theme' => 'red', 'value' => $overdue],
+                        ];
+                    @endphp
+
+                    @foreach ($cards as $card)
+                        <div class="stat-card card-{{ $card['theme'] }}">
+                            <div class="stat-left">
+                                <div class="stat-icon">
+                                    <i class="fa-solid {{ $card['icon'] }}"></i>
                                 </div>
+                                <h4 class="stat-label">{{ $card['label'] }}</h4>
                             </div>
-
-                        @endforeach
-                    </div>
-
-                    {{-- IT Area, Personnel, Service, Overdue --}}
-                    <div class="flex flex-col lg:flex-row gap-6 lg:gap-6 mb-8">
-                        {{-- Tickets by Region --}}
-                        <div class="flex-1 bg-white rounded-lg shadow p-4 sm:p-6 overflow-x-auto">
-                            <h4 class="text-lg font-semibold mb-4 text-gray-700 flex items-center">
-                                <i class="fa-solid fa-network-wired mr-2 text-indigo-600"></i> Tickets by Region
-                            </h4>
-                            <table class="w-full text-md sm:text-base table-auto">
-                                <thead>
-                                    <tr class="bg-indigo-100 text-indigo-800">
-                                        <th class="px-3 sm:px-4 py-2 text-left">IT Area</th>
-                                        <th class="px-3 sm:px-4 py-2 text-right">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($byItArea as $area)
-                                        <tr class="border-b odd:bg-white even:bg-gray-50 hover:bg-gray-100">
-                                            <td class="px-3 sm:px-4 py-2">{{ $area->it_area }}</td>
-                                            <td class="px-3 sm:px-4 py-2 text-right font-bold">{{ $area->total }}</td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="2" class="text-center py-4 text-gray-500">No data available.</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
+                            <p class="stat-value">
+                                {{ $card['value'] }}
+                            </p>
                         </div>
-
-                        {{-- Tickets by Technical Personnel --}}
-                        <div class="flex-1 bg-white rounded-lg shadow p-4 sm:p-6 overflow-x-auto">
-                            <h4 class="text-lg font-semibold mb-4 text-gray-700 flex items-center">
-                                <i class="fa-solid fa-user-gear mr-2 text-green-600"></i> Tickets by Technical Personnel
-                            </h4>
-                            <table class="w-full text-md sm:text-base table-auto">
-                                <thead>
-                                    <tr class="bg-green-100 text-green-800">
-                                        <th class="px-3 sm:px-4 py-2 text-left">Technical Personnel</th>
-                                        <th class="px-3 sm:px-4 py-2 text-right">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($byItPersonnel as $person)
-                                        <tr class="border-b odd:bg-white even:bg-gray-50 hover:bg-gray-100">
-                                            <td class="px-3 sm:px-4 py-2">{{ $person->it_personnel }}</td>
-                                            <td class="px-3 sm:px-4 py-2 text-right font-bold">{{ $person->total }}</td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="2" class="text-center py-4 text-gray-500">No data available.</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {{-- Tickets by Service --}}
-                        <div class="flex-1 bg-white rounded-lg shadow p-4 sm:p-6 overflow-x-auto">
-                            <h4 class="text-lg font-semibold mb-4 text-gray-700 flex items-center">
-                                <i class="fa-solid fa-tools mr-2 text-yellow-600"></i> Tickets by Technical Services
-                            </h4>
-                            <table class="w-full sm:text-base table-auto">
-                                <thead>
-                                    <tr class="bg-yellow-100 text-yellow-800 text-md">
-                                        <th class="px-3 sm:px-4 py-2 text-left">Service</th>
-                                        <th class="px-3 sm:px-4 py-2 text-right">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($byService as $service)
-                                        <tr class="border-b odd:bg-white even:bg-gray-50 hover:bg-gray-100 text-sm">
-                                            <td class="px-3 sm:px-4 py-2">{{ $service->service }}</td>
-                                            <td class="px-3 sm:px-4 py-2 text-right font-bold">{{ $service->total }}</td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="2" class="text-center py-4 text-gray-500">No data available.</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {{-- Overdue Tickets --}}
-                        <div class="flex-1 bg-white rounded-lg shadow p-4 sm:p-6 overflow-x-auto">
-                            <h4 class="text-lg font-semibold mb-4 text-gray-700 flex items-center">
-                                <i class="fa-solid fa-clock mr-2 text-red-800"></i> Overdue Tickets by Personnel
-                            </h4>
-                            <table class="w-full sm:text-base table-auto">
-                                <thead>
-                                    <tr class="bg-red-100 text-red-800 text-md">
-                                        <th class="px-3 sm:px-4 py-2 text-left">Request Details</th>
-                                        <th class="px-3 sm:px-4 py-2 text-right">Assigned Personnel</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($overdueTickets as $personnel => $tickets)
-                                        @foreach ($tickets as $ticket)
-                                            <tr class="border-b odd:bg-white even:bg-gray-50 hover:bg-gray-100 text-sm">
-                                                <td class="px-3 sm:px-4 py-2">{{ $ticket->request }}</td>
-                                                <td class="px-3 sm:px-4 py-2 text-right font-bold">{{ $personnel }}</td>
-                                            </tr>
-                                        @endforeach
-                                    @empty
-                                        <tr>
-                                            <td colspan="2" class="text-center py-4 text-gray-500">No overdue tickets.</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    {{-- Recently Resolved Tickets --}}
-                   
-                        <h4 class="text-lg font-semibold mb-4 text-gray-700 flex items-center">
-                            <i class="fa-solid fa-clock-rotate-left mr-2 text-blue-600"></i> Recently Resolved Tickets
-                        </h4>
-
-                        {{-- Scrollable table container --}}
-                        <div class="overflow-x-auto bg-white shadow-lg rounded-lg border border-gray-200">
-                            <div class="min-w-screen">
-                                <table class="min-w-full table-auto divide-y divide-gray-200 text-left text-gray-800 text-md">
-                                    <thead class="bg-gray-100 text-gray-700">
-                                        <tr>
-                                            <th class="px-4 sm:px-6 py-2 font-semibold uppercase">Ticket Number</th>
-                                            <th class="px-4 sm:px-6 py-2 font-semibold uppercase">Requested By</th>
-                                            <th class="px-4 sm:px-6 py-2 font-semibold uppercase">Division</th>
-                                            <th class="px-4 sm:px-6 py-2 font-semibold uppercase">Service</th>
-                                            <th class="px-4 sm:px-6 py-2 font-semibold uppercase">Assigned Personnel</th>
-                                            <th class="px-4 sm:px-6 py-2 font-semibold uppercase">Date Created</th>
-                                            <th class="px-4 sm:px-6 py-2 font-semibold uppercase">Date Resolved</th>
-                                            <th class="px-4 sm:px-6 py-2 font-semibold uppercase text-center">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse ($recentlyResolved as $ticket)
-                                            <tr class="hover:bg-gray-50 border-b">
-                                                <td class="px-6 py-2">{{ $ticket->ticket_number}}</td>
-                                                <td class="px-6 py-2">{{ $ticket->firstname }} {{ $ticket->lastname }}</td>
-                                                <td class="px-6 py-2">{{ $ticket->division }}</td>
-                                                <td class="px-6 py-2">{{ $ticket->service }}</td>
-                                                <td class="px-6 py-2">{{ $ticket->it_personnel }}</td>
-                                                <td class="px-6 py-2 text-gray-600">{{ \Carbon\Carbon::parse($ticket->date_created)->format('M d, Y h:i A') }}</td>
-                                                <td class="px-6 py-2 text-gray-600">{{ \Carbon\Carbon::parse($ticket->date_resolved)->format('M d, Y h:i A') }}</td>
-                                                @php
-                                                    $status = trim($ticket->status);
-                                                    $statusClasses = match($status) {
-                                                        'Resolved' => 'bg-green-100 text-green-800',
-                                                        'Pending' => 'bg-yellow-100 text-yellow-800',
-                                                        'Pending/Re-Assigned' => 'bg-blue-100 text-blue-800',
-                                                        default => 'bg-gray-100 text-gray-800',
-                                                    };
-                                                @endphp
-                                                <td class="px-8 sm:px-8 text-center">
-                                                    <span class="px-6 py-2 text-sm sm:text-md font-semibold rounded-full {{ $statusClasses }}">
-                                                        {{ $ticket->status }}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="8" class="text-center py-6 text-gray-500">No recently resolved tickets to display.</td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    
-
+                    @endforeach
                 </div>
+
+                {{-- IT Area, Personnel, Service, Overdue --}}
+                <div class="tables-grid">
+                    
+                    {{-- Tickets by Region --}}
+                    <div class="table-card">
+                        <h4 class="table-card-title">
+                            <i class="fa-solid fa-network-wired" style="color: #4f46e5;"></i> Tickets by Region
+                        </h4>
+                        <table class="data-table">
+                            <thead>
+                                <tr class="th-indigo">
+                                    <th>IT Area</th>
+                                    <th class="text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($byItArea as $area)
+                                    <tr>
+                                        <td>{{ $area->it_area }}</td>
+                                        <td class="text-right" style="font-weight: bold;">{{ $area->total }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="2" style="text-align: center; color: #6b7280; padding: 1rem;">No data available.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {{-- Tickets by Technical Personnel --}}
+                    <div class="table-card">
+                        <h4 class="table-card-title">
+                            <i class="fa-solid fa-user-gear" style="color: #16a34a;"></i> Tickets by Technical Personnel
+                        </h4>
+                        <table class="data-table">
+                            <thead>
+                                <tr class="th-green">
+                                    <th>Technical Personnel</th>
+                                    <th class="text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($byItPersonnel as $person)
+                                    <tr>
+                                        <td>{{ $person->it_personnel }}</td>
+                                        <td class="text-right" style="font-weight: bold;">{{ $person->total }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="2" style="text-align: center; color: #6b7280; padding: 1rem;">No data available.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {{-- Tickets by Service --}}
+                    <div class="table-card">
+                        <h4 class="table-card-title">
+                            <i class="fa-solid fa-tools" style="color: #ca8a04;"></i> Tickets by Technical Services
+                        </h4>
+                        <table class="data-table">
+                            <thead>
+                                <tr class="th-yellow">
+                                    <th>Service</th>
+                                    <th class="text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($byService as $service)
+                                    <tr>
+                                        <td>{{ $service->service }}</td>
+                                        <td class="text-right" style="font-weight: bold;">{{ $service->total }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="2" style="text-align: center; color: #6b7280; padding: 1rem;">No data available.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {{-- Overdue Tickets --}}
+                    <div class="table-card">
+                        <h4 class="table-card-title">
+                            <i class="fa-solid fa-clock" style="color: #dc2626;"></i> Overdue Tickets by Personnel
+                        </h4>
+                        <table class="data-table">
+                            <thead>
+                                <tr class="th-red">
+                                    <th>Request Details</th>
+                                    <th class="text-right">Assigned Personnel</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($overdueTickets as $personnel => $tickets)
+                                    @foreach ($tickets as $ticket)
+                                        <tr>
+                                            <td>{{ $ticket->request }}</td>
+                                            <td class="text-right" style="font-weight: bold;">{{ $personnel }}</td>
+                                        </tr>
+                                    @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="2" style="text-align: center; color: #6b7280; padding: 1rem;">No overdue tickets.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {{-- Recently Resolved Tickets --}}
+                <div style="margin-top: 3rem;">
+                    <h4 class="table-card-title">
+                        <i class="fa-solid fa-clock-rotate-left" style="color: #2563eb;"></i> Recently Resolved Tickets
+                    </h4>
+
+                    <div class="full-table-container">
+                        <table class="full-table">
+                            <thead>
+                                <tr>
+                                    <th>Ticket Number</th>
+                                    <th>Requested By</th>
+                                    <th>Division</th>
+                                    <th>Service</th>
+                                    <th>Assigned Personnel</th>
+                                    <th>Date Created</th>
+                                    <th>Date Resolved</th>
+                                    <th style="text-align: center;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($recentlyResolved as $ticket)
+                                    <tr>
+                                        <td style="font-weight: 500; color: #111827;">{{ $ticket->ticket_number }}</td>
+                                        <td>{{ $ticket->firstname }} {{ $ticket->lastname }}</td>
+                                        <td>{{ $ticket->division }}</td>
+                                        <td>{{ $ticket->service }}</td>
+                                        <td>{{ $ticket->it_personnel }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($ticket->date_created)->format('M d, Y h:i A') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($ticket->date_resolved)->format('M d, Y h:i A') }}</td>
+                                        
+                                        @php
+                                            $status = trim($ticket->status);
+                                            $badgeClass = match($status) {
+                                                'Resolved' => 'badge-green',
+                                                'Pending' => 'badge-yellow',
+                                                'Pending/Re-Assigned' => 'badge-blue',
+                                                default => 'badge-gray',
+                                            };
+                                        @endphp
+                                        
+                                        <td style="text-align: center;">
+                                            <span class="badge {{ $badgeClass }}">
+                                                {{ $ticket->status }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="8" style="text-align: center; padding: 2rem; color: #6b7280;">No recently resolved tickets to display.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>

@@ -12,99 +12,116 @@
     <title>CDA-DBRS</title>
     <link rel="icon" href="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" type="image/png">
 
-    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <!-- Styles & Scripts (Vite handles Tailwind + JS build) -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="/assets/js/sweetalert2.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
     <style>
-        @keyframes fade-in-down {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        /* CSS Variables for consistent theming */
+        :root { --primary-blue:#1e40af; --primary-indigo:#4f46e5; --indigo-hover:#4338ca; --bg-body:#f9fafb; --text-main:#1f2937; --text-muted:#6b7280; --border-color:#d1d5db; --error-bg:#fee2e2; --error-text:#991b1b; --error-border:#ef4444; }
 
-        .animate-fade-in-down {
-            animation: fade-in-down 0.7s ease-out both;
-        }
+        /* Base Resets & Typography */
+        * { box-sizing:border-box; margin:0; padding:0; }
+        body { background-color:var(--bg-body); color:var(--text-main); font-family:'Figtree',ui-sans-serif,system-ui,-apple-system,sans-serif; -webkit-font-smoothing:antialiased; line-height:1.5; }
+        a { text-decoration:none; }
+        ul { list-style:none; }
 
-        .card-hover {
-            transition: all 0.3s ease;
-        }
+        /* Animations */
+        @keyframes fade-in-down { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+        .animate-fade-in-down { animation:fade-in-down 0.7s ease-out both; }
 
-        .card-hover:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-        }
+        /* Header Styles */
+        .app-header { background-color:#ffffff; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); position:sticky; top:0; z-index:50; border-bottom:1px solid #e5e7eb; }
+        .header-gradient-bar { height:4px; background:linear-gradient(to right,#2563eb,#6366f1,#a855f7); }
+        .container { max-width:1200px; margin:0 auto; padding:1rem 1.5rem; display:flex; justify-content:space-between; align-items:center; }
+        .logo-title { font-size:1.5rem; font-weight:700; color:var(--primary-blue); display:flex; align-items:center; gap:0.75rem; letter-spacing:-0.025em; }
+        .logo-img { width:48px; height:48px; object-fit:contain; transition:transform 0.3s; }
+        .logo-title:hover .logo-img { transform:scale(1.05); }
 
-        .input-focus:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
-        }
+        /* Navigation */
+        .nav-list { display:flex; gap:1.5rem; align-items:center; font-weight:500; }
+        .nav-link { color:#2563eb; padding:0.5rem 0.75rem; border-radius:9999px; display:flex; align-items:center; gap:0.5rem; transition:all 0.3s ease; }
+        .nav-link:hover { color:#1e40af; background-color:#dbeafe; }
+        .nav-link.logout { color:#ef4444; }
+        .nav-link.logout:hover { color:#b91c1c; background-color:#fee2e2; }
+        .logout-btn { background:none; border:none; font:inherit; cursor:pointer; }
 
-        body, button, input, select, textarea, h1, h2, h3, h4, p, a, span, li, legend, label, option {
-            font-family: 'Figtree', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-                Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif !important;
-        }
+        /* Form Container Section */
+        .incident-section { padding:2rem; max-width:1152px; margin:2.5rem auto 4rem; background-color:#ffffff; border-radius:1rem; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1),0 10px 10px -5px rgba(0,0,0,0.04); position:relative; }
+        .section-title { font-size:1.5rem; font-weight:700; margin-bottom:2.5rem; border-bottom:2px solid #e5e7eb; padding-bottom:1rem; }
+        .form-section-title { font-size:1.125rem; font-weight:600; color:#1f2937; margin:1.5rem 0 1rem; padding-bottom:0.5rem; }
+        .close-btn { position:absolute; top:1.5rem; right:2rem; color:var(--text-muted); font-size:1.875rem; background:none; border:none; cursor:pointer; transition:color 0.2s; }
+        .close-btn:hover { color:var(--text-main); }
 
-        .material-icons-outlined {
-            font-family: 'Material Icons Outlined' !important;
-        }
+        /* Alerts */
+        .alert-error { background-color:var(--error-bg); border-left:4px solid var(--error-border); color:var(--error-text); padding:1rem 1.5rem; margin-bottom:1.5rem; border-radius:0.5rem; display:flex; gap:0.75rem; }
+        .alert-error h4 { margin-bottom:0.25rem; font-size:0.875rem; }
+        .alert-error ul { padding-left:1.25rem; list-style-type:disc; font-size:0.875rem; }
+        
+        /* Grids */
+        .grid-2-col,.grid-3-col { display:grid; gap:1.5rem; margin-top:1.5rem; }
+        .grid-2-col { grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); }
+        .grid-3-col { grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); }
+        .mt-4 { margin-top:1.5rem; }
 
-        .fa, .fas, .far, .fal, .fab {
-            font-family: 'Font Awesome 6 Free' !important;
-        }
+        /* Inputs */
+        .form-group label { display:block; font-size:0.875rem; font-weight:600; margin-bottom:0.5rem; }
+        .text-required { color:var(--error-border); }
+        .form-control { width:100%; border:1px solid var(--border-color); border-radius:0.75rem; padding:0.75rem 1rem; font-family:inherit; font-size:1rem; transition:all 0.2s; }
+        .form-control:focus { outline:none; border-color:var(--primary-indigo); box-shadow:0 0 0 3px rgba(79,70,229,0.2); }
+        .form-control.is-invalid { border-color:var(--error-border); background-color:#fef2f2; }
+        select.form-control { appearance:auto; background-color:white; }
+        textarea.form-control { resize:vertical; min-height:100px; }
+
+        /* Footer & Buttons */
+        .form-footer { display:flex; justify-content:space-between; align-items:flex-start; margin-top:2rem; padding-top:2rem; border-top:1px solid #e5e7eb; }
+        .btn-submit { display:inline-flex; align-items:center; gap:0.75rem; padding:0.75rem 2rem; background-color:var(--primary-indigo); color:#ffffff; font-family:'Figtree',ui-sans-serif,system-ui,-apple-system,sans-serif; font-weight:600; font-size:1rem; border:none; border-radius:0.75rem; cursor:pointer; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); transition:all 0.3s ease; }
+        .btn-submit:hover:not(:disabled) { background-color:var(--indigo-hover); transform:scale(1.05); }
+        .btn-submit:disabled { opacity:0.6; cursor:not-allowed; pointer-events:none; }
+
+        /* Responsive adjustments */
+        @media (max-width:768px) { .form-footer { flex-direction:column; gap:1.5rem; align-items:flex-end; } .incident-section { padding:1.5rem; margin:1.5rem; } }
     </style>
 </head>
 
-<body class="bg-gray-50 text-gray-800 antialiased">
+<body>
 
-<header class="bg-white shadow-lg sticky top-0 z-50 border-b border-gray-200">
-    <div class="h-1 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500"></div>
+<header class="app-header">
+    <div class="header-gradient-bar"></div>
     
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-        <!-- Logo & Title -->
-        <h1 class="text-2xl lg:text-3xl font-bold text-blue-800 flex items-center gap-3">
+    <div class="container">
+        <h1 class="logo-title">
             <img src="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" 
                  alt="Cooperative Development Authority Seal" 
-                 class="w-12 h-12 object-contain drop-shadow-sm transition-transform duration-300 hover:scale-105"/>
-            <span class="tracking-tight">CDA-DBRS</span>
+                 class="logo-img"/>
+            <span>CDA-DBRS</span>
         </h1>
 
-        <!-- Navigation -->
         <nav>
-            <ul class="flex space-x-6 text-base font-medium items-center">
+            <ul class="nav-list">
                 @auth
-                    <!-- Dashboard Link -->
                     <li>
-                        <a href="{{ url('/dashboard') }}" 
-                           class="text-blue-600 hover:text-blue-800 hover:bg-blue-100 px-3 py-2 rounded-full flex items-center gap-2 transition-all duration-300 ease-in-out">
-                            <span class="material-icons-outlined text-lg">dashboard</span> Dashboard
+                        <a href="{{ url('/dashboard') }}" class="nav-link">
+                            <span class="material-icons-outlined">dashboard</span> Dashboard
                         </a>
                     </li>
 
-                    <!-- Logout Button -->
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" 
-                                    class="text-red-500 hover:text-red-700 hover:bg-red-100 px-3 py-2 rounded-full flex items-center gap-2 transition-all duration-300 ease-in-out">
-                                <span class="material-icons-outlined text-lg">logout</span> Logout
+                            <button type="submit" class="nav-link logout logout-btn">
+                                <span class="material-icons-outlined">logout</span> Logout
                             </button>
                         </form>
                     </li>
                 @else
-                    <!-- Login Button -->
                     <li>
-                        <a href="{{ route('login') }}" 
-                           class="text-blue-600 hover:text-blue-800 hover:bg-blue-100 px-3 py-2 rounded-full flex items-center gap-2 font-medium transition-all duration-300 ease-in-out shadow-sm hover:shadow-md">
-                            <span class="material-icons-outlined text-lg">login</span>
-                            Login
+                        <a href="{{ route('login') }}" class="nav-link">
+                            <span class="material-icons-outlined">login</span> Login
                         </a>
                     </li>
                 @endauth
@@ -113,93 +130,62 @@
     </div>
 </header>
 
-<section class="p-8 max-w-6xl mx-auto bg-white rounded-2xl shadow-xl mt-10 mb-16 animate-fade-in-down relative">
-    <button id="close" onclick="window.location.href='{{ url('/') }}'" 
-        class="absolute top-6 right-8 text-gray-500 hover:text-gray-700 text-3xl leading-none w-10 h-10 flex items-center justify-center bg-transparent border-none shadow-none transition-colors duration-200">
+<section class="incident-section animate-fade-in-down">
+    <button id="close" onclick="window.location.href='{{ url('/') }}'" class="close-btn" aria-label="Close">
         &times;
     </button>
 
     @if ($errors->any())
-        <div class="bg-red-100 border-l-4 border-red-500 text-red-800 px-6 py-4 mb-6 rounded-lg">
-            <div class="flex">
-                <i class="fas fa-exclamation-circle text-xl mt-1 mr-3"></i>
-                <div>
-                    <h4 class="font-semibold text-sm mb-1">Please fix the following errors:</h4>
-                    <ul class="list-disc pl-5 space-y-1 text-sm">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
+        <div class="alert-error">
+            <i class="fas fa-exclamation-circle" style="margin-top: 0.25rem;"></i>
+            <div>
+                <h4>Please fix the following errors:</h4>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
         </div>
     @endif
 
-    <h2 class="text-2xl font-bold text-gray-900 mb-10 border-b-2 border-gray-200 pb-4 flex items-center gap-3">
-        Incident Report Form
-    </h2>
+    <h2 class="section-title">Incident Report Form</h2>
 
-    <form action="{{ route('incident.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
+    <form action="{{ route('incident.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
-        <!-- Incident Information -->
-        <fieldset class="border border-gray-200 rounded-3xl p-8 bg-white shadow-sm hover:shadow-md transition-all duration-300 sm:rounded-lg">
-            <legend class="text-xl font-bold text-indigo-700 px-3 flex items-center gap-2">
-                Incident Information
-            </legend>
+            <h3 class="form-section-title">Please provide the incident information.</h3>
 
-            <!-- Sender Information -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                <div>
-                    <label for="sender_fullname" class="block text-sm font-semibold text-gray-700">
-                        Full Name <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" id="sender_fullname" name="sender_fullname" placeholder="e.g., Juan A. Dela Cruz" required
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <div class="grid-2-col">
+                <div class="form-group">
+                    <label for="sender_fullname">Full Name <span class="text-required">*</span></label>
+                    <input type="text" id="sender_fullname" name="sender_fullname" placeholder="e.g., Juan A. Dela Cruz" required class="form-control">
                 </div>
-                <div>
-                    <label for="sender_email" class="block text-sm font-semibold text-gray-700">
-                        Email Address <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" id="sender_email" name="sender_email" placeholder="e.g., j_delacruz@cda.gov.ph" required
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                <div class="form-group">
+                    <label for="sender_email">Email Address <span class="text-required">*</span></label>
+                    <input type="email" id="sender_email" name="sender_email" placeholder="e.g., j_delacruz@cda.gov.ph" required class="form-control">
                 </div>
             </div>
 
-            <!-- Dates (Chronology) -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                <div>
-                    <label for="date_occurrence" class="block text-sm font-semibold text-gray-700">
-                        Date of Occurrence <span class="text-red-500">*</span>
-                    </label>
-                    <input type="datetime-local" id="date_occurrence" name="date_occurrence" required
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <div class="grid-3-col">
+                <div class="form-group">
+                    <label for="date_occurrence">Date of Occurrence <span class="text-required">*</span></label>
+                    <input type="datetime-local" id="date_occurrence" name="date_occurrence" required class="form-control">
                 </div>
-                <div>
-                    <label for="date_discovery" class="block text-sm font-semibold text-gray-700">
-                        Date of Discovery <span class="text-red-500">*</span>
-                    </label>
-                    <input type="datetime-local" id="date_discovery" name="date_discovery" required
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                <div class="form-group">
+                    <label for="date_discovery">Date of Discovery <span class="text-required">*</span></label>
+                    <input type="datetime-local" id="date_discovery" name="date_discovery" required class="form-control">
                 </div>
-                <div>
-                    <label for="date_notification" class="block text-sm font-semibold text-gray-700">
-                        Date of Notification <span class="text-red-500">*</span>
-                    </label>
-                    <input type="datetime-local" id="date_notification" name="date_notification" required readonly
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                <div class="form-group">
+                    <label for="date_notification">Date of Notification <span class="text-required">*</span></label>
+                    <input type="datetime-local" id="date_notification" name="date_notification" required readonly class="form-control"
                         value="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d\TH:i') }}">
                 </div>
-
             </div>
 
-            <!-- Personal Information Controller -->
-            <div class="mt-6">
-                <label for="pic" class="block text-sm font-semibold text-gray-700">
-                    Personal Information Controller <span class="text-red-500">*</span>
-                </label>
-                <select id="pic" name="pic" required
-                    class="w-full border border-gray-300 rounded-xl px-4 py-3 bg-white appearance-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+            <div class="form-group mt-4">
+                <label for="pic">Personal Information Controller <span class="text-required">*</span></label>
+                <select id="pic" name="pic" required class="form-control">
                     <option value="">-- Select Region --</option>
                     <option>CDA HO</option>
                     <option>CDA CAR</option>
@@ -222,41 +208,32 @@
                 </select>
             </div>
 
-            <!-- Brief Summary -->
-            <div class="mt-6">
-                <label for="brief_summary" class="block text-sm font-semibold text-gray-700">
-                    Brief Summary of the Incident <span class="text-red-500">*</span>
-                </label>
-                <textarea id="brief_summary" name="brief_summary" required rows="4"
-                    placeholder="Write a brief summary of the incident here..."
-                    class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"></textarea>
+            <div class="form-group mt-4">
+                <label for="brief_summary">Brief Summary of the Incident <span class="text-required">*</span></label>
+                <textarea id="brief_summary" name="brief_summary" required rows="4" placeholder="Write a brief summary of the incident here..." class="form-control"></textarea>
             </div>
-        </fieldset>
 
-        <!-- Action Buttons -->
-        <div>
-            <div class="g-recaptcha"
-                data-sitekey="{{ config('services.recaptcha.site_key') }}"
-                data-callback="enableSubmitButton"
-                data-expired-callback="disableSubmitButton"
-                data-error-callback="disableSubmitButton"></div>
+        <div class="form-footer">
+            <div>
+                <div class="g-recaptcha"
+                    data-sitekey="{{ config('services.recaptcha.site_key') }}"
+                    data-callback="enableSubmitButton"
+                    data-expired-callback="disableSubmitButton"
+                    data-error-callback="disableSubmitButton"></div>
 
-            @if ($errors->has('g-recaptcha-response'))
-                <x-input-error :messages="$errors->get('g-recaptcha-response')" class="mt-2" />
-            @endif
-        </div>
+                @if ($errors->has('g-recaptcha-response'))
+                    <span style="color: var(--error-border); font-size: 0.875rem; display: block; margin-top: 0.5rem;">
+                        {{ $errors->first('g-recaptcha-response') }}
+                    </span>
+                @endif
+            </div>
 
-        <div class="flex justify-end gap-4 pt-8 border-t border-gray-200">
-            <button type="submit" id="submitReportBtn"
-                class="inline-flex items-center gap-3 px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                disabled>
-                <i class="fas fa-paper-plane text-sm"></i> Submit Report
+            <button type="submit" id="submitReportBtn" class="btn-submit" disabled>
+                <i class="fas fa-paper-plane"></i> Submit Report
             </button>
         </div>
     </form>
 </section>
-
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 <script>
     // SweetAlert notifications
@@ -288,9 +265,9 @@
         requiredFields.forEach(field => {
             if (!field.value.trim()) {
                 isValid = false;
-                field.classList.add('border-red-500', 'bg-red-50');
+                field.classList.add('is-invalid');
             } else {
-                field.classList.remove('border-red-500', 'bg-red-50');
+                field.classList.remove('is-invalid');
             }
         });
 
@@ -309,28 +286,24 @@
     document.querySelectorAll('[required]').forEach(field => {
         field.addEventListener('blur', function() {
             if (!this.value.trim()) {
-                this.classList.add('border-red-500', 'bg-red-50');
+                this.classList.add('is-invalid');
             } else {
-                this.classList.remove('border-red-500', 'bg-red-50');
+                this.classList.remove('is-invalid');
             }
         });
 
         field.addEventListener('input', function() {
             if (this.value.trim()) {
-                this.classList.remove('border-red-500', 'bg-red-50');
+                this.classList.remove('is-invalid');
             }
         });
     });
-
 
     // Called when reCAPTCHA is successfully completed
     function enableSubmitButton() {
         const button = document.getElementById('submitReportBtn');
         if (button) {
             button.disabled = false;
-            button.style.opacity = '1';
-            button.style.cursor = 'pointer';
-            button.style.pointerEvents = 'auto';
         }
     }
 
@@ -339,9 +312,6 @@
         const button = document.getElementById('submitReportBtn');
         if (button) {
             button.disabled = true;
-            button.style.opacity = '0.6';
-            button.style.cursor = 'not-allowed';
-            button.style.pointerEvents = 'none';
         }
     }
 
@@ -349,7 +319,6 @@
     document.addEventListener('DOMContentLoaded', function () {
         disableSubmitButton();
     });
-
 </script>
 </body>
 </html>

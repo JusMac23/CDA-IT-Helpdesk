@@ -1,145 +1,109 @@
 <x-guest-layout>
-
     <style>
-        .cda-button {
-            background-color: #2563eb;
-            color: white;
-            border: 1px solid #ccc;
-            border-radius: .8rem;
-            padding: 0.5rem 1rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.2s;
-            width: 100%;
-        }
-
-        .cda-button:hover {
-            background-color: #1e4fd1; 
-            border-color: #6366f1; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        @media (min-width: 640px) {
-            .cda-button {
-                width: auto;
-            }
-        }
-        .divider {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-top: 20px;
-        }
-
-        .divider hr {
-        flex: 1;
-        border: none;
-        border-top: 1px solid #ccc; /* Line color */
-        }
-
-        .divider span {
-        margin: 0 10px;
-        color: #555;
-        font-size: 14px;
-        font-weight: 500;
-        }
+        .login-form-container { max-width: 400px; margin: 0 auto; }
+        .form-group { margin-bottom: 1.25rem; }
+        .custom-input { width: 100%; padding: 0.50rem; margin-top: 0.25rem; border: 1px solid #d1d5db; border-radius: 0.75rem; display: block; box-sizing: border-box; }
+        .custom-input:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+        .flex-between { display: flex; align-items: center; justify-content: space-between; font-size: 0.875rem; margin-top: 0.5rem; }
+        .text-link { color: #4f46e5; text-decoration: none; font-weight: 500; }
+        .text-link:hover { color: #4338ca; }
+        .divider { display: flex; align-items: center; text-align: center; margin: 1.5rem 0; color: #9ca3af; }
+        .divider hr { flex: 1; border: 0; border-top: 1px solid #e5e7eb; }
+        .divider span { padding: 0 10px; font-size: 0.75rem; font-weight: bold; }
+        .btn-primary { width: 100%; padding: 0.50rem; border-radius: 0.75rem; border: none; color: white; font-weight: 600; transition: background-color 0.2s; }
+        .cda-button { display: flex; align-items: center; justify-content: center; width: 100%; padding: 0.50rem; background-color: #ffffff; border: 1px solid #d1d5db; border-radius: 0.75rem; text-decoration: none; color: #374151; transition: all 0.2s; }
+        .cda-button:hover { background-color: #f9fafb; border-color: #a5b4fc; }
+        .footer-text { text-align: center; font-size: 0.75rem; color: #6b7280; margin-top: 1.5rem; }
     </style>
 
-    {{-- Session Status --}}
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+    <div class="login-form-container">
+        {{-- Session Status --}}
+        <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    {{-- Login Form --}}
-    <form method="POST" action="{{ route('login') }}" class="space-y-5">
-        @csrf
+        {{-- Login Form --}}
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
 
-        {{-- Email --}}
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 mb-2" 
-                type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
+            {{-- Email --}}
+            <div class="form-group">
+                <x-input-label for="email" :value="__('Email')" />
+                <input id="email" class="custom-input" 
+                    type="email" name="email" value="{{ old('email') }}" 
+                    required autofocus autocomplete="username" />
+                <x-input-error :messages="$errors->get('email')" style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;" />
+            </div>
 
-        {{-- Password --}}
-        <div>
-            <x-input-label for="password" :value="__('Password')" />
-            <x-text-input id="password" class="block mt-1 w-full rounded-xl border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                type="password" name="password" required autocomplete="current-password" />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+            {{-- Password --}}
+            <div class="form-group">
+                <x-input-label for="password" :value="__('Password')" />
+                <input id="password" class="custom-input"
+                    type="password" name="password" required autocomplete="current-password" />
+                <x-input-error :messages="$errors->get('password')" style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;" />
+            </div>
 
-        {{-- Remember Me + Forgot Password --}}
-        <div class="flex items-center justify-between text-sm mt-2">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox"
-                        class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                        name="remember">
-                <span class="ms-2 text-gray-700">{{ __('Remember me') }}</span>
-            </label>
+            {{-- Remember Me + Forgot Password --}}
+            <div class="flex-between">
+                <label for="remember_me" style="display: inline-flex; align-items: center; cursor: pointer;">
+                    <input id="remember_me" type="checkbox" name="remember" style="border-radius: 4px; border: 1px solid #d1d5db;">
+                    <span style="margin-left: 0.5rem; color: #374151;">{{ __('Remember me') }}</span>
+                </label>
 
-            @if (Route::has('password.request'))
-            <a href="{{ route('password.request') }}" 
-                class="text-indigo-600 hover:text-indigo-800 font-medium transition">
-                {{ __('Forgot password?') }}
-            </a>
-            @endif
-        </div>
+                @if (Route::has('password.request'))
+                <a href="{{ route('password.request') }}" class="text-link">
+                    {{ __('Forgot password?') }}
+                </a>
+                @endif
+            </div>
 
-        {{-- reCAPTCHA --}}
-        <div class="w-full mt-4 mb-2">
-            <div class="g-recaptcha"
-                data-sitekey="{{ config('services.recaptcha.site_key') }}"
-                data-callback="enableLoginButton"></div>
+            {{-- reCAPTCHA --}}
+            <div style="margin: 1rem 0;">
+                <div class="g-recaptcha"
+                    data-sitekey="{{ config('services.recaptcha.site_key') }}"
+                    data-callback="enableLoginButton"></div>
 
-            @if ($errors->has('g-recaptcha-response'))
-                <x-input-error :messages="$errors->get('g-recaptcha-response')" class="mt-2" />
-            @endif
-        </div>
+                @if ($errors->has('g-recaptcha-response'))
+                    <x-input-error :messages="$errors->get('g-recaptcha-response')" style="color: #ef4444; margin-top: 0.5rem;" />
+                @endif
+            </div>
 
-        {{-- Login Button --}}
-        <div>
-            <x-primary-button id="login-button"
-                class="w-full justify-center text-center py-3 rounded-xl transition duration-200"
-                style="background-color: #cbd5e1; cursor: not-allowed; pointer-events: none; text-transform: none; font-size: 1rem;">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
+            {{-- Login Button --}}
+            <div style="margin-top: 1.5rem;">
+                <button type="submit" id="login-button" class="btn-primary"
+                    style="background-color: #cbd5e1; cursor: not-allowed; pointer-events: none;">
+                    {{ __('Log in') }}
+                </button>
+            </div>
+        </form>
 
-    {{-- Divider --}}
-    <div class="divider">
-        <hr>
+        {{-- Divider --}}
+        <div class="divider">
+            <hr>
             <span>OR</span>
-        <hr>
-    </div>
-
-    {{-- Social Logins --}}
-    <div class="space-y-3 mt-6">
-
-        <div class="flex flex-col sm:flex-row justify-center">
-            {{-- Authentik --}}
-            <a href="{{ route('auth.authentik') }}" class="cda-button mb-2">
-                <span class="font-medium">
-                <i class="fa-solid fa-building-columns mr-2"></i> Continue with CDAOauth
-                </span>
-            </a>
-            {{-- Google
-            <a href="{{ route('auth.google') }}"
-            class="w-full sm:w-auto flex items-center justify-center border border-gray-300 rounded-xl px-4 py-3 bg-white hover:border-indigo-400 hover:shadow-md transition duration-200">
-                <img src="{{ asset('images/google-logo.png') }}" alt="Google Logo" class="h-4">
-            </a>
-            --}}
+            <hr>
         </div>
+
+        {{-- Social Logins --}}
+        <div style="margin-top: 1.5rem;">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                {{-- Authentik --}}
+                <a href="{{ route('auth.authentik') }}" class="cda-button">
+                    <span style="font-weight: 500;">
+                        <i class="fa-solid fa-building-columns" style="margin-right: 0.5rem;"></i> Continue with CDAOauth
+                    </span>
+                </a>
+            </div>
+        </div>
+
+        {{-- Footer --}}
+        <p class="footer-text">
+            &copy; {{ date('Y') }} CDA ICTD. All rights reserved.
+        </p>
     </div>
 
-    {{-- Footer --}}
-    <p class="text-center text-xs text-gray-500 mt-4">
-        &copy; {{ date('Y') }} CDA ICTD. All rights reserved.
-    </p>
     <script src="/assets/js/sweetalert2.min.js"></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script>
+        // SweetAlert Logic
         @if(session('success'))
             document.addEventListener('DOMContentLoaded', function () {
                 Swal.fire({
@@ -171,6 +135,7 @@
             });
         @endif
 
+        // reCAPTCHA callback
         function enableLoginButton() {
             const button = document.getElementById('login-button');
             if (button) {

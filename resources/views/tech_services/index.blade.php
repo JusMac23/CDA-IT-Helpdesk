@@ -1,271 +1,290 @@
 <x-app-layout>
-    @if(session('success'))
-    <script>
-        Swal.fire({
-            icon: 'success',
-            title: 'Success!',
-            text: '{{ session('success') }}',
-            timer: 3000,
-            showConfirmButton: false
-        });
-    </script>
-    @endif
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Main Layout */
+        .panel { background-color: #ffffff; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1.5rem; width: 100%; box-sizing: border-box; }
+        
+        /* Typography */
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+        .title { font-size: 1.5rem; font-weight: 900; color: #111827; margin-bottom: 1.5rem; margin-top: 0; }
+        
+        /* --- Action Container (Toolbar Layout) --- */
+        .action-container { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
 
-    @if(session('error'))
-    <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Notice!',
-            text: '{{ session('error') }}',
-            timer: 3000,
-            showConfirmButton: false
-        });
-    </script>
-    @endif
-    
-    <div id="main-content" class="min-h-screen transition-all duration-300 ease-in-out">
-        <div id="techContent">
-            <div class="w-full">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-8">
-                    <div class="p-2 text-gray-900">
-                        <h3 class="text-xl font-bold text-gray-900 mb-4" style="font-weight: 900;">All Technical Services</h3>
+        /* --- Search Form Group (Joined Input & Button) --- */
+        .action-btn { display: flex; align-items: stretch; border-radius: 0.375rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
 
-                        @can('create_technical_services')
-                        <div class="flex items-center justify-between mb-4">
-                            <button id="openModal" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-150 ease-in-out">
-                                <i class="fas fa-plus text-base mr-2"></i> Add Service
-                            </button>
-                        </div>
-                        @endcan
+        /* --- Search Input Enhancements --- */
+        .action-btn .form-input { border-top-right-radius: 0; border-bottom-right-radius: 0; border-right: none; margin: 0; width: 100%; min-width: 250px; max-width: 350px; transition: all 0.2s; position: relative; z-index: 1; }
+        .action-btn .form-input:focus { z-index: 10; border-color: #4f46e5; box-shadow: inset 0 0 0 1px #4f46e5, 0 0 0 2px rgba(79,70,229,0.2); }
 
-                        @can('search_technical_services')
-                        <div class="flex justify-end mb-4">
-                            <form action="{{ route('tech_services.index') }}" 
-                                method="GET" 
-                                class="flex items-center gap-2">
-                                
-                                <!-- Search Input -->
-                                <input type="text" 
-                                    name="search_query" 
-                                    value="{{ request('search_query') }}" 
-                                    placeholder="Search..." 
-                                    class="px-2 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring focus:ring-indigo-200">
-                                
-                                <!-- Search Button -->
-                                <button type="submit" 
-                                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700 focus:outline-none">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </form>
-                        </div>
-                        @endcan
+        /* --- Search Button Enhancements --- */
+        .action-btn .btn-indigo { border-top-left-radius: 0; border-bottom-left-radius: 0; margin: 0; padding: 0.5rem 1.25rem; z-index: 2; transition: background-color 0.2s; }
 
-                        <div class="overflow-x-auto bg-white shadow-lg rounded-lg border border-gray-200">
-                            <table class="min-w-full table-fixed divide-y divide-gray-200 text-left text-gray-800">
-                                <thead class="bg-gray-100 text-gray-700">
-                                    <tr hover:bg-gray-50 border-b>
-                                        <th class="px-6 py-2 font-semibold uppercase text-left">Technical Services</th>
-                                        <th class="px-6 py-2 font-semibold uppercase text-left">Date Added</th>
-                                        <th class="px-6 py-2 font-semibold uppercase text-left">Date Updated</th>
-                                        @can('edit_technical_services')<th class="px-6 py-2 font-semibold uppercase text-center">Actions</th>@endcan
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-100 bg-white">
-                                    @forelse ($technical_services as $tech_services)
-                                        <tr class="hover:bg-gray-50 focus-within:bg-gray-100 transition">
-                                            <td class="px-4 py-2">{{ $tech_services->technical_services }} </td>
-                                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($tech_services->added_at)->format('M d, Y h:i A') }}</td>
-                                            <td class="px-4 py-2">
-                                                @if($tech_services->updated_at)
-                                                    {{ \Carbon\Carbon::parse($tech_services->updated_at)->format('M d, Y h:i A') }}
-                                                @else
-                                                    <span class="inline-block px-3 py-1 text-xs font-semibold italic text-red-500">No changes</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-9 py-3 text-base align-middle items-center">
-                                                <div class="flex items-center justify-center space-x-3">
-                                                    <!-- Edit Button -->
-                                                    @can('edit_technical_services')
-                                                    <div class="w-24 border rounded-lg px-2 py-1 bg-blue-50 hover:bg-blue-100 transition mb-1 flex justify-center">
-                                                        <button class="editBtn flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-800"
-                                                            data-id="{{ $tech_services->id }}"
-                                                            data-technical_services="{{ $tech_services->technical_services }}">
-                                                            <i class="fas fa-edit"></i>
-                                                            <span>Edit</span>
-                                                        </button>
-                                                    </div>
-                                                    @endcan
+        /* --- Add Button Enhancements --- */
+        .btn-green { background-color: #10b981; color: white; border: 1px solid #059669; padding: 0.5rem 1.5rem; min-width: 140px; justify-content: center; display: inline-flex; align-items: center; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.15); transition: all 0.2s ease; border-radius: 0.375rem; cursor: pointer; }
+        .btn-green:hover { background-color: #059669; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25); }
+        .btn-green:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(16, 185, 129, 0.15); }
 
-                                                    <!-- Delete Button -->
-                                                    @can('delete_technical_services')
-                                                    <div class="w-24 border rounded-lg px-2 py-1 bg-red-50 hover:bg-red-100 transition mb-1 flex justify-center">
-                                                        <form id="delete-form-{{ $tech_services->id }}" 
-                                                            action="{{ route('tech_services.destroy', $tech_services->id) }}" 
-                                                            method="POST" 
-                                                            class="inline-flex items-center space-x-1">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="button" 
-                                                                    class="flex items-center space-x-1 text-sm text-red-600 hover:text-red-800 delete-btn" 
-                                                                    data-id="{{ $tech_services->id }}">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                                <span>Delete</span>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                    @endcan
-                                                    
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="3" class="text-center py-4 text-gray-500">
-                                                <p>No Technical Services found.</p>
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="mt-4 mb-0">
-                            {{ $technical_services->links() }}
-                        </div>
-                    </div>
-                </div>
+        /* --- Responsive Adjustments --- */
+        @media (max-width: 640px) { .action-container { flex-direction: column; align-items: stretch; } .action-btn { width: 100%; } .action-btn .form-input { min-width: 0; flex: 1; max-width: none; } }
+                
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1.5rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; border: none; transition: background-color 0.2s, box-shadow 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .btn i { margin-right: 0.5rem; }
+        .btn-green { background-color: #16a34a; color: white; padding:0.75rem 0.5rem;}
+        .btn-green:hover { background-color: #15803d; }
+        .btn-indigo { background-color: #4f46e5; color: white; }
+        .btn-indigo:hover { background-color: #4338ca; }
+        .btn-gray { background-color: #e5e7eb; color: #374151; }
+        .btn-gray:hover { background-color: #d1d5db; }
+
+        /* Action Buttons (Edit/Delete) */
+        .action-cell { display: flex; justify-content: center; align-items: center; gap: 0.75rem; height: 100%; }
+        .btn-action { display: inline-flex; align-items: center; padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-size: 0.875rem; background: transparent; cursor: pointer; border: 1px solid; transition: 0.2s; white-space: nowrap; }
+        .btn-action i { margin-right: 0.25rem; }
+        .btn-edit { border-color: #93c5fd; color: #2563eb; }
+        .btn-edit:hover { background-color: #eff6ff; color: #1e40af; }
+        .btn-delete { border-color: #fca5a5; color: #dc2626; }
+        .btn-delete:hover { background-color: #fef2f2; color: #991b1b; }
+
+        /* Table */
+        .table-container { overflow-x: auto; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 0.5rem; border: 1px solid #e5e7eb; }
+        .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem; min-width: 800px; }
+        .data-table th { padding: 0.75rem 2.25rem; background-color: #f3f4f6; color: #374151; font-weight: 600; text-transform: uppercase; border-bottom: 1px solid #e5e7eb; }
+        .data-table td { padding: 1rem 2.25rem; border-bottom: 1px solid #e5e7eb; color: #1f2937; vertical-align: middle; }
+        .data-table tbody tr:hover { background-color: #f9fafb; transition: background-color 0.15s; }
+        .text-center { text-align: center; }
+
+        /* Pagination Container */
+        .pagination-wrapper { margin-top: 1rem; }
+
+        /* Modals */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+        .modal-overlay.hidden { display: none; }
+        .modal-box { position: relative; background-color: white; border-radius: 0.75rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); width: 100%; max-width: 48rem; max-height: 90vh; overflow-y: auto; padding: 2.5rem 2rem 2rem 2rem; box-sizing: border-box; }
+        
+        /* Fixed Modal Close Button */
+        .close-btn { position:absolute; top:1.5rem; right:2rem; color:#6b7280; font-size:2.5rem; background:none; border:none; cursor:pointer; transition:color 0.2s; line-height: 1; }
+        .close-btn:hover { color:#111827; }
+        .modal-title { font-size: 1.5rem; font-weight: 700; color: #111827; margin-top: 0; margin-bottom: 2rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; padding-right: 3rem; }
+        
+        /* Form Grid */
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+        @media (min-width: 640px) {
+            .form-grid { grid-template-columns: repeat(2, 1fr); }
+            .col-span-2 { grid-column: span 2; }
+        }
+
+        /* Form Controls */
+        .form-group { display: flex; flex-direction: column; }
+        .form-label { font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem; }
+        .form-input, .form-select { width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid #d1d5db; border-radius: 0.375rem; background-color: white; outline: none; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; }
+        .form-input:focus, .form-select:focus { border-color: #4f46e5; box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2); }
+        .modal-footer { display: flex; justify-content: flex-end; padding-top: 1.5rem; border-top: 1px solid #e5e7eb; margin-top: 1.5rem; gap: 0.75rem; }
+    </style>
+
+    <div id="main-content">
+        <div class="panel">
+            
+            <div class="header-flex">
+                <h3 class="title">All Technical Services</h3>
             </div>
 
-            <!-- Modal for Adding Services -->
-            <div id="servicesModal" 
-                class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-60 p-4 transition-opacity duration-300 ease-out">
-
-                <div id="servicesModalContent" 
-                    class="relative bg-white rounded-xl shadow-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-8 transform scale-95 opacity-0 transition-all duration-300 ease-out">
-
-                    <button id="closeModal" 
-                            class="absolute top-4 right-5 text-gray-400 hover:text-gray-700 text-3xl transition-colors duration-200 leading-none"
-                            aria-label="Close Modal">&times;
+            <div class="action-container">
+                @can('create_technical_services')
+                    <button id="openModal" class="btn btn-green">
+                        <i class="fas fa-plus"></i> Add Service
                     </button>
+                @endcan
 
-                    @if ($errors->any())
-                        <div class="bg-red-50 border border-red-200 text-red-800 px-5 py-4 rounded-lg shadow mb-6">
-                            <div class="flex items-start space-x-3">
-                                <i class="fas fa-exclamation-triangle text-red-500 mt-1 text-lg"></i>
-                                <div>
-                                    <h4 class="text-sm font-bold mb-1">Please fix the following error(s):</h4>
-                                    <ul class="list-disc list-inside text-sm space-y-1">
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    <h2 class="text-2xl font-bold text-gray-900 mb-8 border-b pb-4">
-                        Create a Technical Service
-                    </h2>
-
-                    <form action="{{ route('tech_services.store') }}" method="POST">
-                        @csrf
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-  
-                            <div>
-                                <label for="technical_services" class="block text-sm font-medium text-gray-700">Technical Services</label>
-                                <input type="text" name="technical_services" id="technical_services" required 
-                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            </div>
-
-                            <div>
-                                <label for="added_at" class="block text-sm font-medium text-gray-700 mb-1">Date Added</label>
-                                <input type="text" 
-                                    value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" 
-                                    readonly
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-50 text-sm px-3 py-2">
-                                <input type="hidden" name="added_at"
-                                    value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('Y-m-d') }}">
-                            </div>
-                        </div>
-
-                        <div class="flex justify-end pt-6 border-t border-gray-200">
-                            <button type="submit"
-                                    class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                <i class="fas fa-paper-plane mr-2"></i> Submit
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Modal for Edit Personnel -->
-            <div id="editModal" 
-                class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-60 p-4 transition-opacity duration-300 ease-out">
-
-                <div id="editModalContent" 
-                    class="relative bg-white rounded-xl shadow-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-8 transform scale-95 opacity-0 transition-all duration-300 ease-out">
-
-                    <button id="closeEditModal" 
-                            class="absolute top-4 right-5 text-gray-400 hover:text-gray-700 text-3xl transition-colors duration-200 leading-none"
-                            aria-label="Close Modal">&times;
+                @can('search_technical_services')
+                <form action="{{ route('tech_services.index') }}" method="GET" class="action-btn">
+                    <input type="text" name="search_query" value="{{ request('search_query') }}" placeholder="Search..." class="form-input" style="width: 250px; height: 2.5rem;">
+                    <button type="submit" class="btn btn-indigo">
+                        <i class="fas fa-search"></i>
                     </button>
-
-                    @if ($errors->any())
-                        <div class="bg-red-50 border border-red-200 text-red-800 px-5 py-4 rounded-lg shadow mb-6">
-                            <div class="flex items-start space-x-3">
-                                <i class="fas fa-exclamation-triangle text-red-500 mt-1 text-lg"></i>
-                                <div>
-                                    <h4 class="text-sm font-bold mb-1">Please fix the following error(s):</h4>
-                                    <ul class="list-disc list-inside text-sm space-y-1">
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    <h2 class="text-2xl font-bold text-gray-900 mb-8 border-b pb-4">
-                        Edit Technical Service
-                    </h2>
-
-                    <form id="editForm" method="POST">
-                    @csrf
-                    @method('PUT')
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label for="edit_technical_services" class="block text-sm font-medium text-gray-700">Technical Services</label>
-                            <input type="text" name="technical_services" id="edit_technical_services"
-                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                        </div>
-
-                        <div class="mb-8">
-                            <label for="updated_at" class="block text-sm font-medium text-gray-700 mb-1">Date Updated</label>
-                            <input type="text" 
-                                value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" 
-                                readonly
-                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3 py-2">
-                            <input type="hidden" name="added_at"
-                                value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('Y-m-d') }}">
-                        </div>
-                    </div>
-                    <div class="flex justify-end pt-6 border-t border-gray-200">
-                        <button type="submit"
-                                class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                            <i class="fas fa-save mr-2"></i> Update
-                        </button>
-                    </div>
                 </form>
-                </div>
+                @endcan
             </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Technical Services Description</th>
+                            @can('edit_technical_services')
+                            <th style="text-align: center;">Actions</th>
+                            @endcan
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($technical_services as $tech_services)
+                            <tr>
+                                <td>{{ $tech_services->technical_services }}</td>
+                                
+                                @if(auth()->user()->can('edit_technical_services') || auth()->user()->can('delete_technical_services'))
+                                <td>
+                                    <div class="action-cell">
+                                        {{-- Edit Button --}}
+                                        @can('edit_technical_services')
+                                            <button class="btn-action btn-edit editBtn"
+                                                data-id="{{ $tech_services->id }}"
+                                                data-technical_services="{{ $tech_services->technical_services }}">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                        @endcan
+
+                                        {{-- Delete Button --}}
+                                        @can('delete_technical_services')
+                                            <form id="delete-form-{{ $tech_services->id }}" action="{{ route('tech_services.destroy', $tech_services->id) }}" method="POST" style="margin:0;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="btn-action btn-delete delete-btn" data-id="{{ $tech_services->id }}">
+                                                    <i class="fas fa-trash-alt"></i> Delete
+                                                </button>
+                                            </form>
+                                        @endcan
+                                    </div>
+                                </td>
+                                @endif
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="text-center" style="padding: 2rem; color: #6b7280;">
+                                    No Technical Services found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination-wrapper">
+                {{ $technical_services->links() }}
+            </div>
+            
         </div>
     </div>
+
+    {{-- Modal: Add Service --}}
+    <div id="servicesModal" class="modal-overlay hidden">
+        <div id="servicesModalContent" class="modal-box">
+            <button id="closeModal" class="close-btn" aria-label="Close">&times;</button>
+
+            @if ($errors->any())
+                <div style="background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">
+                    <h4 style="margin:0 0 0.5rem 0; font-weight: bold;"><i class="fas fa-exclamation-triangle"></i> Please fix the following error(s):</h4>
+                    <ul style="margin:0; padding-left: 1.5rem; font-size: 0.875rem;">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <h2 class="modal-title">Add Technical Service</h2>
+
+            <form action="{{ route('tech_services.store') }}" method="POST">
+                @csrf
+                <div class="form-grid">
+                    <div class="form-group col-span-2">
+                        <label for="technical_services" class="form-label">Technical Services</label>
+                        <input type="text" name="technical_services" id="technical_services" required class="form-input">
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <label for="added_at" class="form-label">Date Added</label>
+                        <input type="text" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input" style="background-color: #f9fafb; cursor: not-allowed;">
+                        <input type="hidden" name="added_at" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('Y-m-d') }}">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-indigo">
+                        <i class="fas fa-paper-plane"></i> Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Modal: Edit Service --}}
+    <div id="editModal" class="modal-overlay hidden">
+        <div id="editModalContent" class="modal-box">
+            <button id="closeEditModal" class="close-btn" aria-label="Close">&times;</button>
+
+            @if ($errors->any())
+                <div style="background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">
+                    <h4 style="margin:0 0 0.5rem 0; font-weight: bold;"><i class="fas fa-exclamation-triangle"></i> Please fix the following error(s):</h4>
+                    <ul style="margin:0; padding-left: 1.5rem; font-size: 0.875rem;">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <h2 class="modal-title">Edit Technical Service</h2>
+
+            <form id="editForm" method="POST" action="#">
+                @csrf
+                @method('PUT')
+                <div class="form-grid">
+                    <div class="form-group col-span-2">
+                        <label for="edit_technical_services" class="form-label">Technical Services</label>
+                        <input type="text" name="technical_services" id="edit_technical_services" required class="form-input">
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <label class="form-label">Date Updated</label>
+                        <input type="text" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input" style="background-color: #f9fafb; cursor: not-allowed;">
+                        <input type="hidden" name="added_at" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('Y-m-d') }}">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-indigo">
+                        <i class="fas fa-save"></i> Update
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Add Personnel Modal
+
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '{{ session('success') }}',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            @endif
+
+            @if(session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Notice!',
+                    text: '{{ session('error') }}',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            @endif
+
+            @if ($errors->any())
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    html: `{!! implode('<br>', $errors->all()) !!}`,
+                    showConfirmButton: true
+                });
+            @endif
+
+            // Add Modal Toggles
             const addModal = document.getElementById("servicesModal");
             const openAddBtn = document.getElementById("openModal");
             const closeAddBtn = document.getElementById("closeModal");
@@ -273,20 +292,12 @@
             if (openAddBtn && addModal) {
                 openAddBtn.addEventListener("click", () => {
                     addModal.classList.remove("hidden");
-                    setTimeout(() => {
-                        addModal.querySelector("div > div").classList.remove("scale-95", "opacity-0");
-                        addModal.querySelector("div > div").classList.add("scale-100", "opacity-100");
-                    }, 10);
                 });
             }
 
             if (closeAddBtn && addModal) {
                 closeAddBtn.addEventListener("click", () => {
-                    addModal.querySelector("div > div").classList.add("scale-95", "opacity-0");
-                    addModal.querySelector("div > div").classList.remove("scale-100", "opacity-100");
-                    setTimeout(() => {
-                        addModal.classList.add("hidden");
-                    }, 300);
+                    addModal.classList.add("hidden");
                 });
             }
 
@@ -296,12 +307,10 @@
                 });
             }
 
-            // Edit Personnel Modal
+            // Edit Modal Toggles
             const editModal = document.getElementById("editModal");
-            const editModalContent = document.getElementById("editModalContent");
             const closeEditBtn = document.getElementById("closeEditModal");
             const editButtons = document.querySelectorAll(".editBtn");
-
             const editForm = document.getElementById("editForm");
             const editTechnicalservices = document.getElementById("edit_technical_services");
 
@@ -309,7 +318,6 @@
                 button.addEventListener("click", (e) => {
                     e.preventDefault();
 
-                    // Get dataset values
                     const id = button.dataset.id;
                     const technical_services = button.dataset.technical_services;
 
@@ -321,21 +329,19 @@
 
                     // Show modal
                     editModal.classList.remove("hidden");
-                    setTimeout(() => {
-                        editModalContent.classList.remove("scale-95", "opacity-0");
-                        editModalContent.classList.add("scale-100", "opacity-100");
-                    }, 10);
                 });
             });
 
             // Close Edit Modal
             if (closeEditBtn && editModal) {
                 closeEditBtn.addEventListener("click", () => {
-                    editModalContent.classList.add("scale-95", "opacity-0");
-                    editModalContent.classList.remove("scale-100", "opacity-100");
-                    setTimeout(() => {
-                        editModal.classList.add("hidden");
-                    }, 300);
+                    editModal.classList.add("hidden");
+                });
+            }
+
+            if (editModal) {
+                editModal.addEventListener("click", (e) => {
+                    if (e.target === editModal) closeEditBtn.click();
                 });
             }
 
@@ -350,8 +356,8 @@
                         text: "This action cannot be undone!",
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
+                        confirmButtonColor: '#dc2626',
+                        cancelButtonColor: '#6b7280',
                         confirmButtonText: 'Delete'
                     }).then((result) => {
                         if (result.isConfirmed) {
@@ -362,5 +368,4 @@
             });
         });
     </script>
-
 </x-app-layout>

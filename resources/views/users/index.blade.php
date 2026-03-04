@@ -1,368 +1,361 @@
 <x-app-layout>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Main Layout */
+        .panel { background-color: #ffffff; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1.5rem; width: 100%; box-sizing: border-box; }
+        
+        /* Typography */
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+        .title { font-size: 1.5rem; font-weight: 900; color: #111827; margin-bottom: 1.5rem; margin-top: 0; }
+        
+        /* --- Action Container (Toolbar Layout) --- */
+        .action-container { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
 
-    <div id="main-content" class="min-h-screen transition-all duration-300 ease-in-out">
-        <div id="techContent">
-            <div class="w-full">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-8">
-                    <div class="p-2 text-gray-900">
-                        <h3 class="text-xl font-bold text-gray-900 mb-4" style="font-weight: 900;">All Users</h3>
+        /* --- Search Form Group (Joined Input & Button) --- */
+        .action-btn { display: flex; align-items: stretch; border-radius: 0.375rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
 
-                        @can('create_tech_users')
-                        <div class="flex items-center justify-between mb-4">
-                            <button id="openModal" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-150 ease-in-out">
-                                <i class="fas fa-plus text-base mr-2"></i> Add User
-                            </button>
+        /* --- Search Input Enhancements --- */
+        .action-btn .form-input { border-top-right-radius: 0; border-bottom-right-radius: 0; border-right: none; margin: 0; width: 100%; min-width: 250px; max-width: 350px; transition: all 0.2s; position: relative; z-index: 1; }
+        .action-btn .form-input:focus { z-index: 10; border-color: #4f46e5; box-shadow: inset 0 0 0 1px #4f46e5, 0 0 0 2px rgba(79,70,229,0.2); }
+
+        /* --- Search Button Enhancements --- */
+        .action-btn .btn-indigo { border-top-left-radius: 0; border-bottom-left-radius: 0; margin: 0; padding: 0.5rem 1.25rem; z-index: 2; transition: background-color 0.2s; }
+
+        /* --- Add User Button Enhancements --- */
+        .btn-green { background-color: #10b981; color: white; border: 1px solid #059669; padding: 0.5rem 1.5rem; min-width: 120px; justify-content: center; display: inline-flex; align-items: center; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.15); transition: all 0.2s ease; border-radius: 0.375rem; cursor: pointer; }
+        .btn-green:hover { background-color: #059669; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25); }
+        .btn-green:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(16, 185, 129, 0.15); }
+
+        /* --- Responsive Adjustments --- */
+        @media (max-width: 640px) { .action-container { flex-direction: column; align-items: stretch; } .action-btn { width: 100%; } .action-btn .form-input { min-width: 0; flex: 1; max-width: none; } }
+                
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1.5rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; border: none; transition: background-color 0.2s, box-shadow 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .btn i { margin-right: 0.5rem; }
+        .btn-green { background-color: #16a34a; color: white; padding:0.75rem 0.5rem;}
+        .btn-green:hover { background-color: #15803d; }
+        .btn-indigo { background-color: #4f46e5; color: white; }
+        .btn-indigo:hover { background-color: #4338ca; }
+        .btn-gray { background-color: #e5e7eb; color: #374151; }
+        .btn-gray:hover { background-color: #d1d5db; }
+
+        /* Action Buttons (Edit/Delete) */
+        .action-cell { display: flex; justify-content: flex-start; align-items: center; gap: 0.75rem; height: 100%; }
+        .btn-action { display: inline-flex; align-items: center; padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-size: 0.875rem; background: transparent; cursor: pointer; border: 1px solid; transition: 0.2s; white-space: nowrap; }
+        .btn-action i { margin-right: 0.25rem; }
+        .btn-edit { border-color: #93c5fd; color: #2563eb; }
+        .btn-edit:hover { background-color: #eff6ff; color: #1e40af; }
+        .btn-delete { border-color: #fca5a5; color: #dc2626; }
+        .btn-delete:hover { background-color: #fef2f2; color: #991b1b; }
+
+        /* Table */
+        .table-container { overflow-x: auto; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 0.5rem; border: 1px solid #e5e7eb; }
+        .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem; min-width: 800px; }
+        .data-table th { padding: 0.75rem 2.25rem; background-color: #f3f4f6; color: #374151; font-weight: 600; text-transform: uppercase; border-bottom: 1px solid #e5e7eb; }
+        .data-table td { padding: 1rem 2.25rem; border-bottom: 1px solid #e5e7eb; color: #1f2937; vertical-align: middle; }
+        .data-table tbody tr:hover { background-color: #f9fafb; transition: background-color 0.15s; }
+        .text-center { text-align: center; }
+
+        /* Pagination Container */
+        .pagination-wrapper { margin-top: 1rem; }
+
+        /* Modals */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+        .modal-overlay.hidden { display: none; }
+        .modal-box { position: relative; background-color: white; border-radius: 0.75rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); width: 100%; max-width: 48rem; max-height: 90vh; overflow-y: auto; padding: 2.5rem 2rem 2rem 2rem; box-sizing: border-box; }
+        
+        /* Fixed Modal Close Button */
+        .close-btn { position:absolute; top:1.5rem; right:2rem; color:#6b7280; font-size:2.5rem; background:none; border:none; cursor:pointer; transition:color 0.2s; line-height: 1; }
+        .close-btn:hover { color:#111827; }
+        .modal-title { font-size: 1.5rem; font-weight: 700; color: #111827; margin-top: 0; margin-bottom: 2rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; padding-right: 3rem; }
+        
+        /* Form Grid */
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+        @media (min-width: 640px) {
+            .form-grid { grid-template-columns: repeat(2, 1fr); }
+            .col-span-2 { grid-column: span 2; }
+        }
+
+        /* Form Controls */
+        .form-group { display: flex; flex-direction: column; }
+        .form-label { font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem; }
+        .form-input, .form-select { width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid #d1d5db; border-radius: 0.375rem; background-color: white; outline: none; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; }
+        .form-input:focus, .form-select:focus { border-color: #4f46e5; box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2); }
+        .modal-footer { display: flex; justify-content: flex-end; padding-top: 1.5rem; border-top: 1px solid #e5e7eb; margin-top: 1.5rem; gap: 0.75rem; }
+    </style>
+
+    <div id="main-content">
+        <div class="panel">
+            
+            <div class="header-flex">
+                <h3 class="title">All Users</h3>
+            </div>
+
+            <div class="action-container">
+                @can('create_tech_users')
+                    <button id="openModal" class="btn btn-green">
+                        <i class="fas fa-plus"></i> Add User
+                    </button>
+                @endcan
+
+                <form action="{{ route('users.index') }}" method="GET" class="action-btn">
+                    <input type="text" name="search_query" value="{{ request('search_query') }}" placeholder="Search..." class="form-input" style="width: 250px; height: 2.5rem;">
+                    <button type="submit" class="btn btn-indigo">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>FullName</th>
+                            <th>Email</th>
+                            <th>Region</th>
+                            <th>Contact Number</th>
+                            <th>Role</th>
+                            @can('delete_tech_users')<th class="text-center">Actions</th>@endcan
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($users as $user)
+                            <tr>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->email }}</td>
+                                <td>{{ $user->region }}</td>
+                                <td>{{ $user->contact_number }}</td>
+
+                                <td>
+                                    @if($user->roles->isNotEmpty())
+                                        @foreach($user->roles as $role)
+                                            <span style="display: inline-flex; align-items: center; white-space: nowrap; padding: 0.125rem 1.5rem; background-color: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; letter-spacing: 0.025em; text-transform: capitalize; margin: 0.125rem 0.25rem 0.125rem 0; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+                                                {{ $role->name }}
+                                            </span>
+                                        @endforeach
+                                    @else
+                                        <span style="font-size: 0.75rem; color: #dc2626; font-style: italic;">
+                                            No Role Assigned
+                                        </span>
+                                    @endif
+                                </td>
+
+                                <td>
+                                    <div class="action-cell">
+                                        {{-- Edit Button --}}
+                                        @can('edit_tech_users')
+                                            <button class="btn-action btn-edit editBtn"
+                                                data-id="{{ $user->id }}"
+                                                data-name="{{ $user->name }}"
+                                                data-email="{{ $user->email }}"
+                                                data-region="{{ $user->region }}"
+                                                data-contact-number="{{ $user->contact_number }}"
+                                                data-role-id="{{ optional($user->roles->first())->id }}">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </button>
+                                        @endcan
+
+                                        {{-- Delete Button --}}
+                                        @can('delete_tech_users')
+                                            <form id="delete-form-{{ $user->id }}" action="{{ route('users.destroy', $user->id) }}" method="POST" style="margin:0;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="btn-action btn-delete delete-btn" data-id="{{ $user->id }}">
+                                                    <i class="fas fa-trash-alt"></i> Delete
+                                                </button>
+                                            </form>
+                                        @endcan
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="8" class="text-center" style="padding: 2rem; color: #6b7280;">
+                                    No User found.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination-wrapper">
+                {{ $users->links() }}
+            </div>
+            
+        </div>
+    </div>
+
+    {{-- Modal: Add User --}}
+    <div id="userModal" class="modal-overlay hidden">
+        <div id="userModalContent" class="modal-box">
+            <button id="closeModal" class="close-btn" aria-label="Close">&times;</button>
+
+            @if ($errors->any())
+                <div style="background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">
+                    <h4 style="margin:0 0 0.5rem 0; font-weight: bold;"><i class="fas fa-exclamation-triangle"></i> Please fix the following error(s):</h4>
+                    <ul style="margin:0; padding-left: 1.5rem; font-size: 0.875rem;">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            @error('role')
+                <p style="color: #dc2626; font-size: 0.875rem; margin-bottom: 1rem;">{{ $message }}</p>
+            @enderror
+
+            <h2 class="modal-title">Add New User</h2>
+
+            <form action="{{ route('users.store') }}" method="POST">
+                @csrf
+                <div class="form-grid">
+                    <div class="form-group col-span-2">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" name="name" id="name" required placeholder="John A. Doe" class="form-input">
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" name="email" id="email" required placeholder="j_doe@cda.gov.ph" class="form-input">
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <label for="region" class="form-label">Region</label>
+                        <select id="region" name="region" required class="form-select">
+                            <option value="">-- Select Region --</option>
+                            <option>CDA HO</option><option>CDA CAR</option><option>CDA NIR</option>
+                            <option>CDA NCR</option><option>CDA Region I</option><option>CDA Region II</option>
+                            <option>CDA Region III</option><option>CDA Region IV-A</option><option>CDA Region IV-B</option>
+                            <option>CDA Region V</option><option>CDA Region VI</option><option>CDA Region VII</option>
+                            <option>CDA Region VIII</option><option>CDA Region IX</option><option>CDA Region X</option>
+                            <option>CDA Region XI</option><option>CDA Region XII</option><option>CDA Region XIII</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <label for="contact_number" class="form-label">Contact Number</label>
+                        <input type="text" name="contact_number" id="contact_number" required placeholder="09123456789" class="form-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" name="password" id="password" required class="form-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password_confirmation" class="form-label">Confirm Password</label>
+                        <input type="password" name="password_confirmation" id="password_confirmation" required class="form-input">
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <span class="form-label">Select Role</span>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.25rem;">
+                            @foreach ($roles as $role)
+                                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; cursor: pointer;">
+                                    <input type="radio" name="role" id="add_role_{{ $loop->index }}" value="{{ $role->id }}" {{ old('role') == $role->id ? 'checked' : '' }}>
+                                    {{ $role->name }}
+                                </label>
+                            @endforeach
                         </div>
-                        @endcan
+                        @error('role')
+                            <p style="color: #dc2626; font-size: 0.875rem; margin-top: 0.25rem;">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <div class="flex justify-end mb-4">
-                            <form action="{{ route('users.index') }}"
-                                  method="GET"
-                                  class="flex items-center gap-2">
-                                <input type="text"
-                                       name="search_query"
-                                       value="{{ request('search_query') }}"
-                                       placeholder="Search..."
-                                       class="px-2 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring focus:ring-indigo-200">
-                                <button type="submit"
-                                        class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700 focus:outline-none">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </form>
-                        </div>
-
-                        <div class="overflow-x-auto bg-white shadow-lg rounded-lg border border-gray-200">
-                            <table class="min-w-full table-fixed divide-y divide-gray-200 text-left text-gray-800">
-                                <thead class="bg-gray-100 text-gray-700">
-                                    <tr>
-                                        <th class="px-6 py-2 font-semibold uppercase text-left">FullName</th>
-                                        <th class="px-6 py-2 font-semibold uppercase text-left">Email</th>
-                                        <th class="px-6 py-2 font-semibold uppercase text-left">Region</th>
-                                        <th class="px-6 py-2 font-semibold uppercase text-left">Contact Number</th>
-                                        <th class="px-6 py-2 font-semibold uppercase text-left">Role</th>
-                                        <th class="px-6 py-2 font-semibold uppercase text-left">Date Added</th>
-                                        <th class="px-6 py-2 font-semibold uppercase text-left">Date Updated</th>
-                                        @can('delete_tech_users')<th class="px-6 py-2 font-semibold uppercase text-center">Actions</th>@endcan
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-100 bg-white">
-                                    @forelse ($users as $user)
-                                        <tr class="hover:bg-gray-50 border-b">
-                                            <td class="px-4 py-2">{{ $user->name }}</td>
-                                            <td class="px-4 py-2">{{ $user->email }}</td>
-                                            <td class="px-4 py-2">{{ $user->region }}</td>
-                                            <td class="px-4 py-2">{{ $user->contact_number }}</td>
-
-                                            <td class="px-4 py-2">
-                                                @if($user->roles->isNotEmpty())
-                                                    @foreach($user->roles as $role)
-                                                        <span class="inline-block px-2 py-1 text-sm font-semibold rounded-full bg-indigo-100 text-indigo-700">
-                                                            {{ $role->name }}
-                                                        </span>
-                                                    @endforeach
-                                                @else
-                                                    <span class="inline-block px-3 py-1 text-xs font-semibold italic text-red-500">
-                                                        No Role Assigned
-                                                    </span>
-                                                @endif
-                                            </td>
-                                            <td class="px-4 py-2">{{ \Carbon\Carbon::parse($user->created_at)->format('M d, Y h:i A') }}</td>
-                                            <td class="px-4 py-2">
-                                                @if($user->updated_at)
-                                                    {{ \Carbon\Carbon::parse($user->updated_at)->format('M d, Y h:i A') }}
-                                                @else
-                                                    <span class="inline-block px-3 py-1 text-xs font-semibold italic text-red-500">No changes</span>
-                                                @endif
-                                            </td>
-
-                                            <td class="px-9 py-3 text-base align-middle items-center">
-                                                <div class="flex items-center justify-center space-x-3">
-
-                                                    {{-- Edit Button --}}
-                                                    @can('edit_tech_users')
-                                                    <div class="w-24 border rounded-lg px-2 py-1 bg-blue-50 hover:bg-blue-100 transition mb-1 flex justify-center">
-                                                        <button class="editBtn flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-800"
-                                                            data-id="{{ $user->id }}"
-                                                            data-name="{{ $user->name }}"
-                                                            data-email="{{ $user->email }}"
-                                                            data-region="{{ $user->region }}"
-                                                            data-contact-number="{{ $user->contact_number }}"
-                                                            data-role-id="{{ optional($user->roles->first())->id }}">
-                                                            <i class="fas fa-edit"></i>
-                                                            <span>Edit</span>
-                                                        </button>
-                                                    </div>
-                                                    @endcan
-
-                                                    {{-- Delete Button --}}
-                                                    @can('delete_tech_users')
-                                                    <div class="w-24 border rounded-lg px-2 py-1 bg-red-50 hover:bg-red-100 transition mb-1 flex justify-center">
-                                                        <form id="delete-form-{{ $user->id }}"
-                                                              action="{{ route('users.destroy', $user->id) }}"
-                                                              method="POST"
-                                                              class="inline-flex items-center space-x-1">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="button"
-                                                                    class="flex items-center space-x-1 text-sm text-red-600 hover:text-red-800 delete-btn"
-                                                                    data-id="{{ $user->id }}">
-                                                                <i class="fas fa-trash-alt"></i>
-                                                                <span>Delete</span>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                    @endcan
-                                                    
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="6" class="text-center py-8 text-gray-500 text-lg">
-                                                <p>No User found.</p>
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="mt-4 mb-0">
-                            {{ $users->links() }}
-                        </div>
+                    <div class="form-group col-span-2">
+                        <label for="created_at" class="form-label">Date Added</label>
+                        <input type="text" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input" style="background-color: #f9fafb; cursor: not-allowed;">
                     </div>
                 </div>
-            </div>
 
-            {{-- Modal: Add User --}}
-            <div id="userModal"
-                class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-60 p-4 transition-opacity duration-300 ease-out">
-
-                <div id="userModalContent"
-                    class="relative bg-white rounded-xl shadow-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-8 transform scale-95 opacity-0 transition-all duration-300 ease-out">
-
-                    <button id="closeModal"
-                            class="absolute top-4 right-5 text-gray-400 hover:text-gray-700 text-3xl transition-colors duration-200 leading-none"
-                            aria-label="Close Modal">&times;
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-indigo">
+                        <i class="fas fa-paper-plane"></i> Submit
                     </button>
-
-                    @if ($errors->any())
-                        <div class="bg-red-50 border border-red-200 text-red-800 px-5 py-4 rounded-lg shadow mb-6">
-                            <div class="flex items-start space-x-3">
-                                <i class="fas fa-exclamation-triangle text-red-500 mt-1 text-lg"></i>
-                                <div>
-                                    <h4 class="text-sm font-bold mb-1">Please fix the following error(s):</h4>
-                                    <ul class="list-disc list-inside text-sm space-y-1">
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    @error('role')
-                        <p class="text-red-500 text-sm">{{ $message }}</p>
-                    @enderror
-
-                    <h2 class="text-2xl font-bold text-gray-900 mb-8 border-b pb-4">
-                        Add New User
-                    </h2>
-
-                    <form action="{{ route('users.store') }}" method="POST">
-                        @csrf
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
-                                <input type="text" name="name" id="name" required
-                                        placeholder="John A. Doe"
-                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            </div>
-
-                            <div class="sm:col-span-2">
-                                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                                <input type="email" name="email" id="email" required
-                                        placeholder="j_doe@cda.gov.ph"
-                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            </div>
-
-                            <div class="sm:col-span-2">
-                                <label for="region" class="block text-sm font-medium text-gray-700">Region</label>
-                                <select id="region" name="region" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500">
-                                    <option value="">-- Select Region --</option>
-                                    <option>CDA HO</option><option>CDA CAR</option><option>CDA NIR</option>
-                                    <option>CDA NCR</option><option>CDA Region I</option><option>CDA Region II</option>
-                                    <option>CDA Region III</option><option>CDA Region IV-A</option><option>CDA Region IV-B</option>
-                                    <option>CDA Region V</option><option>CDA Region VI</option><option>CDA Region VII</option>
-                                    <option>CDA Region VIII</option><option>CDA Region IX</option><option>CDA Region X</option>
-                                    <option>CDA Region XI</option><option>CDA Region XII</option><option>CDA Region XIII</option>
-                                </select>
-                            </div>
-
-                            <div class="sm:col-span-2">
-                                <label for="contact_number" class="block text-sm font-medium text-gray-700">Contact Number</label>
-                                <input type="text" name="contact_number" id="contact_number" required
-                                        placeholder="09123456789"
-                                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            </div>
-
-                            <div>
-                                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                                <input type="password" name="password" id="password" required
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            </div>
-
-                            <div>
-                                <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirm Password</label>
-                                <input type="password" name="password_confirmation" id="password_confirmation" required
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            </div>
-
-                            <div class="sm:col-span-2">
-                                <span class="block text-sm font-medium text-gray-700 mb-2">Select Role</span>
-                                @foreach ($roles as $role)
-                                    <div class="flex items-center space-x-2 mb-2">
-                                        <input type="radio" name="role" id="add_role_{{ $loop->index }}" value="{{ $role->id }}"
-                                            class="h-4 w-4 text-blue-600 border-gray-300 rounded-md focus:ring focus:ring-blue-500 focus:ring-opacity-50 mr-2"
-                                            {{ old('role') == $role->id ? 'checked' : '' }}>
-                                        <label for="add_role_{{ $loop->index }}" class="text-sm text-gray-700">
-                                            {{ $role->name }}
-                                        </label>
-                                    </div>
-                                @endforeach
-                                @error('role')
-                                    <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div class="sm:col-span-2">
-                                <label for="created_at" class="block text-sm font-medium text-gray-700 mb-1">Date Added</label>
-                                <input type="text"
-                                    value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}"
-                                    readonly
-                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm bg-gray-50 text-sm px-3 py-2">
-                            </div>
-                        </div>
-
-                        <div class="flex justify-end pt-6 border-t border-gray-200">
-                            <button type="submit"
-                                    class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                <i class="fas fa-paper-plane mr-2"></i> Submit
-                            </button>
-                        </div>
-                    </form>
                 </div>
-            </div>
+            </form>
+        </div>
+    </div>
 
-            {{-- Modal: Edit User --}}
-            <div id="editModal"
-                class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-60 p-4 transition-opacity duration-300 ease-out">
+    {{-- Modal: Edit User --}}
+    <div id="editModal" class="modal-overlay hidden">
+        <div id="editModalContent" class="modal-box">
+            <button id="closeEditModal" class="close-btn" aria-label="Close">&times;</button>
 
-                <div id="editModalContent"
-                    class="relative bg-white rounded-xl shadow-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-8 transform scale-95 opacity-0 transition-all duration-300 ease-out">
+            @if ($errors->any())
+                <div style="background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">
+                    <h4 style="margin:0 0 0.5rem 0; font-weight: bold;"><i class="fas fa-exclamation-triangle"></i> Please fix the following error(s):</h4>
+                    <ul style="margin:0; padding-left: 1.5rem; font-size: 0.875rem;">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-                    <button id="closeEditModal"
-                            class="absolute top-4 right-5 text-gray-400 hover:text-gray-700 text-3xl transition-colors duration-200 leading-none"
-                            aria-label="Close Modal">&times;
+            <h2 class="modal-title">Edit User</h2>
+
+            <form id="editForm" method="POST" action="#">
+                @csrf
+                @method('PUT')
+                <div class="form-grid">
+                    <div class="form-group col-span-2">
+                        <label for="edit_name" class="form-label">Full Name</label>
+                        <input type="text" name="name" id="edit_name" value="" required class="form-input">
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <label for="edit_email" class="form-label">Email</label>
+                        <input type="email" name="email" id="edit_email" value="" required class="form-input">
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <label for="edit_region" class="form-label">Region</label>
+                        <select id="edit_region" name="region" required class="form-select">
+                            <option value="">-- Select Region --</option>
+                            <option>CDA HO</option><option>CDA CAR</option><option>CDA NIR</option>
+                            <option>CDA NCR</option><option>CDA Region I</option><option>CDA Region II</option>
+                            <option>CDA Region III</option><option>CDA Region IV-A</option><option>CDA Region IV-B</option>
+                            <option>CDA Region V</option><option>CDA Region VI</option><option>CDA Region VII</option>
+                            <option>CDA Region VIII</option><option>CDA Region IX</option><option>CDA Region X</option>
+                            <option>CDA Region XI</option><option>CDA Region XII</option><option>CDA Region XIII</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <label for="edit_contact_number" class="form-label">Contact Number</label>
+                        <input type="text" name="contact_number" id="edit_contact_number" value="" required class="form-input">
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <span class="form-label">Select Role</span>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.25rem;">
+                            @foreach ($roles as $role)
+                                <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; cursor: pointer;">
+                                    <input type="radio" name="role" id="edit_role_{{ $loop->index }}" value="{{ $role->id }}">
+                                    {{ $role->name }}
+                                </label>
+                            @endforeach
+                        </div>
+                        @error('role')
+                            <p style="color: #dc2626; font-size: 0.875rem; margin-top: 0.25rem;">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="form-group col-span-2">
+                        <label class="form-label">Last Updated</label>
+                        <input type="text" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input" style="background-color: #f9fafb; cursor: not-allowed;">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-indigo">
+                        <i class="fas fa-paper-plane"></i> Update
                     </button>
-
-                    @if ($errors->any())
-                        <div class="bg-red-50 border border-red-200 text-red-800 px-5 py-4 rounded-lg shadow mb-6">
-                            <div class="flex items-start space-x-3">
-                                <i class="fas fa-exclamation-triangle text-red-500 mt-1 text-lg"></i>
-                                <div>
-                                    <h4 class="text-sm font-bold mb-1">Please fix the following error(s):</h4>
-                                    <ul class="list-disc list-inside text-sm space-y-1">
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    <h2 class="text-2xl font-bold text-gray-900 mb-8 border-b pb-4">
-                        Edit User
-                    </h2>
-
-                    <form id="editForm" method="POST" action="#">
-                        @csrf
-                        @method('PUT')
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label for="edit_name" class="block text-sm font-medium text-gray-700">Full Name</label>
-                                <input type="text" name="name" id="edit_name" value="" required
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            </div>
-
-                            <div class="sm:col-span-2">
-                                <label for="edit_email" class="block text-sm font-medium text-gray-700">Email</label>
-                                <input type="email" name="email" id="edit_email" value="" required
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            </div>
-
-                            <div class="sm:col-span-2">
-                                <label for="edit_region" class="block text-sm font-medium text-gray-700">Region</label>
-                                <select id="edit_region" name="region" required class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500">
-                                    <option value="">-- Select Region --</option>
-                                    <option>CDA HO</option><option>CDA CAR</option><option>CDA NIR</option>
-                                    <option>CDA NCR</option><option>CDA Region I</option><option>CDA Region II</option>
-                                    <option>CDA Region III</option><option>CDA Region IV-A</option><option>CDA Region IV-B</option>
-                                    <option>CDA Region V</option><option>CDA Region VI</option><option>CDA Region VII</option>
-                                    <option>CDA Region VIII</option><option>CDA Region IX</option><option>CDA Region X</option>
-                                    <option>CDA Region XI</option><option>CDA Region XII</option><option>CDA Region XIII</option>
-                                </select>
-                            </div>
-
-                            <div class="sm:col-span-2">
-                                <label for="edit_contact_number" class="block text-sm font-medium text-gray-700">Contact Number</label>
-                                <input type="text" name="contact_number" id="edit_contact_number" value="" required
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            </div>
-
-                            <div class="sm:col-span-2">
-                                <span class="block text-sm font-medium text-gray-700 mb-2">Select Role</span>
-                                @foreach ($roles as $role)
-                                    <div class="flex items-center space-x-2 mb-2">
-                                        <input
-                                            type="radio"
-                                            name="role"
-                                            id="edit_role_{{ $loop->index }}"
-                                            value="{{ $role->id }}"
-                                            class="h-4 w-4 text-blue-600 border-gray-300 rounded-md focus:ring focus:ring-blue-500 focus:ring-opacity-50 mr-2">
-                                        <label for="edit_role_{{ $loop->index }}" class="text-sm text-gray-700">
-                                            {{ $role->name }}
-                                        </label>
-                                    </div>
-                                @endforeach
-                                @error('role')
-                                    <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <div class="sm:col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Last Updated</label>
-                                <input type="text"
-                                    value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}"
-                                    readonly
-                                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-gray-50 text-sm px-3 py-2">
-                            </div>
-                        </div>
-
-                        <div class="flex justify-end pt-6 border-t border-gray-200">
-                            <button type="submit"
-                                    class="inline-flex items-center px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                <i class="fas fa-paper-plane mr-2"></i> Update
-                            </button>
-                        </div>
-                    </form>
                 </div>
-            </div>
-
+            </form>
         </div>
     </div>
 
@@ -398,27 +391,20 @@
                 });
             @endif
 
-            // Add Modal
+            // Add Modal Toggles
             const addModal = document.getElementById("userModal");
             const openAddBtn = document.getElementById("openModal");
             const closeAddBtn = document.getElementById("closeModal");
-            const addModalInner = document.getElementById("userModalContent");
 
             if (openAddBtn && addModal) {
                 openAddBtn.addEventListener("click", () => {
                     addModal.classList.remove("hidden");
-                    setTimeout(() => {
-                        addModalInner.classList.remove("scale-95", "opacity-0");
-                        addModalInner.classList.add("scale-100", "opacity-100");
-                    }, 10);
                 });
             }
 
             if (closeAddBtn && addModal) {
                 closeAddBtn.addEventListener("click", () => {
-                    addModalInner.classList.add("scale-95", "opacity-0");
-                    addModalInner.classList.remove("scale-100", "opacity-100");
-                    setTimeout(() => addModal.classList.add("hidden"), 300);
+                    addModal.classList.add("hidden");
                 });
             }
 
@@ -428,9 +414,8 @@
                 });
             }
 
-            // Edit Modal
+            // Edit Modal Toggles
             const editModal = document.getElementById("editModal");
-            const editModalContent = document.getElementById("editModalContent");
             const closeEditBtn = document.getElementById("closeEditModal");
             const editButtons = document.querySelectorAll(".editBtn");
 
@@ -449,7 +434,7 @@
                     const email = button.dataset.email;
                     const region = button.dataset.region;
                     const contactNumber = button.dataset.contactNumber;
-                    const roleId = button.dataset.roleId; // may be undefined
+                    const roleId = button.dataset.roleId;
 
                     // Fill modal inputs
                     editName.value = name;
@@ -460,26 +445,26 @@
                     // Update form action dynamically
                     editForm.action = `/users/${id}`;
 
-                    // Preselect role radio (single-select)
+                    // Preselect role radio
                     document.querySelectorAll('input[name="role"][id^="edit_role_"]').forEach(r => {
                         r.checked = (String(r.value) === String(roleId));
                     });
 
                     // Show modal
                     editModal.classList.remove("hidden");
-                    setTimeout(() => {
-                        editModalContent.classList.remove("scale-95", "opacity-0");
-                        editModalContent.classList.add("scale-100", "opacity-100");
-                    }, 10);
                 });
             });
 
             // Close Edit Modal
             if (closeEditBtn && editModal) {
                 closeEditBtn.addEventListener("click", () => {
-                    editModalContent.classList.add("scale-95", "opacity-0");
-                    editModalContent.classList.remove("scale-100", "opacity-100");
-                    setTimeout(() => editModal.classList.add("hidden"), 300);
+                    editModal.classList.add("hidden");
+                });
+            }
+
+            if (editModal) {
+                editModal.addEventListener("click", (e) => {
+                    if (e.target === editModal) closeEditBtn.click();
                 });
             }
 
@@ -494,8 +479,8 @@
                         text: "This action cannot be undone!",
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
+                        confirmButtonColor: '#dc2626',
+                        cancelButtonColor: '#6b7280',
                         confirmButtonText: 'Delete'
                     }).then((result) => {
                         if (result.isConfirmed) {
@@ -506,5 +491,4 @@
             });
         });
     </script>
-    
 </x-app-layout>

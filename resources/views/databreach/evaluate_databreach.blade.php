@@ -1,71 +1,127 @@
 <x-app-layout>
-@can('evaluate_databreach')
-    <div id="main-content" class="min-h-screen bg-gray-50 py-10 transition-all duration-300 ease-in-out">
-        <div class="max-w-6xl mx-auto px-8">
-            <div class="relative bg-white rounded-2xl p-8 border border-gray-200 shadow-sm transition-all duration-300 sm:rounded-lg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Main Layout */
+        .container { max-width: 80rem; margin: 0 auto; padding: 0 2rem; }
+        @media (max-width: 640px) { .container { padding: 0.5rem; } }
 
-                <!-- Header -->
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">
-                    Incident Report Evaluation
-                    </h2>
-                    <div class="flex items-center justify-center w-12 h-12 bg-gray-600 rounded-full border-2 border-white transition-colors duration-300 ease-in-out hover:bg-gray-800">
-                        <button id="close" 
-                            onclick="window.location.href='{{ route('databreach.index') }}'" 
-                            class="text-gray-800 text-xl focus:outline-none transition-colors duration-300 ease-in-out hover:text-white">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </div>
+        /* Form Card */
+        .form-card { background-color: #ffffff; border-radius: 1rem; border: 1px solid #e5e7eb; box-shadow: 0 1px 2px rgba(0,0,0,0.05); padding: 2rem; position: relative; transition: all 0.3s ease; }
+        @media (max-width: 640px) { .form-card { padding: 1.5rem; border-radius: 0.75rem; } }
 
-                <!-- Error Handling -->
+        /* Header */
+        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .form-title { font-size:1.5rem; font-weight:700; margin-bottom:2.5rem; border-bottom:2px solid #e5e7eb; padding-bottom:1rem; }
+        .close-btn { position:absolute; top:1.5rem; right:2rem; color:var(--text-muted); font-size:1.5rem; background:none; border:none; cursor:pointer; transition:color 0.2s; }
+        .close-btn:hover { color:var(--text-main); }
+
+        /* Error Box */
+        .error-box { background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 1rem 1.5rem; border-radius: 0.75rem; margin-bottom: 2rem; display: flex; gap: 0.75rem; align-items: flex-start; }
+        .error-icon { font-size: 1.5rem; margin-top: 0.125rem; }
+        .error-title { font-weight: 600; font-size: 0.875rem; margin: 0 0 0.5rem 0; }
+        .error-list { list-style-type: disc; padding-left: 1.25rem; margin: 0; font-size: 0.875rem; line-height: 1.5; }
+
+        /* Grid Layouts */
+        .grid-2 { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+        @media (min-width: 768px) { .grid-2 { grid-template-columns: repeat(2, 1fr); } }
+
+        /* Form Controls */
+        .form-group { display: flex; flex-direction: column; margin-top: 1.5rem; }
+        .grid-2 .form-group { margin-top: 0; }
+        .form-label { font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.25rem; }
+        .form-label-lg { font-size: 1.125rem; font-weight: 600; color: #1f2937; margin-bottom: 0.5rem; display: block; }
+        .required-mark { color: #ef4444; }
+        
+        .form-input, .form-select, .form-textarea { width: 100%; border: 1px solid #d1d5db; border-radius: 0.75rem; padding: 0.75rem 1rem; font-size: 1rem; box-sizing: border-box; background-color: #ffffff; transition: border-color 0.2s, box-shadow 0.2s; font-family: inherit; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); }
+        .form-textarea { resize: none; min-height: 100px; }
+        .form-input[readonly], .readonly-box { background-color: #f3f4f6; color: #4b5563; cursor: not-allowed; }
+        .form-input[readonly]:focus { border-color: #d1d5db; box-shadow: none; }
+        
+        .readonly-box { border: 1px solid #d1d5db; border-radius: 0.75rem; padding: 0.75rem 1rem; width: 100%; box-sizing: border-box; }
+        .readonly-box p { margin: 0 0 0.25rem 0; }
+        .readonly-box p:last-child { margin: 0; }
+
+        /* Validation Error State */
+        .input-error { border-color: #ef4444 !important; }
+
+        /* Checkboxes and Radios */
+        .checkbox-group { display: flex; flex-direction: column; gap: 0.75rem; }
+        .checkbox-label { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 1rem; color: #374151; cursor: pointer; }
+        .checkbox-input { margin-top: 0.25rem; width: 1rem; height: 1rem; accent-color: #4f46e5; cursor: pointer; }
+        
+        .radio-group { display: flex; align-items: center; gap: 1.5rem; }
+        .radio-label { display: flex; align-items: center; gap: 0.5rem; font-size: 1rem; color: #374151; cursor: pointer; }
+        .radio-input { width: 1rem; height: 1rem; accent-color: #4f46e5; cursor: pointer; }
+
+        /* Buttons & Footer */
+        .page-footer { display: flex; border-top: 1px solid #e5e7eb; margin-top: 2rem; padding-top: 1.5rem; }
+        .page-footer.right { justify-content: flex-end; }
+        .page-footer.between { justify-content: space-between; align-items: center; gap: 1rem; }
+        
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; border-radius: 0.75rem; cursor: pointer; border: none; color: white; transition: all 0.3s ease; min-width: 160px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .btn:hover { transform: scale(1.05); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .btn-indigo { background-color: #4f46e5; } .btn-indigo:hover { background-color: #4338ca; }
+        .btn-red { background-color: #dc2626; } .btn-red:hover { background-color: #b91c1c; }
+        
+        /* Utility */
+        .hidden-page { display: none !important; }
+        @media (max-width: 600px) {
+            .form-title { font-size: 1.25rem; }
+            .form-label-lg { font-size: 1rem; }
+             .btn { width: 100%; justify-content: center; }
+             .page-footer.between { flex-direction: column; gap: 1rem; }
+        }
+    </style>
+
+    @can('evaluate_databreach')
+    <div id="main-content" class="page-wrapper">
+        <div class="container">
+            <div class="form-card">
+
+                <button id="close" onclick="window.location.href='{{ route('databreach.index') }}'" class="close-btn" title="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+
+                <h2 class="form-title">Incident Report Evaluation</h2>
+
                 @if ($errors->any())
-                    <div class="bg-red-50 border border-red-200 text-red-800 px-6 py-4 mb-8 rounded-xl">
-                        <div class="flex items-start space-x-3">
-                            <i class="fas fa-exclamation-circle text-2xl mt-1"></i>
-                            <div>
-                                <h4 class="font-semibold text-sm mb-2">Please fix the following errors:</h4>
-                                <ul class="list-disc pl-5 space-y-1 text-sm">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
+                    <div class="error-box">
+                        <i class="fas fa-exclamation-circle error-icon"></i>
+                        <div>
+                            <h4 class="error-title">Please fix the following errors:</h4>
+                            <ul class="error-list">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
                         </div>
                     </div>
                 @endif
 
-                <!-- Form -->
-                <form action="{{ route('databreach.update_evaluation', $notification->dbn_id) }}" method="POST" enctype="multipart/form-data" class="space-y-10">
+                <form action="{{ route('databreach.update_evaluation', $notification->dbn_id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
-                    <!-- ================= PAGE 1: SECTION A ================= -->
                     <div id="page1">
-                        <fieldset class="border border-gray-200 rounded-3xl p-8 bg-white shadow-sm hover:shadow-md transition-all duration-300 sm:rounded-lg">
-                            <legend class="text-xl font-bold text-indigo-700 px-3 flex items-center gap-2">
-                                <i class="fas fa-info-circle text-indigo-500 mr-2"></i> A. Notification Type
-                            </legend>
 
-                            <!-- DBN Number -->
-                            <div class="mt-3 space-y-2">
-                                <label for="dbn_number" class="block text-sm font-semibold text-gray-700">
-                                    DBN Number <span class="text-red-500">*</span>
+                             <h3 class="form-section-title"></i> A. Notification Type</h3>
+
+                            <div class="form-group" style="margin-top: 0.75rem;">
+                                <label for="dbn_number" class="form-label">
+                                    DBN Number <span class="required-mark">*</span>
                                 </label>
                                 <input type="text" id="dbn_number" name="dbn_number"
                                     value="{{ old('dbn_number', $notification->dbn_number) }}"
-                                    placeholder="e.g., CDA-DBN-2025-01" required readonly   
-                                    class="w-full border border-gray-300 bg-gray-50 text-gray-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200">
+                                    placeholder="e.g., CDA-DBN-2025-01" required readonly class="form-input">
                             </div>
 
-                            <!-- PIC & Email -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                                <div>
-                                    <label for="pic" class="block text-sm font-semibold text-gray-700">
-                                        Personal Information Controller <span class="text-red-500">*</span>
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label for="pic" class="form-label">
+                                        Personal Information Controller <span class="required-mark">*</span>
                                     </label>
-                                    <select id="pic" name="pic" required
-                                        class="w-full border border-gray-300 rounded-xl px-4 py-3 bg-white appearance-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                                    <select id="pic" name="pic" required class="form-select">
                                         <option value="">-- Select Personal Information Controller --</option>
                                         <option value="CDA HO" {{ old('pic', $notification->pic) == 'CDA HO' ? 'selected' : '' }}>CDA HO</option>
                                         <option value="CDA CAR" {{ old('pic', $notification->pic) == 'CDA CAR' ? 'selected' : '' }}>CDA CAR</option>
@@ -88,75 +144,64 @@
                                     </select>
                                 </div>
 
-                                <div class="mb-4">
-                                    <label for="email" class="block text-sm font-semibold text-gray-700">
-                                        Email Address <span class="text-red-500">*</span>
+                                <div class="form-group">
+                                    <label for="email" class="form-label">
+                                        Email Address <span class="required-mark">*</span>
                                     </label>
-                                    <input type="text" id="email" name="email" value="{{ old('email', $notification->team_email ?? $notification->email) }}"
-                                        class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-50 text-gray-700"
-                                        readonly
-                                    >
+                                    <input type="text" id="email" name="email" value="{{ old('email', $notification->team_email ?? $notification->email) }}" required readonly class="form-input">
                                 </div>
                             </div>
 
-                            <!-- Representative Info -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                                <div>
-                                    <label for="representative" class="block text-sm font-semibold text-gray-700">Representative <span class="text-red-500">*</span></label>
-                                    <input type="text" id="representative" name="representative"
-                                        value="{{ old('representative', $notification->representative) }}" readonly
-                                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <div class="grid-2">
+                                <div class="form-group">
+                                    <label for="representative" class="form-label">
+                                        Representative <span class="required-mark">*</span>
+                                    </label>
+                                    <input type="text" id="representative" name="representative" value="{{ old('representative', $notification->representative) }}" readonly class="form-input">
                                 </div>
-                                <div>
-                                    <label for="representative_email_address" class="block text-sm font-semibold text-gray-700">Email Address <span class="text-red-500">*</span></label>
-                                    <input type="text" id="representative_email_address" name="representative_email_address"
-                                        value="{{ old('representative_email_address', $notification->representative_email_address) }}" readonly
-                                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+
+                                <div class="form-group">
+                                    <label for="representative_email_address" class="form-label">
+                                        Email Address <span class="required-mark">*</span>
+                                    </label>
+                                    <input type="text" id="representative_email_address" name="representative_email_address" value="{{ old('representative_email_address', $notification->representative_email_address) }}" readonly class="form-input">
                                 </div>
                             </div>
 
-                            <!-- Dates -->
-                            <div class="flex flex-col md:flex-row md:items-end gap-6 mt-6">
-                                <div class="flex-1">
-                                    <label for="date_occurrence" class="block text-sm font-semibold text-gray-700">
-                                        Date of Occurrence <span class="text-red-500">*</span>
+                            <div class="grid-2" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                                <div class="form-group">
+                                    <label for="date_occurrence" class="form-label">
+                                        Date of Occurrence <span class="required-mark">*</span>
                                     </label>
                                     <input type="datetime-local" id="date_occurrence" name="date_occurrence"
-                                        value="{{ old('date_occurrence', $notification->date_occurrence) }}" required
-                                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                        value="{{ old('date_occurrence', $notification->date_occurrence) }}" required class="form-input">
                                 </div>
-                                <div class="flex-1">
-                                    <label for="date_discovery" class="block text-sm font-semibold text-gray-700">
-                                        Date of Discovery <span class="text-red-500">*</span>
+                                <div class="form-group">
+                                    <label for="date_discovery" class="form-label">
+                                        Date of Discovery <span class="required-mark">*</span>
                                     </label>
                                     <input type="datetime-local" id="date_discovery" name="date_discovery"
-                                        value="{{ old('date_discovery', $notification->date_discovery) }}" required
-                                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                        value="{{ old('date_discovery', $notification->date_discovery) }}" required class="form-input">
                                 </div>
-                                <div class="flex-1">
-                                    <label for="date_notification" class="block text-sm font-semibold text-gray-700">
-                                        Date of Notification <span class="text-red-500">*</span>
+                                <div class="form-group">
+                                    <label for="date_notification" class="form-label">
+                                        Date of Notification <span class="required-mark">*</span>
                                     </label>
                                     <input type="datetime-local" id="date_notification" name="date_notification"
-                                        value="{{ old('date_notification', $notification->date_notification) }}" required readonly
-                                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                        value="{{ old('date_notification', $notification->date_notification) }}" required readonly class="form-input">
                                 </div>
                             </div>
 
-                            <!-- Brief Summary -->
-                            <div class="mt-6">
-                                <label for="brief_summary" class="block text-sm font-semibold text-gray-700">
-                                    Brief Summary of the Incident <span class="text-red-500">*</span>
+                            <div class="form-group">
+                                <label for="brief_summary" class="form-label">
+                                    Brief Summary of the Incident <span class="required-mark">*</span>
                                 </label>
-                                <textarea id="brief_summary" name="brief_summary" required rows="4"
-                                    class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none">{{ old('brief_summary', $notification->brief_summary) }}</textarea>
+                                <textarea id="brief_summary" name="brief_summary" required rows="4" class="form-textarea">{{ old('brief_summary', $notification->brief_summary) }}</textarea>
                             </div>
 
-                            <!-- Notification Type -->
-                            <div class="mt-4">
-                                <label class="text-lg font-semibold text-gray-800 mb-2 block">Notification Type</label>
-                                <div class="space-y-3">
-
+                            <div class="form-group">
+                                <label class="form-label-lg">Notification Type</label>
+                                <div class="checkbox-group">
                                     @php
                                         // Decode JSON manually if still stored as string
                                         $notifTypes = $notification->notification_type_description;
@@ -171,69 +216,50 @@
                                         'Acquired by an unauthorized person',
                                         'Likely to give rise to harm to data subjects'
                                     ] as $option)
-                                        <div class="flex items-start space-x-3">
-                                            <input
-                                                type="checkbox"
-                                                name="notification_type_description[]"
-                                                value="{{ $option }}"
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" name="notification_type_description[]" value="{{ $option }}"
                                                 {{ is_array($notifTypes) && in_array($option, $notifTypes) ? 'checked' : '' }}
-                                                class="mt-1 h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                            >
-                                            <label class="text-base text-gray-700">{{ $option }}</label>
-                                        </div>
+                                                class="checkbox-input">
+                                            <span>{{ $option }}</span>
+                                        </label>
                                     @endforeach
                                 </div>
                             </div>
 
-                        </fieldset>
-
-                        <!-- Page 1 Buttons -->
-                        <div class="flex justify-end gap-4 pt-6 border-t border-gray-200 mt-8">
-                            <button type="button" id="next-page"
-                                class="inline-flex items-center justify-center w-40 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                Continue <i class="fas fa-arrow-right text-sm ml-3"></i>
+                        <div class="page-footer right">
+                            <button type="button" id="next-page" class="btn btn-indigo">
+                                Continue <i class="fas fa-arrow-right" style="margin-left: 0.25rem; margin-right: 0;"></i>
                             </button>
                         </div>
                     </div>
 
-                    <!-- ================= PAGE 2: SECTION B ================= -->
-                    <div id="page2" class="hidden">
-                        <fieldset class="border border-gray-200 rounded-2xl p-8 bg-white shadow-md hover:shadow-lg transition duration-300 ease-in-out sm:rounded-lg">
-                            <legend class="text-xl font-bold text-gray-800 px-4 flex items-center">
-                                <i class="fas fa-exclamation-circle text-indigo-600 mr-2"></i>
-                                B. Data Breach Notification Details
-                            </legend>
+                    <div id="page2" class="hidden-page">
 
-                            <div class="space-y-6 mt-3">
-                                <!-- Sector and Subsector -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label for="sector_name" class="block text-sm font-semibold text-gray-700 mb-1">
-                                            Sector Name <span class="text-red-500">*</span>
+                            <h3 class="form-section-title">B. Data Breach Notification Details</h3>
+
+                            <div style="margin-top: 1rem;">
+                                <div class="grid-2">
+                                    <div class="form-group">
+                                        <label for="sector_name" class="form-label">
+                                            Sector Name <span class="required-mark">*</span>
                                         </label>
-                                        <input type="text" id="sector_name" name="sector_name"
-                                            value="{{ old('sector_name', $notification->sector_name) }}" required
-                                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                                        <input type="text" id="sector_name" name="sector_name" value="{{ old('sector_name', $notification->sector_name) }}" required class="form-input">
                                     </div>
 
-                                    <div>
-                                        <label for="subsector_name" class="block text-sm font-semibold text-gray-700 mb-1">
-                                            Subsector Name <span class="text-red-500">*</span>
+                                    <div class="form-group">
+                                        <label for="subsector_name" class="form-label">
+                                            Subsector Name <span class="required-mark">*</span>
                                         </label>
-                                        <input type="text" id="subsector_name" name="subsector_name"
-                                            value="{{ old('subsector_name', $notification->subsector_name) }}" required
-                                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                                        <input type="text" id="subsector_name" name="subsector_name" value="{{ old('subsector_name', $notification->subsector_name) }}" required class="form-input">
                                     </div>
                                 </div>
 
-                                <!-- Notification and Timeliness -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label for="notification_type" class="block text-sm font-semibold text-gray-700 mb-1">
-                                            Notification Type <span class="text-red-500">*</span>
+                                <div class="grid-2">
+                                    <div class="form-group">
+                                        <label for="notification_type" class="form-label">
+                                            Notification Type <span class="required-mark">*</span>
                                         </label>
-                                        <select id="notification_type" name="notification_type" required
-                                            class="w-full border border-gray-300 rounded-xl px-4 py-3 bg-white appearance-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                                        <select id="notification_type" name="notification_type" required class="form-select">
                                             <option value="">-- Select Notification Type --</option>
                                             <option value="Mandatory" {{ old('notification_type', $notification->notification_type) == 'Mandatory' ? 'selected' : '' }}>Mandatory</option>
                                             <option value="Voluntary" {{ old('notification_type', $notification->notification_type) == 'Voluntary' ? 'selected' : '' }}>Voluntary</option>
@@ -241,24 +267,20 @@
                                         </select>
                                     </div>
 
-                                    <div>
-                                        <label for="timeliness" class="block text-sm font-semibold text-gray-700 mb-1">
-                                            Timeliness <span class="text-red-500">*</span>
+                                    <div class="form-group">
+                                        <label for="timeliness" class="form-label">
+                                            Timeliness <span class="required-mark">*</span>
                                         </label>
-                                        <input type="text" id="timeliness" name="timeliness"
-                                            value="{{ old('timeliness', $notification->timeliness) }}" required
-                                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                                        <input type="text" id="timeliness" name="timeliness" value="{{ old('timeliness', $notification->timeliness) }}" required class="form-input">
                                     </div>
                                 </div>
 
-                                <!-- General and Specific Causes -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label for="general_cause" class="block text-sm font-semibold text-gray-700 mb-1">
-                                            General Cause <span class="text-red-500">*</span>
+                                <div class="grid-2">
+                                    <div class="form-group">
+                                        <label for="general_cause" class="form-label">
+                                            General Cause <span class="required-mark">*</span>
                                         </label>
-                                        <select id="general_cause" name="general_cause" required
-                                            class="w-full border border-gray-300 rounded-xl px-4 py-3 bg-white appearance-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                                        <select id="general_cause" name="general_cause" required class="form-select">
                                             <option value="">-- Select General Cause --</option>
                                             @foreach (['Malicious Attack', 'Malicious Attack/Human Error', 'Human Error', 'System Glitch', 'Malicious Attack/System Glitch', 'System Glitch/Human Error', 'Others'] as $cause)
                                                 <option value="{{ $cause }}" {{ old('general_cause', $notification->general_cause) == $cause ? 'selected' : '' }}>
@@ -268,47 +290,38 @@
                                         </select>
                                     </div>
 
-                                    <div>
-                                        <label for="specific_cause" class="block text-sm font-semibold text-gray-700 mb-1">
-                                            Specific Cause <span class="text-red-500">*</span>
+                                    <div class="form-group">
+                                        <label for="specific_cause" class="form-label">
+                                            Specific Cause <span class="required-mark">*</span>
                                         </label>
-                                        <select id="specific_cause" name="specific_cause" required
-                                            class="w-full border border-gray-300 rounded-xl px-4 py-3 bg-white appearance-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                                        <select id="specific_cause" name="specific_cause" required class="form-select">
                                             <option value="{{ old('specific_cause', $notification->specific_cause) }}">{{ old('specific_cause', $notification->specific_cause) }}</option>
                                         </select>
 
-                                        <label for="general_incident" class="block text-sm font-semibold text-gray-700 mt-2 mb-1">
-                                            General Incident <span class="text-red-500">*</span>
+                                        <label for="general_incident" class="form-label" style="margin-top: 1rem;">
+                                            General Incident <span class="required-mark">*</span>
                                         </label>
-
                                         <input type="text" name="general_incident" id="general_incident" required readonly
-                                            value="{{ old('general_incident', $notification->general_incident) }}"
-                                            class="w-full border border-gray-300 rounded-xl px-4 py-3 bg-gray-100 cursor-not-allowed focus:ring-0 focus:border-gray-300 transition"/>
+                                            value="{{ old('general_incident', $notification->general_incident) }}" class="form-input">
                                     </div>
                                 </div>
 
-                                <!-- With Request -->
-                                <div class="mb-4">
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                        With Request? <span class="text-red-500">*</span>
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        With Request? <span class="required-mark">*</span>
                                     </label>
-                                    <div class="flex items-center gap-6">
-                                        <label class="inline-flex items-center cursor-pointer">
-                                            <input type="radio" name="with_request" value="Yes"
-                                                {{ old('with_request', $notification->with_request) == 'Yes' ? 'checked' : '' }}
-                                                class="text-indigo-600 focus:ring-indigo-500 border-gray-300">
-                                            <span class="ml-3 text-gray-700">Yes</span>
+                                    <div class="radio-group">
+                                        <label class="radio-label">
+                                            <input type="radio" name="with_request" value="Yes" class="radio-input" {{ old('with_request', $notification->with_request) == 'Yes' ? 'checked' : '' }}>
+                                            <span>Yes</span>
                                         </label>
-                                        <label class="inline-flex items-center cursor-pointer">
-                                            <input type="radio" name="with_request" value="No"
-                                                {{ old('with_request', $notification->with_request) == 'No' ? 'checked' : '' }}
-                                                class="text-indigo-600 focus:ring-indigo-500 border-gray-300">
-                                            <span class="ml-3 text-gray-700">No</span>
+                                        <label class="radio-label">
+                                            <input type="radio" name="with_request" value="No" class="radio-input" {{ old('with_request', $notification->with_request) == 'No' ? 'checked' : '' }}>
+                                            <span>No</span>
                                         </label>
                                     </div>
                                 </div>
 
-                                <!-- Textarea fields -->
                                 @php
                                     $fields = [
                                         'how_breach_occured' => '1.A How Breach Occurred + DPS Vulnerability',
@@ -328,55 +341,45 @@
                                 @endphp
 
                                 @foreach ($fields as $name => $label)
-                                    <div class="mt-4">
-                                        <label for="{{ $name }}" class="block text-sm font-semibold text-gray-700 mb-1">
-                                            {{ $label }} <span class="text-red-500">*</span>
+                                    <div class="form-group">
+                                        <label for="{{ $name }}" class="form-label">
+                                            {{ $label }} <span class="required-mark">*</span>
                                         </label>
 
                                         @if ($name === 'dpo')
-                                            {{-- DPO info (display-only) --}}
-                                            <div
-                                                class="w-full border border-gray-300 rounded-xl py-3 px-4 bg-gray-100 cursor-not-allowed">
-                                                <p class="m-0">{{ $dpoDetails->name }}</p>
-                                                <p class="m-0">{{ $dpoDetails->email }}</p>
-                                                <p class="m-0">{{ $dpoDetails->contact_number }}</p>
+                                            {{-- Display DPO name and email as readonly --}}
+                                            <div id="{{ $name }}" name="{{ $name }}" class="readonly-box">
+                                                <p>{{ $dpoDetails->name }}</p>
+                                                <p>{{ $dpoDetails->email }}</p>
+                                                <p>{{ $dpoDetails->contact_number }}</p>
                                             </div>
-
                                         @else
-                                            <textarea
-                                                id="{{ $name }}"
-                                                name="{{ $name }}"
-                                                class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition resize-none"
-                                            >{{ old($name, $notification->$name ?? '') }}</textarea>
+                                            <textarea id="{{ $name }}" name="{{ $name }}" class="form-textarea">{{ old($name, $notification->$name ?? '') }}</textarea>
                                         @endif
                                     </div>
 
-                                    {{-- Extra field after 1.C --}}
+                                    {{-- Insert the extra "Provide Details" field right after 1.C --}}
                                     @if ($name === 'num_records')
-                                        <div class="mt-4">
-                                            <label for="num_records_provide_details"
-                                                class="block text-gray-700 font-semibold mb-2">
-                                                Number of Records – Provide Details
+                                        <div class="form-group">
+                                            <label for="num_records_provide_details" class="form-label">
+                                                Number of Records – Provide Details <span class="required-mark">*</span>
                                             </label>
-
-                                            <textarea
-                                                name="num_records_provide_details"
-                                                id="num_records_provide_details"
-                                                rows="3"
-                                                class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition resize-none"
-                                            >{{ old('num_records_provide_details', $notification->num_records_provide_details ?? '') }}</textarea>
+                                            <textarea name="num_records_provide_details" id="num_records_provide_details" rows="3"
+                                                class="form-textarea" required>{{ old('num_records_provide_details', $notification->num_records_provide_details ?? '') }}</textarea>
+                                            
+                                            @error('num_records_provide_details')
+                                                <span style="color: #ef4444; font-size: 0.875rem; margin-top: 0.25rem;">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                     @endif
                                 @endforeach
 
-                                <!-- Record Type & Data Subjects -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div>
-                                        <label for="record_type" class="block text-sm font-semibold text-gray-700 mb-1">
-                                            Record Type <span class="text-red-500">*</span>
+                                <div class="grid-2">
+                                    <div class="form-group">
+                                        <label for="record_type" class="form-label">
+                                            Record Type <span class="required-mark">*</span>
                                         </label>
-                                        <select id="record_type" name="record_type" required
-                                            class="w-full border border-gray-300 rounded-xl px-4 py-3 bg-white appearance-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                                        <select id="record_type" name="record_type" required class="form-select">
                                             <option value="">-- Select Record Type --</option>
                                             @foreach ([
                                                 'Digital Records in Electronic Systems',
@@ -391,12 +394,11 @@
                                         </select>
                                     </div>
 
-                                    <div>
-                                        <label for="data_subjects" class="block text-sm font-semibold text-gray-700 mb-1">
-                                            Data Subjects <span class="text-red-500">*</span>
+                                    <div class="form-group">
+                                        <label for="data_subjects" class="form-label">
+                                            Data Subjects <span class="required-mark">*</span>
                                         </label>
-                                        <select id="data_subjects" name="data_subjects" required
-                                            class="w-full border border-gray-300 rounded-xl px-4 py-3 bg-white appearance-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                                        <select id="data_subjects" name="data_subjects" required class="form-select">
                                             <option value="">-- Select Data Subjects --</option>
                                             @foreach ([
                                                 'Own Employees',
@@ -412,18 +414,14 @@
                                     </div>
                                 </div>
                             </div>
-                        </fieldset>
 
-                        <!-- Page 2 Buttons -->
-                        <div class="flex justify-between items-center gap-4 border-t border-gray-200 mt-8 pt-6">
-                            <button type="button" id="prev-page"
-                                class="inline-flex items-center justify-center w-40 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                                <i class="fas fa-arrow-left text-sm mr-2"></i> Back
+                        <div class="page-footer between">
+                            <button type="button" id="prev-page" class="btn btn-red">
+                                <i class="fas fa-arrow-left" style="margin-right: 0.25rem;"></i> Back
                             </button>
 
-                            <button type="submit"
-                                class="inline-flex items-center justify-center w-40 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                <i class="fas fa-save text-sm mr-2"></i> Update
+                            <button type="submit" class="btn btn-indigo">
+                                <i class="fas fa-save" style="margin-right: 0.25rem;"></i> Update
                             </button>
                         </div>
                     </div>
@@ -432,7 +430,6 @@
         </div>
     </div>
 
-    <!-- PAGE TOGGLE SCRIPT -->
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const nextPageBtn = document.getElementById('next-page');
@@ -442,14 +439,14 @@
 
             if (nextPageBtn && prevPageBtn && page1 && page2) {
                 nextPageBtn.addEventListener('click', () => {
-                    page1.classList.add('hidden');
-                    page2.classList.remove('hidden');
+                    page1.classList.add('hidden-page');
+                    page2.classList.remove('hidden-page');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
 
                 prevPageBtn.addEventListener('click', () => {
-                    page2.classList.add('hidden');
-                    page1.classList.remove('hidden');
+                    page2.classList.add('hidden-page');
+                    page1.classList.remove('hidden-page');
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
             }
@@ -595,38 +592,36 @@
                 "Others (Specify)": "Others"
             };
 
-            specificCauseEl.addEventListener("change", function () {
-                const selectedCause = this.value;
-
-                generalIncidentEl.value =
-                    categoryOptionsIncident[selectedCause] || "Others";
-            });
-
+            if(specificCauseEl && generalIncidentEl) {
+                specificCauseEl.addEventListener("change", function () {
+                    const selectedCause = this.value;
+                    generalIncidentEl.value = categoryOptionsIncident[selectedCause] || "Others";
+                });
+            }
 
             // EMAIL AUTO-FILL BASED ON PIC REGION
             const picSelect = document.getElementById('pic');
             const emailField = document.getElementById('email');
 
-            if (!picSelect) return;
+            if (picSelect && emailField) {
+                picSelect.addEventListener('change', function () {
+                    const region = this.value;
 
-            picSelect.addEventListener('change', function () {
-                const region = this.value;
-
-                if (!region) {
-                    emailField.value = '';
-                    return;
-                }
-
-                fetch(`/get-dbrt-email/${encodeURIComponent(region)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        emailField.value = data.email ?? '';
-                    })
-                    .catch(() => {
+                    if (!region) {
                         emailField.value = '';
-                    });
-            });
+                        return;
+                    }
 
+                    fetch(`/get-dbrt-email/${encodeURIComponent(region)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            emailField.value = data.email ?? '';
+                        })
+                        .catch(() => {
+                            emailField.value = '';
+                        });
+                });
+            }
 
             // FORM VALIDATION ENHANCEMENT
             const form = document.querySelector('form');
@@ -638,9 +633,9 @@
                     requiredFields.forEach(field => {
                         if (!field.value.trim()) {
                             isValid = false;
-                            field.classList.add('border-red-500');
+                            field.classList.add('input-error');
                         } else {
-                            field.classList.remove('border-red-500');
+                            field.classList.remove('input-error');
                         }
                     });
 
@@ -652,6 +647,13 @@
                             text: 'Please fill in all required fields marked with *.',
                             confirmButtonColor: '#3085d6'
                         });
+                        
+                        // Force back to page 1 if errors are there
+                        if(page1 && page2) {
+                             page2.classList.add('hidden-page');
+                             page1.classList.remove('hidden-page');
+                             window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
                     }
                 });
 
@@ -659,14 +661,14 @@
                 form.querySelectorAll('[required]').forEach(field => {
                     field.addEventListener('blur', function () {
                         if (!this.value.trim()) {
-                            this.classList.add('border-red-500');
+                            this.classList.add('input-error');
                         } else {
-                            this.classList.remove('border-red-500');
+                            this.classList.remove('input-error');
                         }
                     });
                 });
             }
         });
     </script>
-@endcan
+    @endcan
 </x-app-layout>
