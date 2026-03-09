@@ -8,45 +8,63 @@
         <title>CDA-DBRS</title>
         <link rel="icon" href="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" type="image/png">
 
-        <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <style>
+            /* base resets & typography */
+            body{ margin:0;font-family:'Figtree',ui-sans-serif,system-ui,-apple-system,sans-serif;color:#111827;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background-color:#f3f4f6; }
+            *{ box-sizing:border-box;}
+
+            /* layout containers */
+            .page-wrapper{ min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem; }
+            .auth-card{ width:100%;max-width:28rem;padding:2rem;background-color:#ffffff;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6 -2 rgba(0,0,0,0.05);border-radius:.75rem; }
+
+            /* logo styles */
+            .logo-container{ display:flex;justify-content:center; margin-bottom:.5rem; }
+            .logo-link{ display:block;}
+            .logo-img{ width:5.5rem;height:5.5rem;object-fit:contain; }
+
+            /* typography */
+            .auth-heading{ text-align:center;margin-bottom:2rem; }
+            /* title */
+            .login-title{ font-size:1.5rem;font-weight:700;color:#1f2937;margin:0; }
+            .login-subtitle{ font-size:.875rem;color:#6b7280;margin-top:.5rem;margin-bottom:0; }
+        </style>
     </head>
-    <body class="font-sans text-gray-900 antialiased m-0">
-        <div class="min-h-screen flex items-center justify-center bg-gray-100">
-            <div class="w-full sm:max-w-md px-6 py-6 bg-white shadow-md overflow-hidden sm:rounded-lg">
+    <body>
+        <div class="page-wrapper">
+            <div class="auth-card">
 
-                <div class="flex justify-center mb-4">
-                    <a href="{{ route('login') }}" class="block">
-                        <img src="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" alt="Cooperative Development Authority Seal" class="w-20 h-20 object-contain" />
+                <div class="logo-container">
+                    <a href="{{ route('login') }}" class="logo-link">
+                        <img src="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" alt="Cooperative Development Authority Seal" class="logo-img" />
                     </a>
                 </div>
 
-                    <h2 class="text-center text-2xl font-semibold mb-6">
-                        @php
-                            $route = Route::currentRouteName();
-                        @endphp
+                <div class="auth-heading">
+                    @php
+                        $route = Route::currentRouteName();
+                    @endphp
 
-                        @if ($route === 'login')
-                            <div class="text-center">
-                                <h2 class="text-2xl font-bold text-gray-800">Welcome Back</h2>
-                                <p class="text-sm text-gray-500 mt-1">Sign in to continue to your account</p>
-                            </div>
-                        @elseif ($route === 'register')
-                            Sign Up User
-                        @elseif ($route === 'forgot-password')
-                            Forgot Password
-                        @elseif ($route === 'reset-password')
-                            Reset Password
-                        @else
-                           
-                        @endif
-                    </h2>
+                    @if ($route === 'login')
+                        <div class="login-header">
+                            <h2 class="login-title">Sign In</h2>
+                            <p class="login-subtitle">A few more clicks to sign in to your account.</p>
+                        </div>
+                    @elseif ($route === 'register')
+                        <h2 class="login-title">Sign Up User</h2>
+                    @elseif ($route === 'forgot-password')
+                        <h2 class="login-title">Forgot Password</h2>
+                    @elseif ($route === 'reset-password')
+                        <h2 class="login-title">Reset Password</h2>
+                    @endif
+                </div>
 
+                {{-- Slot for the inner forms --}}
                 {{ $slot }}
+                
             </div>
         </div>
     </body>

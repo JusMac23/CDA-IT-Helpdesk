@@ -110,8 +110,8 @@ class GenerateTSARController extends Controller
             $pdf->Image(public_path('storage/' . $t->personnel_signature), $xRight + 5, $ySignature, $signatureWidth, $signatureHeight);
         }
 
-        $pdf->Cell(79.6, 7, strtoupper($t->firstname . ' ' . $t->lastname . ' ' . Carbon::parse($t->date_created)->format('m/d/Y g:i A')), 0, 0, 'C');
-        $pdf->Cell(79.6, 7, strtoupper($t->it_personnel . ' ' . Carbon::parse($t->date_resolved)->format('m/d/Y g:i A')), 0, 1, 'C');
+        $pdf->Cell(79.6, 7, strtoupper($t->firstname . ' ' . $t->lastname . ' ' . Carbon::parse($t->date_created)->format('m/d/Y')), 0, 0, 'C');
+        $pdf->Cell(79.6, 7, strtoupper($t->it_personnel . ' ' . Carbon::parse($t->date_resolved)->format('m/d/Y')), 0, 1, 'C');
         $pdf->SetFont('Arial', '', 8);
         $pdf->Cell(79.6, 7, 'Name/Signature of Responsible Staff/Date', 0, 0, 'C');
         $pdf->Cell(79.6, 7, 'Name/Signature of ICT Personnel/Date', 0, 1, 'C');

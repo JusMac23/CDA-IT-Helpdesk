@@ -1,75 +1,95 @@
 <x-app-layout>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* Main Layout */
-        .panel { background-color: #ffffff; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1.5rem; width: 100%; box-sizing: border-box; }
+        /* Main Layout - Mobile First 100% Width */
+        .panel { background-color: #ffffff; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1rem; width: 100%; box-sizing: border-box; }
         
         /* Typography */
-        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
-        .title { font-size: 1.5rem; font-weight: 900; color: #111827; margin-bottom: 1.5rem; margin-top: 0; }
+        .header-flex { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 1.5rem; gap: 1rem; width: 100%; }
+        .title { font-size: 1.5rem; font-weight: 900; color: #111827; margin-bottom: 0; margin-top: 0; }
         
-        /* Header & Actions */
-        .action-container { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-        .btn-green { background-color: #10b981; color: white; border: 1px solid #059669; padding: 0.5rem 1.5rem; min-width: 160px; justify-content: center; display: inline-flex; align-items: center; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.15); transition: all 0.2s ease; border-radius: 0.375rem; cursor: pointer; }
-        .btn-green:hover { background-color: #059669; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25); }
-        .btn-green:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(16, 185, 129, 0.15); }
+        /* Header & Actions - Mobile First */
+        .action-container { display: flex; flex-direction: column; width: 100%; gap: 1rem; margin-bottom: 1.5rem; }
         
-        /* Buttons */
-        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1.5rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; border: none; transition: background-color 0.2s, box-shadow 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        /* Buttons - Mobile First (Full Width default) */
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1.5rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; border: none; transition: background-color 0.2s, box-shadow 0.2s, transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box; }
         .btn i { margin-right: 0.5rem; }
-        .btn-green { background-color: #16a34a; color: white; padding:0.75rem 0.5rem;}
-        .btn-green:hover { background-color: #15803d; }
-        .btn-indigo { background-color: #4f46e5; color: white; }
-        .btn-indigo:hover { background-color: #4338ca; }
+        
+        .btn-green { background-color: #16a34a; color: white; padding: 0.85rem 1rem; font-weight: 600; border: 1px solid #15803d; }
+        .btn-green:hover { background-color: #15803d; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(22, 163, 74, 0.25); }
+        .btn-green:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(22, 163, 74, 0.15); }
+        
+        /* Taller Submit/Update Buttons */
+        .btn-indigo { background-color: #4f46e5; color: white; padding: 1rem 2rem; font-size: 1rem; font-weight: 600; }
+        .btn-indigo:hover { background-color: #4338ca; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25); }
+        .btn-indigo:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(79, 70, 229, 0.15); }
+        
         .btn-gray { background-color: #e5e7eb; color: #374151; }
         .btn-gray:hover { background-color: #d1d5db; }
 
-        /* Action Buttons (Edit/Delete) */
+        /* Action Buttons (Edit/Delete in Table) */
         .action-cell { display: flex; justify-content: flex-start; align-items: center; gap: 0.75rem; height: 100%; }
-        .btn-action { display: inline-flex; align-items: center; padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-size: 0.875rem; background: transparent; cursor: pointer; border: 1px solid; transition: 0.2s; white-space: nowrap; }
+        .btn-action { display: inline-flex; align-items: center; padding: 0.35rem 0.75rem; border-radius: 0.375rem; font-size: 0.875rem; background: transparent; cursor: pointer; border: 1px solid; transition: 0.2s; white-space: nowrap; }
         .btn-action i { margin-right: 0.25rem; }
         .btn-edit { border-color: #93c5fd; color: #2563eb; }
         .btn-edit:hover { background-color: #eff6ff; color: #1e40af; }
         .btn-delete { border-color: #fca5a5; color: #dc2626; }
         .btn-delete:hover { background-color: #fef2f2; color: #991b1b; }
 
-        /* --- Responsive Adjustments --- */
-        @media (max-width: 640px) { .action-container { flex-direction: column; align-items: stretch; } .action-btn { width: 100%; } .action-btn .form-input { min-width: 0; flex: 1; max-width: none; } }
-
         /* Table */
-        .table-container { overflow-x: auto; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 0.5rem; border: 1px solid #e5e7eb; }
+        .table-container { overflow-x: auto; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 0.5rem; border: 1px solid #e5e7eb; width: 100%; -webkit-overflow-scrolling: touch; }
         .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem; min-width: 800px; }
-        .data-table th { padding: 0.75rem 2.25rem; background-color: #f3f4f6; color: #374151; font-weight: 600; text-transform: uppercase; border-bottom: 1px solid #e5e7eb; }
-        .data-table td { padding: 1rem 2.25rem; border-bottom: 1px solid #e5e7eb; color: #1f2937; vertical-align: middle; }
+        .data-table th { padding: 0.75rem 1.5rem; background-color: #f3f4f6; color: #374151; font-weight: 600; text-transform: uppercase; border-bottom: 1px solid #e5e7eb; }
+        .data-table td { padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; color: #1f2937; vertical-align: middle; }
         .data-table tbody tr:hover { background-color: #f9fafb; transition: background-color 0.15s; }
         .text-center { text-align: center; }
 
         /* Pagination Container */
-        .pagination-wrapper { margin-top: 1rem; }
+        .pagination-wrapper { margin-top: 1rem; width: 100%; }
 
-        /* Modals */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+        /* Modals - Mobile First */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem; box-sizing: border-box; }
         .modal-overlay.hidden { display: none; }
-        .modal-box { position: relative; background-color: white; border-radius: 0.75rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); width: 100%; max-width: 48rem; max-height: 90vh; overflow-y: auto; padding: 2.5rem 2rem 2rem 2rem; box-sizing: border-box; }
+        .modal-box { position: relative; background-color: white; border-radius: 0.75rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); width: 100%; max-width: 48rem; max-height: 90vh; overflow-y: auto; padding: 1.5rem; box-sizing: border-box; }
         
         /* Fixed Modal Close Button */
-        .close-btn { position:absolute; top:1.5rem; right:2rem; color:var(--text-muted); font-size:2.5rem; background:none; border:none; cursor:pointer; transition:color 0.2s; }
-        .close-btn:hover { color:var(--text-main); }
-        .modal-title { font-size: 1.5rem; font-weight: 700; color: #111827; margin-top: 0; margin-bottom: 2rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; padding-right: 3rem; /* Prevents text overlapping with button */ }
+        .close-btn { position: absolute; top: 1rem; right: 1rem; color: #94a3b8; font-size: 2rem; background: none; border: none; cursor: pointer; transition: color 0.2s; line-height: 1; }
+        .close-btn:hover { color: #1f2937; }
+        .modal-title { font-size: 1.25rem; font-weight: 700; color: #111827; margin-top: 0; margin-bottom: 1.5rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; padding-right: 2.5rem; }
         
-        /* Form Grid */
-        .form-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-        @media (min-width: 640px) {
-            .form-grid { grid-template-columns: repeat(2, 1fr); }
-            .col-span-2 { grid-column: span 2; }
-        }
+        /* Form Grid - Mobile First 100% Width */
+        .form-grid { display: flex; flex-direction: column; gap: 1rem; width: 100%; }
 
-        /* Form Controls */
-        .form-group { display: flex; flex-direction: column; }
-        .form-label { font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem; }
-        .form-input, .form-select { width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid #d1d5db; border-radius: 0.375rem; background-color: white; outline: none; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; }
-        .form-input:focus, .form-select:focus { border-color: #4f46e5; box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2); }
-        .modal-footer { display: flex; justify-content: flex-end; padding-top: 1.5rem; border-top: 1px solid #e5e7eb; margin-top: 1.5rem; gap: 0.75rem; }
+        /* Form Controls - Mobile First 100% Width */
+        .form-group { display: flex; flex-direction: column; width: 100%; }
+        .form-label { font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.35rem; width: 100%; }
+        .form-input, .form-select { width: 100%; padding: 0.75rem 1rem; font-size: 1rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background-color: white; outline: none; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; display: block; font-family: inherit; }
+        .form-input:focus, .form-select:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); }
+        
+        .modal-footer { display: flex; flex-direction: column; padding-top: 1.5rem; border-top: 1px solid #e5e7eb; margin-top: 1.5rem; gap: 1rem; width: 100%; }
+
+        /* --------------------------------------------------- */
+        /* Desktop & Tablet Overrides (min-width: 640px/768px) */
+        /* --------------------------------------------------- */
+        @media (min-width: 640px) {
+            .panel { padding: 1.5rem; }
+            .header-flex { flex-direction: row; justify-content: space-between; align-items: center; }
+            .action-container { flex-direction: row; justify-content: flex-end; }
+            .btn-green { width: auto; min-width: 160px; }
+            
+            /* Restore Grid layout for Desktop */
+            .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); }
+            .col-span-2 { grid-column: span 2; }
+            
+            /* Modal formatting for Desktop */
+            .modal-box { padding: 2.5rem 2rem 2rem 2rem; }
+            .close-btn { top: 1.5rem; right: 2rem; font-size: 2.5rem; }
+            .modal-title { font-size: 1.5rem; margin-bottom: 2rem; }
+            
+            /* Modal Footer Buttons */
+            .modal-footer { flex-direction: row; justify-content: flex-end; }
+            .btn-indigo { width: auto; }
+        }
     </style>
 
     <div id="main-content" class="page-wrapper">
@@ -178,7 +198,7 @@
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" name="email" id="email" required class="form-input">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group col-span-2">
                                 <label for="region" class="form-label">Region</label>
                                 <select id="region" name="region" required class="form-select">
                                     <option value="">-- Select Region --</option>
@@ -204,7 +224,8 @@
                 <div class="modal-box">
                     <button id="closeEditModal" class="close-btn" aria-label="Close Modal">&times;</button>
                     <h2 class="modal-title">Edit Data Breach Response Team</h2>
-                    <form id="editForm" method="POST">
+                    
+                    <form id="editForm" method="POST" action="#">
                         @csrf
                         @method('PUT')
                         <div class="form-grid">
@@ -224,7 +245,7 @@
                                 <label for="edit_email" class="form-label">Email</label>
                                 <input type="email" name="email" id="edit_email" required class="form-input">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group col-span-2">
                                 <label for="edit_region" class="form-label">Region</label>
                                 <select id="edit_region" name="region" required class="form-select">
                                     <option value="">-- Select Region --</option>
@@ -248,6 +269,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
@@ -287,8 +309,8 @@
                     document.getElementById('edit_email').value = button.dataset.email;
                     document.getElementById('edit_region').value = button.dataset.region;
 
-                    // Set form action dynamically
-                    editForm.action = "{{ url('/databreach/team_databreach') }}/" + dbrtId;
+                    // Set form action dynamically using relative path to prevent http/https mismatched warnings
+                    editForm.action = `/databreach/team_databreach/${dbrtId}`;
 
                     editModal.classList.remove('hidden');
                 });

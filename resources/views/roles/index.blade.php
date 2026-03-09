@@ -1,37 +1,35 @@
 <x-app-layout>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* Main Layout */
-        .panel { background-color: #ffffff; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1.5rem; width: 100%; box-sizing: border-box; }
+        /* Main Layout - Mobile First 100% Width */
+        .panel { background-color: #ffffff; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1rem; width: 100%; box-sizing: border-box; }
         
         /* Typography */
-        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
-        .title { font-size: 1.5rem; font-weight: 900; color: #111827; margin-bottom: 1.5rem; margin-top: 0; }
+        .header-flex { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 1.5rem; gap: 1rem; width: 100%; }
+        .title { font-size: 1.5rem; font-weight: 900; color: #111827; margin-bottom: 0; margin-top: 0; }
         
-        /* --- Action Container (Toolbar Layout) --- */
-        .action-container { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-        
-        /* --- Add User Button Enhancements --- */
-        .btn-green { background-color: #10b981; color: white; border: 1px solid #059669; padding: 0.5rem 1.5rem; min-width: 120px; justify-content: center; display: inline-flex; align-items: center; box-shadow: 0 2px 4px rgba(16, 185, 129, 0.15); transition: all 0.2s ease; border-radius: 0.375rem; cursor: pointer; }
-        .btn-green:hover { background-color: #059669; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25); }
-        .btn-green:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(16, 185, 129, 0.15); }
+        /* --- Action Container - Mobile First --- */
+        .action-container { display: flex; flex-direction: column; width: 100%; gap: 1rem; margin-bottom: 1.5rem; }
 
-        /* --- Buttons --- */
-        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1.5rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; border: none; transition: background-color 0.2s, box-shadow 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        /* --- Buttons - Mobile First (Full Width default) --- */
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1.5rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; border: none; transition: background-color 0.2s, box-shadow 0.2s, transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box; }
         .btn i { margin-right: 0.5rem; }
-        .btn-green { background-color: #16a34a; color: white; padding:0.75rem 0.5rem;}
-        .btn-green:hover { background-color: #15803d; }
-        .btn-indigo { background-color: #4f46e5; color: white; }
-        .btn-indigo:hover { background-color: #4338ca; }
+        
+        .btn-green { background-color: #16a34a; color: white; padding: 0.85rem 1rem; font-weight: 600; border: 1px solid #15803d; }
+        .btn-green:hover { background-color: #15803d; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(22, 163, 74, 0.25); }
+        .btn-green:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(22, 163, 74, 0.15); }
+
+        /* Taller Submit/Update Buttons */
+        .btn-indigo { background-color: #4f46e5; color: white; padding: 1rem 2rem; font-size: 1rem; font-weight: 600; }
+        .btn-indigo:hover { background-color: #4338ca; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25); }
+        .btn-indigo:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(79, 70, 229, 0.15); }
+        
         .btn-gray { background-color: #e5e7eb; color: #374151; }
         .btn-gray:hover { background-color: #d1d5db; }
 
-        /* --- Responsive Adjustments --- */
-        @media (max-width: 640px) { .action-container { flex-direction: column; align-items: stretch; } .action-btn { width: 100%; } .action-btn .form-input { min-width: 0; flex: 1; max-width: none; } }
-
-        /* Action Buttons (Edit/Delete) */
+        /* Action Buttons (Edit/Delete in Table) */
         .action-cell { display: flex; justify-content: center; align-items: center; gap: 0.75rem; height: 100%; }
-        .btn-action { display: inline-flex; align-items: center; padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-size: 0.875rem; background: transparent; cursor: pointer; border: 1px solid; transition: 0.2s; white-space: nowrap; }
+        .btn-action { display: inline-flex; align-items: center; padding: 0.35rem 0.75rem; border-radius: 0.375rem; font-size: 0.875rem; background: transparent; cursor: pointer; border: 1px solid; transition: 0.2s; white-space: nowrap; }
         .btn-action i { margin-right: 0.25rem; }
         .btn-edit { border-color: #93c5fd; color: #2563eb; }
         .btn-edit:hover { background-color: #eff6ff; color: #1e40af; }
@@ -39,48 +37,76 @@
         .btn-delete:hover { background-color: #fef2f2; color: #991b1b; }
 
         /* Table */
-        .table-container { overflow-x: auto; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 0.5rem; border: 1px solid #e5e7eb; }
+        .table-container { overflow-x: auto; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 0.5rem; border: 1px solid #e5e7eb; width: 100%; -webkit-overflow-scrolling: touch; }
         .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem; min-width: 800px; }
-        .data-table th { padding: 0.75rem 2.25rem; background-color: #f3f4f6; color: #374151; font-weight: 600; text-transform: uppercase; border-bottom: 1px solid #e5e7eb; }
-        .data-table td { padding: 1rem 2.25rem; border-bottom: 1px solid #e5e7eb; color: #1f2937; vertical-align: middle; }
+        .data-table th { padding: 0.75rem 1.5rem; background-color: #f3f4f6; color: #374151; font-weight: 600; text-transform: uppercase; border-bottom: 1px solid #e5e7eb; }
+        .data-table td { padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; color: #1f2937; vertical-align: middle; }
         .data-table tbody tr:hover { background-color: #f9fafb; transition: background-color 0.15s; }
         .text-center { text-align: center; }
 
         /* Badges for Permissions */
-        .badge-indigo { display: inline-flex; align-items: center; white-space: nowrap; padding: 0.125rem 0.75rem; background-color: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.025em; text-transform: capitalize; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-        .permission-container { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+        .badge-indigo { display: inline-flex; align-items: center; white-space: nowrap; padding: 0.25rem 0.75rem; background-color: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.025em; text-transform: capitalize; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+        .permission-container { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: flex-start; }
 
         /* Pagination Container */
-        .pagination-wrapper { margin-top: 1rem; }
+        .pagination-wrapper { margin-top: 1rem; width: 100%; }
 
-        /* Modals */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+        /* Modals - Mobile First */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem; box-sizing: border-box; }
         .modal-overlay.hidden { display: none; }
-        .modal-box { position: relative; background-color: white; border-radius: 0.75rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); width: 100%; max-width: 48rem; max-height: 90vh; overflow-y: auto; padding: 2.5rem 2rem 2rem 2rem; box-sizing: border-box; }
+        .modal-box { position: relative; background-color: white; border-radius: 0.75rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); width: 100%; max-width: 48rem; max-height: 90vh; overflow-y: auto; padding: 1.5rem; box-sizing: border-box; }
         
         /* Fixed Modal Close Button */
-        .close-btn { position:absolute; top:1.5rem; right:2rem; color:#6b7280; font-size:2.5rem; background:none; border:none; cursor:pointer; transition:color 0.2s; line-height: 1; }
-        .close-btn:hover { color:#111827; }
-        .modal-title { font-size: 1.5rem; font-weight: 700; color: #111827; margin-top: 0; margin-bottom: 2rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; padding-right: 3rem; }
+        .close-btn { position: absolute; top: 1rem; right: 1rem; color: #94a3b8; font-size: 2rem; background: none; border: none; cursor: pointer; transition: color 0.2s; line-height: 1; }
+        .close-btn:hover { color: #1f2937; }
+        .modal-title { font-size: 1.25rem; font-weight: 700; color: #111827; margin-top: 0; margin-bottom: 1.5rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; padding-right: 2.5rem; }
         
-        /* Form Grid */
-        .form-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-        @media (min-width: 640px) {
-            .form-grid { grid-template-columns: repeat(2, 1fr); }
-            .col-span-2 { grid-column: span 2; }
-        }
+        /* Form Grid - Mobile First 100% Width */
+        .form-grid { display: flex; flex-direction: column; gap: 1rem; width: 100%; }
 
-        /* Form Controls */
-        .form-group { display: flex; flex-direction: column; }
-        .form-label { font-size: 0.875rem; font-weight: 500; color: #374151; margin-bottom: 0.25rem; }
-        .form-input, .form-select { width: 100%; padding: 0.5rem 0.75rem; font-size: 0.875rem; border: 1px solid #d1d5db; border-radius: 0.375rem; background-color: white; outline: none; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; }
-        .form-input:focus, .form-select:focus { border-color: #4f46e5; box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2); }
-        .modal-footer { display: flex; justify-content: flex-end; padding-top: 1.5rem; border-top: 1px solid #e5e7eb; margin-top: 1.5rem; gap: 0.75rem; }
+        /* Form Controls - Mobile First 100% Width */
+        .form-group { display: flex; flex-direction: column; width: 100%; }
+        .form-label { font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.35rem; width: 100%; }
+        .form-input, .form-select { width: 100%; padding: 0.75rem 1rem; font-size: 1rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background-color: white; outline: none; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; display: block; font-family: inherit; }
+        .form-input:focus, .form-select:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); }
         
-        /* Custom Checkbox Grid for Permissions */
-        .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; margin-top: 0.5rem; }
-        .checkbox-label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; cursor: pointer; color: #374151; }
-        .checkbox-input { height: 1rem; width: 1rem; color: #4f46e5; border: 1px solid #d1d5db; border-radius: 0.25rem; cursor: pointer; }
+        .modal-footer { display: flex; flex-direction: column; padding-top: 1.5rem; border-top: 1px solid #e5e7eb; margin-top: 1.5rem; gap: 1rem; width: 100%; }
+
+        /* Custom Checkbox Grid for Permissions - Mobile First */
+        .checkbox-grid { display: flex; flex-direction: column; gap: 0.75rem; margin-top: 0.5rem; width: 100%; }
+        .checkbox-label { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.875rem; cursor: pointer; color: #374151; word-break: break-word; line-height: 1.4; }
+        .checkbox-input { height: 1.25rem; width: 1.25rem; color: #4f46e5; border: 1px solid #d1d5db; border-radius: 0.25rem; cursor: pointer; flex-shrink: 0; margin-top: 0.125rem; }
+
+        /* --------------------------------------------------- */
+        /* Desktop & Tablet Overrides (min-width: 640px/768px) */
+        /* --------------------------------------------------- */
+        @media (min-width: 640px) {
+            .panel { padding: 1.5rem; }
+            .header-flex { flex-direction: row; justify-content: space-between; align-items: center; }
+            
+            /* Align Add button inline */
+            .action-container { flex-direction: row; justify-content: flex-end; align-items: center; }
+            
+            /* Un-stretch buttons on desktop */
+            .btn-green, .btn-indigo { width: auto; min-width: 120px; }
+            
+            /* Restore Grid layout for Desktop */
+            .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); }
+            .col-span-2 { grid-column: span 2; }
+            
+            /* Checkbox grid for Desktop */
+            .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+            .checkbox-label { align-items: center; }
+            .checkbox-input { margin-top: 0; }
+            
+            /* Modal formatting for Desktop */
+            .modal-box { padding: 2.5rem 2rem 2rem 2rem; }
+            .close-btn { top: 1.5rem; right: 2rem; font-size: 2.5rem; }
+            .modal-title { font-size: 1.5rem; margin-bottom: 2rem; }
+            
+            /* Modal Footer Buttons */
+            .modal-footer { flex-direction: row; justify-content: flex-end; }
+        }
     </style>
 
     <div id="main-content">
@@ -103,7 +129,7 @@
                     <thead>
                         <tr>
                             <th class="text-center">Role Name</th>
-                            <th>Permissions</th>
+                            <th class="text-center">Permissions</th>
                             <th class="text-center">Actions</th>
                         </tr>
                     </thead>
@@ -191,7 +217,7 @@
                                     value="{{ $permission->id }}" 
                                     id="add_perm_{{ $permission->id }}" 
                                     class="checkbox-input">
-                                {{ $permission->name }}
+                                <span>{{ $permission->name }}</span>
                             </label>
                             @endforeach
                         </div>
@@ -232,7 +258,7 @@
                                     value="{{ $permission->id }}" 
                                     id="edit_perm_{{ $permission->id }}" 
                                     class="edit-permission checkbox-input">
-                                {{ $permission->name }}
+                                <span>{{ $permission->name }}</span>
                             </label>
                             @endforeach
                         </div>
@@ -248,6 +274,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 

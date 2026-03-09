@@ -3,16 +3,24 @@
     @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin']))
     
     <style>
+        /* Base Resets */
+        * { box-sizing: border-box; }
+
         /* Dashboard Container */
         .dashboard-panel { background-color: #ffffff; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1.5rem; width: 100%; }
         .dashboard-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 1.5rem; color: #1f2937; }
         
         /* Stats Cards */
-        .stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-cards { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); 
+            gap: 1.5rem; 
+            margin-bottom: 2rem; 
+        }
         .stat-card { border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; border-left: 4px solid; transition: transform 0.2s, box-shadow 0.2s; }
         .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
         .stat-left { display: flex; align-items: center; gap: 1rem; }
-        .stat-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+        .stat-icon { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0; }
         .stat-label { font-size: 1.125rem; font-weight: 600; margin: 0; }
         .stat-value { font-size: 1.875rem; font-weight: 700; margin: 0; text-align: right; }
         
@@ -38,12 +46,19 @@
         .card-red .stat-value { color: #dc2626; }
         
         /* Grid Tables (Middle Section) */
-        .tables-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .table-card { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1.5rem; border: 1px solid #f3f4f6; overflow-x: auto; }
+        .tables-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); 
+            gap: 1.5rem; 
+            margin-bottom: 2rem; 
+        }
+        .table-card { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1.5rem; border: 1px solid #f3f4f6; overflow: hidden; }
         .table-card-title { font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; color: #374151; display: flex; align-items: center; gap: 0.5rem; }
         
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        
         .data-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .data-table th, .data-table td { padding: 0.75rem 1rem; }
+        .data-table th, .data-table td { padding: 0.75rem 1rem; white-space: nowrap; }
         .data-table thead tr { font-weight: 600; }
         .data-table tbody tr { border-bottom: 1px solid #e5e7eb; transition: background-color 0.15s; }
         .data-table tbody tr:nth-child(even) { background-color: #f9fafb; }
@@ -57,26 +72,31 @@
         .th-red { background: #fee2e2; color: #991b1b; }
         
         /* Bottom Full Table */
-        .full-table-container { background: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 8px; border: 1px solid #e5e7eb; overflow-x: auto; margin-top: 1rem; }
-        .full-table { width: 100%; border-collapse: collapse; text-align: left; white-space: nowrap; }
-        .full-table th { padding: 0.75rem 1.5rem; background: #f3f4f6; color: #374151; font-weight: 600; text-transform: uppercase; font-size: 0.875rem; border-bottom: 2px solid #e5e7eb; }
-        .full-table td { padding: 0.75rem 1.5rem; border-bottom: 1px solid #e5e7eb; color: #4b5563; }
+        .full-table-container { background: white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 8px; border: 1px solid #e5e7eb; overflow-x: auto; margin-top: 1rem; -webkit-overflow-scrolling: touch; }
+        .full-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .full-table th { padding: 0.75rem 1.5rem; background: #f3f4f6; color: #374151; font-weight: 600; text-transform: uppercase; font-size: 0.875rem; border-bottom: 2px solid #e5e7eb; white-space: nowrap; }
+        .full-table td { padding: 0.75rem 1.5rem; border-bottom: 1px solid #e5e7eb; color: #4b5563; white-space: nowrap; } /* Added white-space: nowrap here */
         .full-table tbody tr:hover { background: #f9fafb; }
         
         /* Badges */
-        .badge { padding: 0.35rem 1rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; display: inline-block; text-align: center; }
+        .badge { padding: 0.35rem 1rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; display: inline-block; text-align: center; white-space: nowrap; }
         .badge-green { background: #dcfce7; color: #166534; }
         .badge-yellow { background: #fef9c3; color: #854d0e; }
         .badge-blue { background: #dbeafe; color: #1e40af; }
         .badge-gray { background: #f3f4f6; color: #374151; }
 
-        /* Responsive */
+        /* General Mobile Responsiveness */
         @media (max-width: 640px) {
-            .stat-card { flex-direction: column; text-align: center; gap: 1rem; }
+            .dashboard-panel { padding: 1rem; }
+            .stat-card { flex-direction: column; text-align: center; gap: 1rem; padding: 1.25rem; }
             .stat-left { flex-direction: column; }
             .stat-value { text-align: center; }
-            .dashboard-panel { padding: 1rem; }
+            .dashboard-wrapper { padding: 0.5rem; }
+            .table-card { padding: 1rem; }
         }
+        
+        /* The previous @media (max-width: 768px) block that stacked the table rows has been removed to allow horizontal scrolling */
+
     </style>
 
     <div id="main-content">
@@ -88,10 +108,10 @@
                 <div class="stat-cards">
                     @php
                         $cards = [
-                            ['label' => 'Total Tickets', 'icon' => 'fa-ticket', 'theme' => 'indigo', 'value' => $total],
-                            ['label' => 'Pending Tickets', 'icon' => 'fa-hourglass-half', 'theme' => 'green', 'value' => $pending],
-                            ['label' => 'Resolved Tickets', 'icon' => 'fa-check-circle', 'theme' => 'blue', 'value' => $resolved],
-                            ['label' => 'Overdue Tickets', 'icon' => 'fa-exclamation-circle', 'theme' => 'red', 'value' => $overdue],
+                            ['label' => 'Total Tickets', 'icon' => 'fa-ticket', 'theme' => 'indigo', 'value' => $total ?? 0],
+                            ['label' => 'Pending Tickets', 'icon' => 'fa-hourglass-half', 'theme' => 'green', 'value' => $pending ?? 0],
+                            ['label' => 'Resolved Tickets', 'icon' => 'fa-check-circle', 'theme' => 'blue', 'value' => $resolved ?? 0],
+                            ['label' => 'Overdue Tickets', 'icon' => 'fa-exclamation-circle', 'theme' => 'red', 'value' => $overdue ?? 0],
                         ];
                     @endphp
 
@@ -118,26 +138,28 @@
                         <h4 class="table-card-title">
                             <i class="fa-solid fa-network-wired" style="color: #4f46e5;"></i> Tickets by Region
                         </h4>
-                        <table class="data-table">
-                            <thead>
-                                <tr class="th-indigo">
-                                    <th>IT Area</th>
-                                    <th class="text-right">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($byItArea as $area)
-                                    <tr>
-                                        <td>{{ $area->it_area }}</td>
-                                        <td class="text-right" style="font-weight: bold;">{{ $area->total }}</td>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr class="th-indigo">
+                                        <th>IT Area</th>
+                                        <th class="text-right">Total</th>
                                     </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="2" style="text-align: center; color: #6b7280; padding: 1rem;">No data available.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @forelse ($byItArea ?? [] as $area)
+                                        <tr>
+                                            <td>{{ $area->it_area }}</td>
+                                            <td class="text-right" style="font-weight: bold;">{{ $area->total }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="2" style="text-align: center; color: #6b7280; padding: 1rem;">No data available.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     {{-- Tickets by Technical Personnel --}}
@@ -145,26 +167,28 @@
                         <h4 class="table-card-title">
                             <i class="fa-solid fa-user-gear" style="color: #16a34a;"></i> Tickets by Technical Personnel
                         </h4>
-                        <table class="data-table">
-                            <thead>
-                                <tr class="th-green">
-                                    <th>Technical Personnel</th>
-                                    <th class="text-right">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($byItPersonnel as $person)
-                                    <tr>
-                                        <td>{{ $person->it_personnel }}</td>
-                                        <td class="text-right" style="font-weight: bold;">{{ $person->total }}</td>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr class="th-green">
+                                        <th>Technical Personnel</th>
+                                        <th class="text-right">Total</th>
                                     </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="2" style="text-align: center; color: #6b7280; padding: 1rem;">No data available.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @forelse ($byItPersonnel ?? [] as $person)
+                                        <tr>
+                                            <td>{{ $person->it_personnel }}</td>
+                                            <td class="text-right" style="font-weight: bold;">{{ $person->total }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="2" style="text-align: center; color: #6b7280; padding: 1rem;">No data available.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     {{-- Tickets by Service --}}
@@ -172,26 +196,28 @@
                         <h4 class="table-card-title">
                             <i class="fa-solid fa-tools" style="color: #ca8a04;"></i> Tickets by Technical Services
                         </h4>
-                        <table class="data-table">
-                            <thead>
-                                <tr class="th-yellow">
-                                    <th>Service</th>
-                                    <th class="text-right">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($byService as $service)
-                                    <tr>
-                                        <td>{{ $service->service }}</td>
-                                        <td class="text-right" style="font-weight: bold;">{{ $service->total }}</td>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr class="th-yellow">
+                                        <th>Service</th>
+                                        <th class="text-right">Total</th>
                                     </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="2" style="text-align: center; color: #6b7280; padding: 1rem;">No data available.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @forelse ($byService ?? [] as $service)
+                                        <tr>
+                                            <td>{{ $service->service }}</td>
+                                            <td class="text-right" style="font-weight: bold;">{{ $service->total }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="2" style="text-align: center; color: #6b7280; padding: 1rem;">No data available.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
                     {{-- Overdue Tickets --}}
@@ -199,28 +225,30 @@
                         <h4 class="table-card-title">
                             <i class="fa-solid fa-clock" style="color: #dc2626;"></i> Overdue Tickets by Personnel
                         </h4>
-                        <table class="data-table">
-                            <thead>
-                                <tr class="th-red">
-                                    <th>Request Details</th>
-                                    <th class="text-right">Assigned Personnel</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($overdueTickets as $personnel => $tickets)
-                                    @foreach ($tickets as $ticket)
-                                        <tr>
-                                            <td>{{ $ticket->request }}</td>
-                                            <td class="text-right" style="font-weight: bold;">{{ $personnel }}</td>
-                                        </tr>
-                                    @endforeach
-                                @empty
-                                    <tr>
-                                        <td colspan="2" style="text-align: center; color: #6b7280; padding: 1rem;">No overdue tickets.</td>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr class="th-red">
+                                        <th>Request Details</th>
+                                        <th class="text-right">Assigned Personnel</th>
                                     </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @forelse ($overdueTickets ?? [] as $personnel => $tickets)
+                                        @foreach ($tickets as $ticket)
+                                            <tr>
+                                                <td>{{ $ticket->request }}</td>
+                                                <td class="text-right" style="font-weight: bold;">{{ $personnel }}</td>
+                                            </tr>
+                                        @endforeach
+                                    @empty
+                                        <tr>
+                                            <td colspan="2" style="text-align: center; color: #6b7280; padding: 1rem;">No overdue tickets.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -245,7 +273,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($recentlyResolved as $ticket)
+                                @forelse ($recentlyResolved ?? [] as $ticket)
                                     <tr>
                                         <td style="font-weight: 500; color: #111827;">{{ $ticket->ticket_number }}</td>
                                         <td>{{ $ticket->firstname }} {{ $ticket->lastname }}</td>

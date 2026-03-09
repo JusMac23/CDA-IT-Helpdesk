@@ -22,106 +22,144 @@
 
     <style>
         /* CSS Variables for consistent theming */
-        :root { --primary-blue:#1e40af; --primary-indigo:#4f46e5; --indigo-hover:#4338ca; --bg-body:#f9fafb; --text-main:#1f2937; --text-muted:#6b7280; --border-color:#d1d5db; --error-bg:#fee2e2; --error-text:#991b1b; --error-border:#ef4444; }
+        :root { 
+            --accent-blue: #3b82f6; 
+            --alert-red: #ef4444; 
+            --text-muted: #94a3b8; 
+            --glass-bg: rgba(15, 23, 42, 0.9); 
+            --glass-border: rgba(255, 255, 255, 0.1); 
+            --primary-indigo: #4f46e5; 
+            --indigo-hover: #4338ca; 
+            --bg-body: #f9fafb; 
+            --text-body: #1f2937; 
+            --border-color: #d1d5db; 
+            --error-bg: #fee2e2; 
+            --error-text: #991b1b; 
+            --error-border: #ef4444; 
+        }
 
         /* Base Resets & Typography */
-        * { box-sizing:border-box; margin:0; padding:0; }
-        body { background-color:var(--bg-body); color:var(--text-main); font-family:'Figtree',ui-sans-serif,system-ui,-apple-system,sans-serif; -webkit-font-smoothing:antialiased; line-height:1.5; }
-        a { text-decoration:none; }
-        ul { list-style:none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: var(--bg-body); color: var(--text-body); font-family: 'Figtree', ui-sans-serif, system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.5; }
+        a { text-decoration: none; }
+        ul { list-style: none; }
 
         /* Animations */
-        @keyframes fade-in-down { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
-        .animate-fade-in-down { animation:fade-in-down 0.7s ease-out both; }
+        @keyframes fade-in-down { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in-down { animation: fade-in-down 0.7s ease-out both; }
 
         /* Header Styles */
-        .app-header { background-color:#ffffff; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); position:sticky; top:0; z-index:50; border-bottom:1px solid #e5e7eb; }
-        .header-gradient-bar { height:4px; background:linear-gradient(to right,#2563eb,#6366f1,#a855f7); }
-        .container { max-width:1200px; margin:0 auto; padding:1rem 1.5rem; display:flex; justify-content:space-between; align-items:center; }
-        .logo-title { font-size:1.5rem; font-weight:700; color:var(--primary-blue); display:flex; align-items:center; gap:0.75rem; letter-spacing:-0.025em; }
-        .logo-img { width:48px; height:48px; object-fit:contain; transition:transform 0.3s; }
-        .logo-title:hover .logo-img { transform:scale(1.05); }
+        .app-header { background-color: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--glass-border); }
+        .header-gradient { height: 3px; background: linear-gradient(90deg, var(--accent-blue), var(--alert-red)); width: 100%; }
+        .container { max-width: 1280px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        
+        /* Branding */
+        .brand { font-size: 1.5rem; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 0.75rem; letter-spacing: -0.025em; }
+        .brand img { width: 44px; height: 44px; object-fit: contain; transition: transform 0.3s ease; }
+        .brand:hover img { transform: scale(1.1) rotate(-5deg); }
 
         /* Navigation */
-        .nav-list { display:flex; gap:1.5rem; align-items:center; font-weight:500; }
-        .nav-link { color:#2563eb; padding:0.5rem 0.75rem; border-radius:9999px; display:flex; align-items:center; gap:0.5rem; transition:all 0.3s ease; }
-        .nav-link:hover { color:#1e40af; background-color:#dbeafe; }
-        .nav-link.logout { color:#ef4444; }
-        .nav-link.logout:hover { color:#b91c1c; background-color:#fee2e2; }
-        .logout-btn { background:none; border:none; font:inherit; cursor:pointer; }
+        .nav-links { display: flex; gap: 1rem; align-items: center; font-weight: 600; font-size: 0.95rem; }
+        .nav-link { color: #e2e8f0; padding: 0.6rem 1.25rem; border-radius: 8px; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; border: 1px solid transparent; }
+        .nav-link:hover { color: #ffffff; background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
+        
+        /* Hide nav icons on mobile to save space */
+        .nav-link .material-icons-outlined { display: none; }
+
+        /* Logout Link Specifics */
+        .nav-link.nav-link-logout { color: #f87171; background: transparent; border: none; font: inherit; cursor: pointer; }
+        .nav-link.nav-link-logout:hover { color: #ffffff; background-color: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); }
 
         /* Form Container Section */
-        .incident-section { padding:2rem; max-width:1152px; margin:2.5rem auto 4rem; background-color:#ffffff; border-radius:1rem; box-shadow:0 20px 25px -5px rgba(0,0,0,0.1),0 10px 10px -5px rgba(0,0,0,0.04); position:relative; }
-        .section-title { font-size:1.5rem; font-weight:700; margin-bottom:2.5rem; border-bottom:2px solid #e5e7eb; padding-bottom:1rem; }
-        .form-section-title { font-size:1.125rem; font-weight:600; color:#1f2937; margin:1.5rem 0 1rem; padding-bottom:0.5rem; }
-        .close-btn { position:absolute; top:1.5rem; right:2rem; color:var(--text-muted); font-size:1.875rem; background:none; border:none; cursor:pointer; transition:color 0.2s; }
-        .close-btn:hover { color:var(--text-main); }
+        .incident-section { padding: 1.5rem; width: calc(100% - 2rem); max-width: 1152px; margin: 1.5rem auto 4rem; background-color: #ffffff; border-radius: 1rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); position: relative; }
+        .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; color: var(--text-body); width: 100%; }
+        .form-section-title { font-size: 1.125rem; font-weight: 600; color: #1f2937; margin: 1.5rem 0 1rem; padding-bottom: 0.5rem; width: 100%; }
+        .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; color: var(--text-muted); font-size: 1.875rem; background: none; border: none; cursor: pointer; transition: color 0.2s; }
+        .close-btn:hover { color: var(--text-body); }
 
         /* Alerts */
-        .alert-error { background-color:var(--error-bg); border-left:4px solid var(--error-border); color:var(--error-text); padding:1rem 1.5rem; margin-bottom:1.5rem; border-radius:0.5rem; display:flex; gap:0.75rem; }
-        .alert-error h4 { margin-bottom:0.25rem; font-size:0.875rem; }
-        .alert-error ul { padding-left:1.25rem; list-style-type:disc; font-size:0.875rem; }
+        .alert-error { width: 100%; background-color: var(--error-bg); border-left: 4px solid var(--error-border); color: var(--error-text); padding: 1rem 1.5rem; margin-bottom: 1.5rem; border-radius: 0.5rem; display: flex; gap: 0.75rem; }
+        .alert-error h4 { margin-bottom: 0.25rem; font-size: 0.875rem; }
+        .alert-error ul { padding-left: 1.25rem; list-style-type: disc; font-size: 0.875rem; }
         
-        /* Grids */
-        .grid-2-col,.grid-3-col { display:grid; gap:1.5rem; margin-top:1.5rem; }
-        .grid-2-col { grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); }
-        .grid-3-col { grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); }
-        .mt-4 { margin-top:1.5rem; }
+        /* Universal Form Elements - Mobile First (100% width) */
+        form { width: 100%; }
+        .form-group { width: 100%; margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-body); width: 100%; }
+        .text-required { color: var(--error-border); }
+        .form-control { width: 100%; border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.75rem 1rem; font-family: inherit; font-size: 1rem; color: var(--text-body); transition: all 0.2s; box-sizing: border-box; display: block; }
+        .form-control:focus { outline: none; border-color: var(--primary-indigo); box-shadow: 0 0 0 3px rgba(79,70,229,0.2); }
+        .form-control.is-invalid { border-color: var(--error-border); background-color: #fef2f2; }
+        select.form-control { appearance: auto; background-color: white; }
+        textarea.form-control { resize: vertical; min-height: 100px; width: 100%; }
 
-        /* Inputs */
-        .form-group label { display:block; font-size:0.875rem; font-weight:600; margin-bottom:0.5rem; }
-        .text-required { color:var(--error-border); }
-        .form-control { width:100%; border:1px solid var(--border-color); border-radius:0.75rem; padding:0.75rem 1rem; font-family:inherit; font-size:1rem; transition:all 0.2s; }
-        .form-control:focus { outline:none; border-color:var(--primary-indigo); box-shadow:0 0 0 3px rgba(79,70,229,0.2); }
-        .form-control.is-invalid { border-color:var(--error-border); background-color:#fef2f2; }
-        select.form-control { appearance:auto; background-color:white; }
-        textarea.form-control { resize:vertical; min-height:100px; }
+        /* Grids - Default to 1 column (100% width) for Mobile */
+        .grid-2-col, .grid-3-col { display: flex; flex-direction: column; width: 100%; gap: 0; }
+        
+        /* Footer & Buttons - Mobile First (100% width) */
+        .form-footer { display: flex; flex-direction: column; width: 100%; gap: 1.5rem; align-items: stretch; margin-top: 1.5rem; padding-top: 2rem; border-top: 1px solid #e5e7eb; }
+        .btn-submit { width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 0.85rem; background-color: var(--primary-indigo); color: #ffffff; font-family: 'Figtree', ui-sans-serif, system-ui, -apple-system, sans-serif; font-weight: 600; font-size: 1rem; border: none; border-radius: 0.75rem; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); transition: all 0.3s ease; }
+        .btn-submit:hover:not(:disabled) { background-color: var(--indigo-hover); transform: scale(1.02); }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
+        
+        /* reCAPTCHA wrapper - Mobile First (100% width scaling) */
+        .recaptcha-wrapper { width: 100%; margin: 0; overflow: hidden; position: relative; }
 
-        /* Footer & Buttons */
-        .form-footer { display:flex; justify-content:space-between; align-items:flex-start; margin-top:2rem; padding-top:2rem; border-top:1px solid #e5e7eb; }
-        .btn-submit { display:inline-flex; align-items:center; gap:0.75rem; padding:0.75rem 2rem; background-color:var(--primary-indigo); color:#ffffff; font-family:'Figtree',ui-sans-serif,system-ui,-apple-system,sans-serif; font-weight:600; font-size:1rem; border:none; border-radius:0.75rem; cursor:pointer; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); transition:all 0.3s ease; }
-        .btn-submit:hover:not(:disabled) { background-color:var(--indigo-hover); transform:scale(1.05); }
-        .btn-submit:disabled { opacity:0.6; cursor:not-allowed; pointer-events:none; }
+        /* --------------------------------------------------- */
+        /* Desktop & Tablet Overrides (min-width: 768px)       */
+        /* --------------------------------------------------- */
+        @media (min-width: 768px) {
+            .incident-section { padding: 2rem; margin: 2.5rem auto 4rem; }
+            .close-btn { right: 2rem; }
+            
+            /* Show Nav Icons on Desktop/Tablet */
+            .nav-link .material-icons-outlined { display: inline-block; }
 
-        /* Responsive adjustments */
-        @media (max-width:768px) { .form-footer { flex-direction:column; gap:1.5rem; align-items:flex-end; } .incident-section { padding:1.5rem; margin:1.5rem; } }
+            /* Activate Grids */
+            .grid-2-col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
+            .grid-3-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
+            
+            /* Reset gap zeroing from mobile */
+            .grid-2-col .form-group, .grid-3-col .form-group { margin-bottom: 0; }
+            
+            /* Horizontal Footer */
+            .form-footer { flex-direction: row; justify-content: space-between; align-items: flex-start; }
+            .btn-submit { width: auto; padding: 0.75rem 2rem; }
+            .recaptcha-wrapper { max-width: 304px; margin: 1rem 0; }
+        }
     </style>
 </head>
 
 <body>
 
 <header class="app-header">
-    <div class="header-gradient-bar"></div>
-    
+    <div class="header-gradient"></div>
     <div class="container">
-        <h1 class="logo-title">
-            <img src="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" 
-                 alt="Cooperative Development Authority Seal" 
-                 class="logo-img"/>
+        <h1 class="brand">
+            <img src="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" alt="CDA Seal" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Cooperative_Development_Authority_%28CDA%29.svg/1200px-Cooperative_Development_Authority_%28CDA%29.svg.png'" />
             <span>CDA-DBRS</span>
         </h1>
 
         <nav>
-            <ul class="nav-list">
+            <ul class="nav-links">
                 @auth
                     <li>
                         <a href="{{ url('/dashboard') }}" class="nav-link">
-                            <span class="material-icons-outlined">dashboard</span> Dashboard
+                            <span class="material-icons-outlined text-lg">dashboard</span> Dashboard
                         </a>
                     </li>
-
                     <li>
-                        <form method="POST" action="{{ route('logout') }}">
+                        <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
                             @csrf
-                            <button type="submit" class="nav-link logout logout-btn">
-                                <span class="material-icons-outlined">logout</span> Logout
+                            <button type="submit" class="nav-link nav-link-logout">
+                                <span class="material-icons-outlined text-lg">logout</span> Logout
                             </button>
                         </form>
                     </li>
                 @else
                     <li>
                         <a href="{{ route('login') }}" class="nav-link">
-                            <span class="material-icons-outlined">login</span> Login
+                            <span class="material-icons-outlined text-lg">login</span> Login
                         </a>
                     </li>
                 @endauth
@@ -154,67 +192,67 @@
     <form action="{{ route('incident.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
-            <h3 class="form-section-title">Please provide the incident information.</h3>
+        <h3 class="form-section-title">Please provide the incident information.</h3>
 
-            <div class="grid-2-col">
-                <div class="form-group">
-                    <label for="sender_fullname">Full Name <span class="text-required">*</span></label>
-                    <input type="text" id="sender_fullname" name="sender_fullname" placeholder="e.g., Juan A. Dela Cruz" required class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="sender_email">Email Address <span class="text-required">*</span></label>
-                    <input type="email" id="sender_email" name="sender_email" placeholder="e.g., j_delacruz@cda.gov.ph" required class="form-control">
-                </div>
+        <div class="grid-2-col">
+            <div class="form-group">
+                <label for="sender_fullname">Full Name <span class="text-required">*</span></label>
+                <input type="text" id="sender_fullname" name="sender_fullname" placeholder="e.g., Juan A. Dela Cruz" required class="form-control">
             </div>
+            <div class="form-group">
+                <label for="sender_email">Email Address <span class="text-required">*</span></label>
+                <input type="email" id="sender_email" name="sender_email" placeholder="e.g., j_delacruz@cda.gov.ph" required class="form-control">
+            </div>
+        </div>
 
-            <div class="grid-3-col">
-                <div class="form-group">
-                    <label for="date_occurrence">Date of Occurrence <span class="text-required">*</span></label>
-                    <input type="datetime-local" id="date_occurrence" name="date_occurrence" required class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="date_discovery">Date of Discovery <span class="text-required">*</span></label>
-                    <input type="datetime-local" id="date_discovery" name="date_discovery" required class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="date_notification">Date of Notification <span class="text-required">*</span></label>
-                    <input type="datetime-local" id="date_notification" name="date_notification" required readonly class="form-control"
-                        value="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d\TH:i') }}">
-                </div>
+        <div class="grid-3-col">
+            <div class="form-group">
+                <label for="date_occurrence">Date of Occurrence <span class="text-required">*</span></label>
+                <input type="datetime-local" id="date_occurrence" name="date_occurrence" required class="form-control">
             </div>
+            <div class="form-group">
+                <label for="date_discovery">Date of Discovery <span class="text-required">*</span></label>
+                <input type="datetime-local" id="date_discovery" name="date_discovery" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="date_notification">Date of Notification <span class="text-required">*</span></label>
+                <input type="datetime-local" id="date_notification" name="date_notification" required readonly class="form-control"
+                    value="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d\TH:i') }}">
+            </div>
+        </div>
 
-            <div class="form-group mt-4">
-                <label for="pic">Personal Information Controller <span class="text-required">*</span></label>
-                <select id="pic" name="pic" required class="form-control">
-                    <option value="">-- Select Region --</option>
-                    <option>CDA HO</option>
-                    <option>CDA CAR</option>
-                    <option>CDA NIR</option>
-                    <option>CDA NCR</option>
-                    <option>CDA Region I</option>
-                    <option>CDA Region II</option>
-                    <option>CDA Region III</option>
-                    <option>CDA Region IV-A</option>
-                    <option>CDA Region IV-B</option>
-                    <option>CDA Region V</option>
-                    <option>CDA Region VI</option>
-                    <option>CDA Region VII</option>
-                    <option>CDA Region VIII</option>
-                    <option>CDA Region IX</option>
-                    <option>CDA Region X</option>
-                    <option>CDA Region XI</option>
-                    <option>CDA Region XII</option>
-                    <option>CDA Region XIII</option>
-                </select>
-            </div>
+        <div class="form-group">
+            <label for="pic">Personal Information Controller <span class="text-required">*</span></label>
+            <select id="pic" name="pic" required class="form-control">
+                <option value="">-- Select Region --</option>
+                <option>CDA HO</option>
+                <option>CDA CAR</option>
+                <option>CDA NIR</option>
+                <option>CDA NCR</option>
+                <option>CDA Region I</option>
+                <option>CDA Region II</option>
+                <option>CDA Region III</option>
+                <option>CDA Region IV-A</option>
+                <option>CDA Region IV-B</option>
+                <option>CDA Region V</option>
+                <option>CDA Region VI</option>
+                <option>CDA Region VII</option>
+                <option>CDA Region VIII</option>
+                <option>CDA Region IX</option>
+                <option>CDA Region X</option>
+                <option>CDA Region XI</option>
+                <option>CDA Region XII</option>
+                <option>CDA Region XIII</option>
+            </select>
+        </div>
 
-            <div class="form-group mt-4">
-                <label for="brief_summary">Brief Summary of the Incident <span class="text-required">*</span></label>
-                <textarea id="brief_summary" name="brief_summary" required rows="4" placeholder="Write a brief summary of the incident here..." class="form-control"></textarea>
-            </div>
+        <div class="form-group">
+            <label for="brief_summary">Brief Summary of the Incident <span class="text-required">*</span></label>
+            <textarea id="brief_summary" name="brief_summary" required rows="4" placeholder="Write a brief summary of the incident here..." class="form-control"></textarea>
+        </div>
 
         <div class="form-footer">
-            <div>
+            <div class="recaptcha-wrapper" id="recaptcha-container">
                 <div class="g-recaptcha"
                     data-sitekey="{{ config('services.recaptcha.site_key') }}"
                     data-callback="enableSubmitButton"
@@ -222,7 +260,7 @@
                     data-error-callback="disableSubmitButton"></div>
 
                 @if ($errors->has('g-recaptcha-response'))
-                    <span style="color: var(--error-border); font-size: 0.875rem; display: block; margin-top: 0.5rem;">
+                    <span style="color: var(--error-border); font-size: 0.875rem; display: block; margin-top: 0.5rem; width: 100%;">
                         {{ $errors->first('g-recaptcha-response') }}
                     </span>
                 @endif
@@ -319,6 +357,32 @@
     document.addEventListener('DOMContentLoaded', function () {
         disableSubmitButton();
     });
+
+    // Dynamically Resize reCAPTCHA to stretch accurately on all screens
+    function resizeRecaptcha() {
+        const wrapper = document.getElementById('recaptcha-container');
+        const recaptcha = document.querySelector('.g-recaptcha');
+        
+        if (wrapper && recaptcha) {
+            // Measure actual container width
+            const wrapperWidth = wrapper.offsetWidth;
+            
+            // Standard reCAPTCHA size is 304px
+            const scale = wrapperWidth / 304;
+            
+            // Apply scale and fix dimensions
+            recaptcha.style.transform = `scale(${scale})`;
+            recaptcha.style.transformOrigin = '0 0';
+            wrapper.style.height = `${78 * scale}px`;
+        }
+    }
+
+    // Re-run the scaling function heavily to ensure it catches Google API load times
+    window.addEventListener('resize', resizeRecaptcha);
+    window.addEventListener('load', resizeRecaptcha);
+    setTimeout(resizeRecaptcha, 300);
+    setTimeout(resizeRecaptcha, 1000);
+    setTimeout(resizeRecaptcha, 2000); 
 </script>
 </body>
 </html>

@@ -2,49 +2,64 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
-        /* Main Container */
-        .content-panel { background-color: #ffffff; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1.5rem; width: 100%; box-sizing: border-box; }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+        /* Base Resets */
+        * { box-sizing: border-box; }
+
+        /* Main Container - Mobile First 100% Width */
+        .content-panel { background-color: #ffffff; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1rem; width: 100%; box-sizing: border-box; }
+        .header-flex { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 1.5rem; gap: 1rem; width: 100%; }
         .title { font-size: 1.5rem; font-weight: 900; color: #111827; margin-bottom: 0; margin-top: 0; }
 
-        /* --- Action Container (Toolbar Layout) --- */
-        .action-container { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-
-        /* --- Search Form Group (Joined Input & Button) --- */
-        .action-btn { display: flex; align-items: stretch; border-radius: 0.375rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .action-btn .form-input { border-top-right-radius: 0; border-bottom-right-radius: 0; border-right: none; margin: 0; width: 100%; min-width: 250px; max-width: 350px; transition: all 0.2s; position: relative; z-index: 1; }
-        .action-btn .form-input:focus { z-index: 10; border-color: #4f46e5; box-shadow: inset 0 0 0 1px #4f46e5, 0 0 0 2px rgba(79,70,229,0.2); }
-        .action-btn .btn-indigo { border-top-left-radius: 0; border-bottom-left-radius: 0; margin: 0; padding: 0.5rem 1.25rem; z-index: 2; transition: background-color 0.2s; }
-
-        /* Buttons */
-        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1rem; border: 1px solid transparent; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.2s; text-decoration: none; box-sizing: border-box; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .btn i { margin-right: 0.5rem; }
-        .btn-green { background-color: #16a34a; color: #ffffff; }
-        .btn-green:hover { background-color: #15803d; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(22, 163, 74, 0.25); }
-        .btn-red { color: #ffffff;  background-color: #dc2626; border-color: #fecaca; }
-        .btn-blue { background-color: #2563eb; color: #ffffff; }
-        .btn-indigo { background-color: #4f46e5; color: white; }
-        .btn-indigo:hover { background-color: #4338ca; }
-        .btn-gray { background-color: #e5e7eb; color: #374151; }
-        .btn-gray:hover { background-color: #d1d5db; }
+        /* --- Action Container (Toolbar Layout) - Mobile First --- */
+        .action-container { display: flex; flex-direction: column; width: 100%; gap: 0.75rem; margin-bottom: 1rem; }
+        .action-left-group { display: flex; flex-direction: column; width: 100%; gap: 0.75rem; }
 
         /* Auto Reload Toggle */
-        .auto-reload-label { display: flex; align-items: center; font-size: 0.875rem; color: #374151; cursor: pointer; font-weight: 500; }
-        .auto-reload-checkbox { margin-right: 0.5rem; cursor: pointer; width: 1rem; height: 1rem; accent-color: #4f46e5; }
+        .auto-reload-label { display: flex; align-items: center; font-size: 0.8rem; color: #374151; cursor: pointer; width: 100%; justify-content: flex-start; padding: 0.25rem 0; font-weight: 500; white-space: nowrap; }
+        .auto-reload-checkbox { margin-right: 0.4rem; cursor: pointer; width: 1rem; height: 1rem; accent-color: #4f46e5; }
+        
+        /* Action Forms (To allow buttons to stretch) */
+        .action-form { margin: 0; width: 100%; }
 
-        /* Filters Section */
-        .filter-section { display: flex; flex-direction: row; flex-wrap: wrap; align-items: flex-end; gap: 16px; width: 60%; margin-bottom: 0; }
-        .form-group { display: flex; flex-direction: column; flex: 1; min-width: 150px; }
-        .form-label { font-weight: 600; margin-bottom: 4px; font-size: 0.875rem; color: #374151; }
-        .form-input, .form-select { padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.875rem; width: 100%; box-sizing: border-box; background-color: white; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
-        .form-input:focus, .form-select:focus { border-color: #4f46e5; box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2); }
+        /* Buttons - Mobile First (Full Width default) */
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1.5rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; border: none; transition: background-color 0.2s, box-shadow 0.2s, transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box; text-decoration: none; white-space: nowrap; line-height: 1.5; min-height: 46px; }
+        .btn i { margin-right: 0.5rem; }
+        .btn h4 { margin: 0 0 0 0.5rem; font-size: 0.875rem; display: inline; }
+
+        .btn-green { background-color: #16a34a; color: white; border: 1px solid #15803d; }
+        .btn-green:hover { background-color: #15803d; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(22, 163, 74, 0.25); color: white; }
+        .btn-green:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(22, 163, 74, 0.15); }
+        
+        .btn-blue { background-color: #2563eb; color: white; border: 1px solid #1d4ed8; }
+        .btn-blue:hover { background-color: #1d4ed8; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(37, 99, 235, 0.25); color: white; }
+
+        .btn-red { background-color: #dc2626; color: white; border: 1px solid #b91c1c; }
+        .btn-red:hover { background-color: #b91c1c; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(220, 38, 38, 0.25); color: white; }
+        
+        .btn-indigo { background-color: #4f46e5; color: white; border: 1px solid #4338ca; }
+        .btn-indigo:hover { background-color: #4338ca; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25); color: white; }
+
+        .btn-gray { background-color: #e5e7eb; color: #374151; padding: 0.85rem 1.5rem; font-weight: 600; border-radius: 0.375rem; }
+        .btn-gray:hover { background-color: #d1d5db; }
+
+        /* --- Search Form Group --- */
+        .search-form { display: flex; align-items: stretch; width: 100%; margin: 0; min-height: 44px; }
+        .search-form .form-input { border-top-right-radius: 0; border-bottom-right-radius: 0; border-right: none; margin: 0; width: 100%; transition: all 0.2s; position: relative; z-index: 1; padding: 0.5rem 1rem; border: 1px solid #d1d5db; outline: none; font-size: 0.875rem; line-height: 1.5; background-color: white; border-top-left-radius: 0.375rem; border-bottom-left-radius: 0.375rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .search-form .form-input:focus { z-index: 10; border-color: #4f46e5; box-shadow: inset 0 0 0 1px #4f46e5, 0 0 0 2px rgba(79,70,229,0.2); }
+        .search-form .btn-indigo { border-top-left-radius: 0; border-bottom-left-radius: 0; margin: 0; z-index: 2; width: auto; padding: 0 1.25rem; display: flex; align-items: center; justify-content: center; }
+
+        /* --- Filters Section - Mobile First --- */
+        .filter-section { display: flex; flex-direction: column; align-items: stretch; width: 100%; gap: 1rem; margin-bottom: 1.5rem; background: #f9fafb; padding: 1rem; border-radius: 0.5rem; border: 1px solid #e5e7eb; box-sizing: border-box; }
+        .form-group { display: flex; flex-direction: column; width: 100%; }
+        .form-label { font-weight: 600; margin-bottom: 0.35rem; font-size: 0.875rem; color: #374151; }
+        .form-input, .form-select { padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 1rem; width: 100%; box-sizing: border-box; outline: none; transition: border-color 0.2s, box-shadow 0.2s; background-color: white; min-height: 44px; }
+        .form-input:focus, .form-select:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); }
         textarea.form-input { resize: vertical; }
+        
+        .filter-container { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; margin-top: 0.5rem; }
 
-        /* Container for the Apply and Report buttons */
-        .filter-container { display: flex; gap: 8px; flex-shrink: 0; }
-
-        /* Data Table */
-        .table-container { overflow-x: auto; background-color: #ffffff; border-radius: 0.5rem; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-top: 1.5rem; }
+        /* --- Data Table - Horizontal Scroll on All Devices --- */
+        .table-container { width: 100%; overflow-x: auto; background-color: #ffffff; border-radius: 0.5rem; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-top: 1.5rem; -webkit-overflow-scrolling: touch; display: block; }
         .data-table { width: 100%; min-width: 1200px; border-collapse: collapse; text-align: left; font-size: 0.875rem; }
         .data-table th { padding: 0.75rem 1rem; background-color: #f3f4f6; color: #374151; font-weight: 600; text-transform: uppercase; border-bottom: 2px solid #e5e7eb; white-space: nowrap; }
         .data-table td { padding: 0.75rem 1rem; border-bottom: 1px solid #e5e7eb; color: #1f2937; vertical-align: top; }
@@ -65,55 +80,84 @@
         .status-default { background-color: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
 
         /* Action Links inside Table */
-        .action-group { display: flex; flex-direction: column; gap: 0.25rem; }
-        .action-link { display: flex; align-items: center; font-size: 0.75rem; font-weight: 600; font-family: inherit; cursor: pointer; padding: 0.35rem 0.5rem; border-radius: 0.25rem; transition: 0.2s; text-decoration: none; border: 1px solid transparent; background: transparent; white-space: nowrap; width: 100%; text-align: left; }
-        .action-link i { margin-right: 0.35rem; width: 14px; text-align: center; }
+        .action-group { display: flex; flex-direction: column; gap: 0.5rem; min-width: 130px; }
+        .action-link { display: flex; align-items: center; font-size: 0.75rem; font-weight: 500; font-family: inherit; cursor: pointer; padding: 0.35rem 0.75rem; border-radius: 0.375rem; transition: 0.2s; text-decoration: none; background: transparent; white-space: nowrap; width: 100%; text-align: left; box-sizing: border-box; justify-content: flex-start; border: 1px solid transparent; min-height: 32px; }
+        .action-link i { margin-right: 0.35rem; width: 16px; text-align: center; flex-shrink: 0; }
         
-        .link-blue { color: #2563eb; background-color: #eff6ff; border-color: #bfdbfe; } .link-blue:hover { background-color: #dbeafe; color: #1e40af; }
-        .link-yellow { color: #ca8a04; background-color: #fefce8; border-color: #fef08a; } .link-yellow:hover { background-color: #fef9c3; color: #854d0e; }
-        .link-indigo { color: #4f46e5; background-color: #eef2ff; border-color: #c7d2fe; } .link-indigo:hover { background-color: #e0e7ff; color: #3730a3; }
-        .link-red { color: #dc2626; background-color: #fef2f2; border-color: #fecaca; } .link-red:hover { background-color: #fee2e2; color: #991b1b; }
+        .link-blue { color: #2563eb; border: 1px solid #93c5fd; } 
+        .link-blue:hover { background-color: #eff6ff; color: #1e40af; border-color: #60a5fa; }
+        
+        .link-yellow { color: #ca8a04; border: 1px solid #fde047; } 
+        .link-yellow:hover { background-color: #fef9c3; color: #a16207; border-color: #facc15; }
+        
+        .link-indigo { color: #4f46e5; border: 1px solid #a5b4fc; } 
+        .link-indigo:hover { background-color: #e0e7ff; color: #3730a3; border-color: #818cf8; }
+        
+        .link-red { color: #dc2626; border: 1px solid #fca5a5; } 
+        .link-red:hover { background-color: #fef2f2; color: #b91c1c; border-color: #f87171; }
 
-        /* Modal Base */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 1rem; }
+        /* Modal Base - Mobile First */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem; box-sizing: border-box; }
         .modal-overlay.hidden { display: none !important; }
-        .modal-box { position: relative; background-color: white; border-radius: 0.75rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); width: 100%; max-width: 48rem; max-height: 90vh; overflow-y: auto; padding: 2rem; box-sizing: border-box; }
-        
-        /* Fixed Modal Close Button */
-        .close-btn { position:absolute; top:1.5rem; right:1.5rem; color:#9ca3af; font-size:2rem; background:none; border:none; cursor:pointer; transition:color 0.2s; line-height: 1; padding: 0; }
+        .modal-box { position: relative; background-color: white; border-radius: 0.75rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); width: 100%; max-width: 48rem; max-height: 90vh; overflow-y: auto; padding: 1.5rem; box-sizing: border-box; }
+        .close-btn { position:absolute; top:1.25rem; right:1.5rem; color:#9ca3af; font-size:2rem; background:none; border:none; cursor:pointer; transition:color 0.2s; line-height: 1; padding: 0; }
         .close-btn:hover { color:#374151; }
-        .modal-title { font-size: 1.5rem; font-weight: 700; color: #111827; margin-top: 0; margin-bottom: 1.5rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.75rem; padding-right: 2rem; }
+        .modal-title { font-size: 1.25rem; font-weight: 700; color: #111827; margin-top: 0; margin-bottom: 1.5rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.75rem; padding-right: 2rem; }
         
-        /* Modal Grids */
         .form-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-        @media (min-width: 640px) {
-            .form-grid { grid-template-columns: repeat(2, 1fr); }
-            .col-span-2 { grid-column: span 2; }
-        }
-        fieldset.form-fieldset { border: 1px solid #d1d5db; border-radius: 0.5rem; padding: 1.25rem; margin-bottom: 1rem; }
+        fieldset.form-fieldset { border: 1px solid #d1d5db; border-radius: 0.5rem; padding: 1rem 0.75rem; margin-bottom: 1rem; }
         fieldset.form-fieldset legend { font-weight: 600; color: #374151; padding: 0 0.5rem; font-size: 1rem; }
-
-        .modal-footer { display: flex; justify-content: flex-end; padding-top: 1.25rem; border-top: 1px solid #e5e7eb; margin-top: 1.25rem; gap: 0.75rem; }
+        .modal-footer { display: flex; flex-direction: column; padding-top: 1.25rem; border-top: 1px solid #e5e7eb; margin-top: 1.25rem; gap: 0.75rem; }
+        .modal-footer .btn { width: 100%; }
 
         /* Pagination Fixes */
-        .pagination-container { margin-top: 1.5rem; font-size: 0.875rem; color: #374151; }
-        .pagination-container nav { display: flex; flex-direction: column; gap: 1rem; align-items: center; }
-        @media (min-width: 640px) { .pagination-container nav { flex-direction: row; justify-content: space-between; } }
-        .pagination-container svg { width: 1.25rem; height: 1.25rem; display: inline-block; } 
-        .pagination-container p { margin: 0; color: #4b5563; }
-        .pagination-container span.relative.inline-flex, 
-        .pagination-container a.relative.inline-flex { display: inline-flex; align-items: center; padding: 0.5rem 0.75rem; border: 1px solid #d1d5db; text-decoration: none; color: #374151; background: #fff; margin-left: -1px; }
-        .pagination-container a.relative.inline-flex:hover { background-color: #f3f4f6; }
-        .pagination-container span[aria-current="page"] span { background-color: #eff6ff; color: #4f46e5; border-color: #4f46e5; z-index: 1; }
-        .pagination-container span[aria-disabled="true"] span { opacity: 0.5; cursor: not-allowed; }
+        .pagination-container { margin-top: 1.5rem; width: 100%; overflow-x: auto; padding-bottom: 0.5rem; }
+        .pagination-container nav { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; }
+        .pagination-container svg { width: 1.25rem !important; height: 1.25rem !important; display: inline-block; vertical-align: middle; } 
+        .pagination-container a, .pagination-container span { display: inline-flex; align-items: center; justify-content: center; }
+        .pagination-container p { margin: 0; font-size: 0.875rem; color: #6b7280; }
 
-        /* Responsive Adjustments */
+        /* --------------------------------------------------- */
+        /* Mobile Specific Overrides                           */
+        /* --------------------------------------------------- */
         @media (max-width: 640px) {
+            .pagination-container > nav > div:first-child { display: flex; width: 100%; justify-content: space-between; }
+            .pagination-container > nav > div:last-child { display: none; }
+            .page-wrapper { padding: 0.5rem; }
             .content-panel { padding: 1rem; }
-            .action-container { flex-direction: column; align-items: stretch; }
-            .filter-section { flex-direction: column; align-items: stretch; width: 100%;}
-            .filter-container { flex-direction: column; margin-top: 8px; }
-            .btn { width: 100%; justify-content: center; }
+        }
+
+        /* --------------------------------------------------- */
+        /* Desktop & Tablet Overrides (min-width: 768px)       */
+        /* --------------------------------------------------- */
+        @media (min-width: 768px) {
+            .content-panel { padding: 1.5rem; }
+            .header-flex { flex-direction: row; justify-content: space-between; align-items: center; }
+            
+            /* Align Actions inline */
+            .action-container { flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+            .action-left-group { flex-direction: row; width: auto; flex: 1; align-items: center; }
+            .action-form { width: auto; }
+            .search-form { max-width: 350px; min-width: 250px; width: auto; }
+            .auto-reload-label { width: auto; padding: 0; justify-content: flex-start; margin-left: 0.5rem; }
+            
+            /* Un-stretch buttons on desktop */
+            .btn { width: auto; padding: 0.5rem 1.5rem; }
+            
+            /* Filter Row */
+            .filter-section { flex-direction: row; align-items: flex-end; width: auto; background: transparent; padding: 0; border: none; }
+            .form-group { width: 200px; }
+            .filter-container { flex-direction: row; width: auto; margin-top: 0; }
+            .form-input, .form-select { padding: 0.5rem 0.75rem; min-height: 44px; }
+            
+            /* Modal formatting */
+            .modal-box { padding: 2rem; }
+            .modal-title { font-size: 1.5rem; }
+            .form-grid { grid-template-columns: repeat(2, 1fr); }
+            .col-span-2 { grid-column: span 2; }
+            fieldset.form-fieldset { padding: 1.25rem; }
+            .modal-footer { flex-direction: row; justify-content: flex-end; }
+            .modal-footer .btn { width: auto; }
         }
     </style>
 
@@ -125,26 +169,26 @@
                     <h3 class="title">All Tickets</h3>
                 </div>
 
+                {{-- Toolbar Action Buttons --}}
                 <div class="action-container">
-                    <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-
+                    <div class="action-left-group">
                         @can('create_ticket')
                         <button id="openModal" class="btn btn-green">
                             <i class="fas fa-plus"></i> Add Ticket
                         </button>
                         @endcan
 
-                        <form action="{{ route('tickets.index') }}" method="GET" style="margin: 0;">
+                        <form action="{{ route('tickets.index') }}" method="GET" class="action-form">
                             <input type="hidden" name="filter" value="allTickets">
                             <button id="allTickets" type="submit" class="btn btn-blue">
-                                <i class="fas fa-count"></i> All Tickets <h4 style="margin-left: 0.5rem;">({{ $ticketsCount }})</h4>
+                                <i class="fas fa-list"></i> All Tickets <h4>({{ $ticketsCount ?? 0 }})</h4>
                             </button>
                         </form>
 
-                        <form action="{{ route('tickets.index') }}" method="GET" style="margin: 0;">
+                        <form action="{{ route('tickets.index') }}" method="GET" class="action-form">
                             <input type="hidden" name="filter" value="overdue">
                             <button id="overdue" type="submit" class="btn btn-red">
-                                <i class="fas fa-clock"></i> Overdue Tickets <h4 style="margin-left: 0.5rem;">({{ $overdueCount }})</h4>
+                                <i class="fas fa-clock"></i> Overdue <h4>({{ $overdueCount ?? 0 }})</h4>
                             </button>
                         </form>
 
@@ -155,60 +199,60 @@
                     </div>
 
                     @can('search_ticket')
-                    <form action="{{ route('tickets.index') }}" method="GET" class="action-btn">
-                        <input type="text" name="search_query" value="{{ request('search_query') }}" placeholder="Search..." class="form-input">
-                        <button type="submit" class="btn btn-indigo">
-                            <i class="fas fa-search"></i>
+                    <form action="{{ route('tickets.index') }}" method="GET" class="search-form">
+                        <input type="text" name="search_query" value="{{ request('search_query') }}" placeholder="Search tickets..." class="form-input">
+                        <button type="submit" class="btn btn-indigo" aria-label="Search">
+                            <i class="fas fa-search" style="margin: 0;"></i>
                         </button>
                     </form>
                     @endcan
                 </div>
                 
-                <div style="margin-bottom: 1.5rem;">
-                    <form action="{{ route('tickets.index') }}" method="GET" class="filter-section">
-                        <div class="form-group">
-                            <label for="it_area" class="form-label">Filter by Region</label>
-                            <select name="it_area" id="it_area" class="form-select">
-                                <option value="">All Regions</option>
-                                @if($it_area && count($it_area))
-                                    @foreach($it_area as $area)
-                                        <option value="{{ $area }}" {{ request('it_area') == $area ? 'selected' : '' }}>
-                                            {{ $area }}
-                                        </option>
-                                    @endforeach
-                                @endif
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="status" class="form-label">Filter by Status</label>
-                            <select name="status" id="status" class="form-select">
-                                <option value="">All Tickets</option>
-                                <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="Pending/Re-Assigned" {{ request('status') == 'Pending/Re-Assigned' ? 'selected' : '' }}>Pending/Re-Assigned</option>
-                                <option value="Resolved" {{ request('status') == 'Resolved' ? 'selected' : '' }}>Resolved</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="start_date" class="form-label">Start Date</label>
-                            <input type="datetime-local" id="start_date" name="start_date" value="{{ request('start_date') }}" class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label for="end_date" class="form-label">End Date</label>
-                            <input type="datetime-local" id="end_date" name="end_date" value="{{ request('end_date') }}" class="form-input">
-                        </div>
-                        <div class="filter-container">
-                            <button type="submit" name="action" value="search" class="btn btn-indigo">
-                                <i class="fas fa-filter"></i> Apply
-                            </button>
-                            @can('generate_report')
-                            <button type="submit" name="action" value="generate" class="btn btn-green">
-                                <i class="fas fa-download"></i> Report
-                            </button>
-                            @endcan
-                        </div>
-                    </form>
-                </div>
+                {{-- Filters --}}
+                <form action="{{ route('tickets.index') }}" method="GET" class="filter-section">
+                    <div class="form-group">
+                        <label for="it_area" class="form-label">Filter by Region</label>
+                        <select name="it_area" id="it_area" class="form-select">
+                            <option value="">All Regions</option>
+                            @if(!empty($it_area))
+                                @foreach($it_area as $area)
+                                    <option value="{{ $area }}" {{ request('it_area') == $area ? 'selected' : '' }}>
+                                        {{ $area }}
+                                    </option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="status" class="form-label">Filter by Status</label>
+                        <select name="status" id="status" class="form-select">
+                            <option value="">All Tickets</option>
+                            <option value="Pending" {{ request('status') == 'Pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="Pending/Re-Assigned" {{ request('status') == 'Pending/Re-Assigned' ? 'selected' : '' }}>Pending/Re-Assigned</option>
+                            <option value="Resolved" {{ request('status') == 'Resolved' ? 'selected' : '' }}>Resolved</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="start_date" class="form-label">Start Date</label>
+                        <input type="datetime-local" id="start_date" name="start_date" value="{{ request('start_date') }}" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label for="end_date" class="form-label">End Date</label>
+                        <input type="datetime-local" id="end_date" name="end_date" value="{{ request('end_date') }}" class="form-input">
+                    </div>
+                    <div class="filter-container">
+                        <button type="submit" name="action" value="search" class="btn btn-indigo">
+                            <i class="fas fa-filter"></i> Apply
+                        </button>
+                        @can('generate_report')
+                        <button type="submit" name="action" value="generate" class="btn btn-green">
+                            <i class="fas fa-download"></i> Report
+                        </button>
+                        @endcan
+                    </div>
+                </form>
 
+                {{-- Data Table --}}
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
@@ -229,9 +273,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($tickets as $ticket)
+                            @forelse ($tickets ?? [] as $ticket)
                                 <tr>
-                                    <td class="font-bold">{{ $ticket->ticket_number }}</td>
+                                    <td class="text-center font-bold">{{ $ticket->ticket_number }}</td>
                                     <td>{{ $ticket->firstname }} {{ $ticket->lastname }}</td>
                                     <td>{{ $ticket->division }}</td>
                                     <td>{{ $ticket->device }}</td>
@@ -266,17 +310,19 @@
                                     <td class="text-center">
                                         @php
                                             $status = trim($ticket->status);
-                                            $badgeClass = 'status-default';
-                                            if ($status === 'Resolved') $badgeClass = 'status-resolved';
-                                            elseif ($status === 'Pending') $badgeClass = 'status-pending';
-                                            elseif ($status === 'Pending/Re-Assigned') $badgeClass = 'status-reassigned';
+                                            $badgeClass = match($status) {
+                                                'Resolved' => 'status-resolved',
+                                                'Pending' => 'status-pending',
+                                                'Pending/Re-Assigned' => 'status-reassigned',
+                                                default => 'status-default',
+                                            };
                                         @endphp
                                         <span class="badge {{ $badgeClass }}">
                                             {{ $ticket->status }}
                                         </span>
                                     </td>
 
-                                    <td>
+                                    <td class="text-center">
                                         <div class="action-group">
                                             @can('reassign_ticket')
                                                 <button type="button" class="action-link link-yellow open-assign-modal"
@@ -305,7 +351,7 @@
                                             @endcan
 
                                             @can('delete_ticket')
-                                                <form id="delete-form-{{ $ticket->ticket_id }}" action="{{ route('tickets.destroy', $ticket->ticket_id) }}" method="POST" style="margin: 0;">
+                                                <form id="delete-form-{{ $ticket->ticket_id }}" action="{{ route('tickets.destroy', $ticket->ticket_id) }}" method="POST" style="margin: 0; width: 100%;">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="button" class="action-link link-red delete-btn" data-id="{{ $ticket->ticket_id }}">
@@ -328,11 +374,12 @@
                 </div>
 
                 <div class="pagination-container">
-                    {{ $tickets->links() }}
+                    {{ $tickets->links() ?? '' }}
                 </div>
             </div>
         </div>
 
+        {{-- Add Ticket Modal --}}
         <div id="ticketModal" class="modal-overlay hidden">
             <div class="modal-box transform scale-95 opacity-0 transition-all duration-300 ease-out">
                 <button id="closeModal" class="close-btn" aria-label="Close">&times;</button>
@@ -352,7 +399,6 @@
 
                 <form action="{{ route('tickets.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    
                     <fieldset class="form-fieldset">
                         <legend>Client Information</legend>
                         <div class="form-grid">
@@ -377,7 +423,7 @@
                                 <label for="division" class="form-label">Division <span style="color:#ef4444;">*</span></label>
                                 <select name="division" id="division" required class="form-select">
                                     <option value="" disabled selected>Select Division</option>
-                                    @foreach ($sections_divisions as $division)
+                                    @foreach ($sections_divisions ?? [] as $division)
                                         <option value="{{ $division }}">{{ $division }}</option>
                                     @endforeach
                                 </select>
@@ -399,7 +445,7 @@
                                 <label for="service" class="form-label">Technical Service <span style="color:#ef4444;">*</span></label>
                                 <select name="service" id="service" required class="form-select">
                                     <option value="" disabled selected>Select Service</option>
-                                    @foreach ($technical_services as $service)
+                                    @foreach ($technical_services ?? [] as $service)
                                         <option value="{{ $service }}">{{ $service }}</option>
                                     @endforeach
                                 </select>
@@ -422,7 +468,7 @@
                                 <label for="it_area_add" class="form-label">Region <span style="color:#ef4444;">*</span></label>
                                 <select name="it_area" id="it_area_add" required class="form-select">
                                     <option selected disabled value="">Select Region</option>
-                                    @foreach($it_area as $area)
+                                    @foreach($it_area ?? [] as $area)
                                         <option value="{{ $area }}">{{ $area }}</option>
                                     @endforeach
                                 </select>
@@ -453,6 +499,7 @@
             </div>
         </div>
 
+        {{-- Re-Assign Modal --}}
         <div id="assignTicketModal" class="modal-overlay hidden">
             <div class="modal-box transform scale-95 opacity-0 transition-all duration-300 ease-out">
                 <button id="closeAssignModal" class="close-btn" aria-label="Close">&times;</button>
@@ -467,7 +514,7 @@
                             <label for="it_area_assign" class="form-label">Region <span style="color:#ef4444;">*</span></label>
                             <select name="it_area" id="it_area_assign" required class="form-select">
                                 <option selected disabled value="">Select Region</option>
-                                @foreach($it_area as $area)
+                                @foreach($it_area ?? [] as $area)
                                     <option value="{{ $area }}">{{ $area }}</option>
                                 @endforeach
                             </select>
@@ -502,6 +549,7 @@
             </div>
         </div>
 
+        {{-- Edit Modal --}}
         <div id="editticketModal" class="modal-overlay hidden">
             <div class="modal-box transform scale-95 opacity-0 transition-all duration-300 ease-out">
                 <button id="closeEditModal" class="close-btn" aria-label="Close">&times;</button>
@@ -551,6 +599,7 @@
 
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const body = document.body;
@@ -636,7 +685,7 @@
                 }, 300);
             }
 
-            const itMapping = @json($it_mapping);
+            const itMapping = @json($it_mapping ?? []);
 
             // ======= ADD TICKET MODAL =======
             const addModal = document.getElementById('ticketModal');
