@@ -103,7 +103,8 @@
             .action-btn .form-input { min-width: 250px; max-width: 350px; }
             
             /* Un-stretch buttons on desktop */
-            .btn-green, .btn-indigo { width: auto; min-width: 140px; }
+            .btn-green, .modal-footer .btn-indigo { width: auto; min-width: 140px; }
+            .action-btn .btn-indigo { min-width: auto; padding: 0.5rem 1.25rem; }
             
             /* Restore Grid layout for Desktop */
             .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); }
@@ -136,7 +137,7 @@
                 @can('search_technical_personnel')
                 <form action="{{ route('tech_personnel.index') }}" method="GET" class="action-btn">
                     <input type="text" name="search_query" value="{{ request('search_query') }}" placeholder="Search..." class="form-input">
-                    <button type="submit" class="btn btn-indigo" style="padding: 0.5rem 1.25rem;">
+                    <button type="submit" class="btn btn-indigo">
                         <i class="fas fa-search"></i>
                     </button>
                 </form>

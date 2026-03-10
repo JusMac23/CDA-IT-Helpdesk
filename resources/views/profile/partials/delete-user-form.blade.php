@@ -1,119 +1,23 @@
 <section class="delete-section">
     <style>
-        /* Shared Header Styles */
-        .section-header h2 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--text-main, #1f2937);
-            margin-bottom: 0.25rem;
-        }
-        
-        .section-header p {
-            font-size: 0.875rem;
-            color: var(--text-muted, #6b7280);
-            margin-bottom: 0;
-        }
-
-        .delete-section {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem; /* Replaces space-y-6 */
-        }
-
-        /* Input Styles */
-        .form-input {
-            width: 100%;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid var(--border-color, #e5e7eb);
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-            color: var(--text-main, #1f2937);
-            background-color: #ffffff;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-            font-family: inherit;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: var(--danger, #ef4444);
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
-        }
-
-        .input-w-75 {
-            width: 100%;
-        }
-        @media (min-width: 640px) {
-            .input-w-75 { width: 75%; } /* Replaces w-3/4 on larger screens */
-        }
-
-        /* Buttons */
-        .btn-danger {
-            background-color: var(--danger, #ef4444);
-            color: #ffffff;
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-danger:hover {
-            background-color: #dc2626; /* Darker red */
-        }
-
-        .btn-secondary {
-            background-color: #ffffff;
-            color: var(--text-main, #1f2937);
-            padding: 0.5rem 1rem;
-            border-radius: 0.375rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-            border: 1px solid var(--border-color, #d1d5db);
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-secondary:hover {
-            background-color: #f3f4f6;
-        }
-
-        /* Modal Specific Styling */
-        .modal-content-pad {
-            padding: 1.5rem; /* Replaces p-6 */
-        }
-
-        .modal-actions {
-            margin-top: 1.5rem;
-            display: flex;
-            justify-content: flex-end;
-            gap: 0.75rem; /* Replaces ms-3 */
-        }
-
-        .mt-6 { margin-top: 1.5rem; }
-        .mt-2 { margin-top: 0.5rem; }
-        
-        .text-error { font-size: 0.875rem; color: var(--danger, #ef4444); }
-
-        /* Screen reader only class (for the password label) */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border-width: 0;
-        }
+        /* Section Header Title */ .section-header h2 { font-size: 1.125rem; font-weight: 600; color: var(--text-main, #1f2937); margin-bottom: 0.25rem; }
+        /* Section Header Desc */ .section-header p { font-size: 0.875rem; color: var(--text-muted, #6b7280); margin-bottom: 0; }
+        /* Delete Section */ .delete-section { display: flex; flex-direction: column; gap: 1.5rem; }
+        /* Form Input */ .form-input { width: 100%; padding: 0.725rem 1.0rem; border: 1px solid var(--border-color, #e5e7eb); border-radius: 0.375rem; font-size: 0.875rem; color: var(--text-main, #1f2937); background-color: #ffffff; transition: border-color 0.2s ease, box-shadow 0.2s ease; font-family: inherit; }
+        /* Form Input Focus */ .form-input:focus { outline: none; border-color: var(--danger, #ef4444); box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2); }
+        /* Input Width 75 Mobile */ .input-w-75 { width: 100%; }
+        /* Input Width 75 Desktop */ @media (min-width: 640px) { .input-w-75 { width: 75%; } }
+        /* Danger Button */ .btn-danger { background-color: var(--danger, #ef4444); color: #ffffff; padding: 0.725rem 1.0rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 600; border: none; cursor: pointer; transition: background-color 0.2s ease; display: inline-flex; align-items: center; justify-content: center; }
+        /* Danger Btn Hover */ .btn-danger:hover { background-color: #dc2626; }
+        /* Secondary Button */ .btn-secondary { background-color: #ffffff; color: var(--text-main, #1f2937); padding: 0.5rem 1rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 600; border: 1px solid var(--border-color, #d1d5db); cursor: pointer; transition: background-color 0.2s ease; display: inline-flex; align-items: center; justify-content: center; }
+        /* Secondary Btn Hover */ .btn-secondary:hover { background-color: #f3f4f6; }
+        /* Modal Content Padding */ .modal-content-pad { padding: 1.5rem; }
+        /* Modal Actions */ .modal-actions { margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.75rem; }
+        /* Margin Top 6 */ .mt-6 { margin-top: 1.5rem; }
+        /* Margin Top 2 */ .mt-2 { margin-top: 0.5rem; }
+        /* Error Text */ .text-error { font-size: 0.875rem; color: var(--danger, #ef4444); }
+        /* Screen Reader Only */ .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
+        /* Mobile Buttons Stretch */ @media (max-width: 768px) { .btn-danger, .btn-secondary { width: 100%; } .modal-actions { flex-direction: column; align-items: stretch; gap: 1rem; } }
     </style>
 
     <header class="section-header">
