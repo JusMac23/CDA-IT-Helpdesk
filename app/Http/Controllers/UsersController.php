@@ -44,7 +44,7 @@ class UsersController extends Controller
             $roles = Role::where('name', '!=', 'Super Admin')->get(); 
         }
 
-        $users = $query->paginate(20)->appends($request->only('search_query'));
+        $users = $query->paginate(10)->appends($request->only('search_query'));
 
         return view('users.index', compact('users', 'roles'));
     }

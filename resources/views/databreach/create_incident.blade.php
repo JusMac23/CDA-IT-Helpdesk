@@ -12,9 +12,8 @@
     <title>CDA-DBRS</title>
     <link rel="icon" href="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" type="image/png">
 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <script src="/assets/js/sweetalert2.min.js"></script>
@@ -25,32 +24,32 @@
         :root { 
             --accent-blue: #3b82f6; 
             --alert-red: #ef4444; 
-            --text-muted: #94a3b8; 
+            --text-muted: #64748b; 
             --glass-bg: rgba(15, 23, 42, 0.9); 
             --glass-border: rgba(255, 255, 255, 0.1); 
             --primary-indigo: #4f46e5; 
             --indigo-hover: #4338ca; 
-            --bg-body: #f9fafb; 
-            --text-body: #1f2937; 
-            --border-color: #d1d5db; 
-            --error-bg: #fee2e2; 
+            --bg-body: #f8fafc; 
+            --text-body: #334155; 
+            --border-color: #cbd5e1; 
+            --error-bg: #fef2f2; 
             --error-text: #991b1b; 
             --error-border: #ef4444; 
         }
 
         /* Base Resets & Typography */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: var(--bg-body); color: var(--text-body); font-family: 'Figtree', ui-sans-serif, system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.5; }
+        body { background-color: var(--bg-body); color: var(--text-body); font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.5; }
         a { text-decoration: none; }
         ul { list-style: none; }
 
         /* Animations */
         @keyframes fade-in-down { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in-down { animation: fade-in-down 0.7s ease-out both; }
+        .animate-fade-in-down { animation: fade-in-down 0.5s ease-out forwards; }
 
         /* Header Styles */
         .app-header { background-color: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--glass-border); }
-        .header-gradient { height: 3px; background: linear-gradient(90deg, var(--accent-blue), var(--alert-red)); width: 100%; }
+        .header-gradient { height: 4px; background: linear-gradient(90deg, var(--accent-blue), var(--alert-red)); width: 100%; }
         .container { max-width: 1280px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; width: 100%; }
         
         /* Branding */
@@ -60,72 +59,84 @@
 
         /* Navigation */
         .nav-links { display: flex; gap: 1rem; align-items: center; font-weight: 600; font-size: 0.95rem; }
-        .nav-link { color: #e2e8f0; padding: 0.6rem 1.25rem; border-radius: 8px; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; border: 1px solid transparent; }
+        .nav-link { color: #e2e8f0; padding: 0.6rem 1.25rem; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s ease; border: 1px solid transparent; font-family: inherit; }
         .nav-link:hover { color: #ffffff; background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
         
         /* Hide nav icons on mobile to save space */
-        .nav-link .material-icons-outlined { display: none; }
+        .nav-link .material-icons-outlined { display: none; font-size: 1.25rem; }
 
         /* Logout Link Specifics */
-        .nav-link.nav-link-logout { color: #f87171; background: transparent; border: none; font: inherit; cursor: pointer; }
+        .nav-link.nav-link-logout { color: #fca5a5; background: transparent; border: none; font: inherit; cursor: pointer; }
         .nav-link.nav-link-logout:hover { color: #ffffff; background-color: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); }
 
         /* Form Container Section */
-        .incident-section { padding: 1.5rem; width: calc(100% - 2rem); max-width: 1152px; margin: 1.5rem auto 4rem; background-color: #ffffff; border-radius: 1rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04); position: relative; }
-        .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; color: var(--text-body); width: 100%; }
-        .form-section-title { font-size: 1.125rem; font-weight: 600; color: #1f2937; margin: 1.5rem 0 1rem; padding-bottom: 0.5rem; width: 100%; }
-        .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; color: var(--text-muted); font-size: 1.875rem; background: none; border: none; cursor: pointer; transition: color 0.2s; }
-        .close-btn:hover { color: var(--text-body); }
+        .incident-section { padding: 1.5rem; width: calc(100% - 2rem); max-width: 1152px; margin: 2rem auto 4rem; background-color: #ffffff; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); border: 1px solid #f1f5f9; position: relative; }
+        .section-title { font-size: 1.75rem; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 2rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem; letter-spacing: -0.025em; width: 100%; }
+        .form-section-title { font-size: 1.15rem; font-weight: 700; color: #0f172a; margin: 1.5rem 0 1.25rem; padding-bottom: 0.5rem; width: 100%; }
+        
+        .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; color: #94a3b8; font-size: 1.75rem; background: none; border: none; cursor: pointer; transition: all 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0.25rem 0.5rem; }
+        .close-btn:hover { color: #0f172a; background-color: #f1f5f9; }
 
         /* Alerts */
-        .alert-error { width: 100%; background-color: var(--error-bg); border-left: 4px solid var(--error-border); color: var(--error-text); padding: 1rem 1.5rem; margin-bottom: 1.5rem; border-radius: 0.5rem; display: flex; gap: 0.75rem; }
-        .alert-error h4 { margin-bottom: 0.25rem; font-size: 0.875rem; }
-        .alert-error ul { padding-left: 1.25rem; list-style-type: disc; font-size: 0.875rem; }
+        .alert-error { width: 100%; background-color: var(--error-bg); border-left: 4px solid var(--error-border); color: var(--error-text); padding: 1.25rem 1.5rem; margin-bottom: 2rem; border-radius: 0.5rem; display: flex; gap: 0.75rem; }
+        .alert-error h4 { margin-bottom: 0.5rem; font-size: 0.95rem; font-weight: 700; color: #7f1d1d; }
+        .alert-error ul { padding-left: 1.5rem; list-style-type: disc; font-size: 0.9rem; font-weight: 500; }
         
         /* Universal Form Elements - Mobile First (100% width) */
         form { width: 100%; }
         .form-group { width: 100%; margin-bottom: 1.5rem; }
-        .form-group label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-body); width: 100%; }
-        .text-required { color: var(--error-border); }
-        .form-control { width: 100%; border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.75rem 1rem; font-family: inherit; font-size: 1rem; color: var(--text-body); transition: all 0.2s; box-sizing: border-box; display: block; }
-        .form-control:focus { outline: none; border-color: var(--primary-indigo); box-shadow: 0 0 0 3px rgba(79,70,229,0.2); }
-        .form-control.is-invalid { border-color: var(--error-border); background-color: #fef2f2; }
-        select.form-control { appearance: auto; background-color: white; }
-        textarea.form-control { resize: vertical; min-height: 100px; width: 100%; }
+        .form-group label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; color: #475569; width: 100%; }
+        .text-required { color: var(--error-border); margin-left: 0.125rem; }
+        
+        /* Unified Input Heights */
+        .form-control { height: 44px; width: 100%; border: 1px solid var(--border-color); border-radius: 0.5rem; padding: 0 1rem; font-family: inherit; font-size: 0.95rem; color: var(--text-body); transition: all 0.2s; box-sizing: border-box; display: block; background-color: #ffffff; }
+        .form-control:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
+        .form-control.is-invalid { border-color: var(--error-border); background-color: var(--error-bg); }
+        .form-control.is-invalid:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important; }
+        .form-control::placeholder { color: #94a3b8; }
+        
+        /* Readonly specific styling */
+        .form-control[readonly] { background-color: #f8fafc; color: #64748b; cursor: not-allowed; border-color: #e2e8f0; }
+        
+        /* Textarea Override */
+        textarea.form-control { height: auto; padding: 0.75rem 1rem; resize: vertical; min-height: 120px; width: 100%; }
 
         /* Grids - Default to 1 column (100% width) for Mobile */
         .grid-2-col, .grid-3-col { display: flex; flex-direction: column; width: 100%; gap: 0; }
         
         /* Footer & Buttons - Mobile First (100% width) */
-        .form-footer { display: flex; flex-direction: column; width: 100%; gap: 1.5rem; align-items: stretch; margin-top: 1.5rem; padding-top: 2rem; border-top: 1px solid #e5e7eb; }
-        .btn-submit { width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 0.85rem; background-color: var(--primary-indigo); color: #ffffff; font-family: 'Figtree', ui-sans-serif, system-ui, -apple-system, sans-serif; font-weight: 600; font-size: 1rem; border: none; border-radius: 0.75rem; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); transition: all 0.3s ease; }
-        .btn-submit:hover:not(:disabled) { background-color: var(--indigo-hover); transform: scale(1.02); }
-        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
+        .form-footer { display: flex; flex-direction: column; width: 100%; gap: 1.5rem; align-items: stretch; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e2e8f0; }
+        
+        .btn-submit { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 2rem; background-color: var(--primary-indigo); color: white; font-size: 0.95rem; font-weight: 600; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s ease; width: 100%; font-family: inherit; box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
+        .btn-submit i { margin-right: 0.5rem; font-size: 1rem; }
+        .btn-submit:hover:not(:disabled) { background-color: var(--indigo-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+        .btn-submit:active:not(:disabled) { transform: translateY(0); box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
+        .btn-submit:disabled { background-color: #cbd5e1; color: #f8fafc; cursor: not-allowed; box-shadow: none; transform: none; }
         
         /* reCAPTCHA wrapper - Mobile First (100% width scaling) */
         .recaptcha-wrapper { width: 100%; margin: 0; overflow: hidden; position: relative; }
 
         /* --------------------------------------------------- */
-        /* Desktop & Tablet Overrides (min-width: 768px)       */
+        /* Desktop & Tablet Overrides                          */
         /* --------------------------------------------------- */
         @media (min-width: 768px) {
-            .incident-section { padding: 2rem; margin: 2.5rem auto 4rem; }
-            .close-btn { right: 2rem; }
+            .incident-section { padding: 2.5rem; margin: 3rem auto 4rem; }
+            .close-btn { top: 2rem; right: 2.5rem; }
             
             /* Show Nav Icons on Desktop/Tablet */
             .nav-link .material-icons-outlined { display: inline-block; }
 
             /* Activate Grids */
-            .grid-2-col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
-            .grid-3-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
+            .grid-2-col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+            .grid-3-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
             
             /* Reset gap zeroing from mobile */
             .grid-2-col .form-group, .grid-3-col .form-group { margin-bottom: 0; }
             
             /* Horizontal Footer */
             .form-footer { flex-direction: row; justify-content: space-between; align-items: flex-start; }
-            .btn-submit { width: auto; padding: 0.75rem 2rem; }
-            .recaptcha-wrapper { max-width: 304px; margin: 1rem 0; }
+            .btn-submit { width: auto; }
+            .recaptcha-wrapper { max-width: 304px; }
         }
     </style>
 </head>
@@ -145,21 +156,21 @@
                 @auth
                     <li>
                         <a href="{{ url('/dashboard') }}" class="nav-link">
-                            <span class="material-icons-outlined text-lg">dashboard</span> Dashboard
+                            <span class="material-icons-outlined">dashboard</span> Dashboard
                         </a>
                     </li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
                             @csrf
                             <button type="submit" class="nav-link nav-link-logout">
-                                <span class="material-icons-outlined text-lg">logout</span> Logout
+                                <span class="material-icons-outlined">logout</span> Logout
                             </button>
                         </form>
                     </li>
                 @else
                     <li>
                         <a href="{{ route('login') }}" class="nav-link">
-                            <span class="material-icons-outlined text-lg">login</span> Login
+                            <span class="material-icons-outlined">login</span> Login
                         </a>
                     </li>
                 @endauth
@@ -169,13 +180,13 @@
 </header>
 
 <section class="incident-section animate-fade-in-down">
-    <button id="close" onclick="window.location.href='{{ url('/') }}'" class="close-btn" aria-label="Close">
-        &times;
+    <button id="close" onclick="window.location.href='{{ url('/') }}'" class="close-btn" aria-label="Close" title="Close Form">
+        <i class="fas fa-times"></i>
     </button>
 
     @if ($errors->any())
         <div class="alert-error">
-            <i class="fas fa-exclamation-circle" style="margin-top: 0.25rem;"></i>
+            <i class="fas fa-exclamation-circle" style="margin-top: 0.125rem;"></i>
             <div>
                 <h4>Please fix the following errors:</h4>
                 <ul>
@@ -192,20 +203,20 @@
     <form action="{{ route('incident.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
-        <h3 class="form-section-title">Please provide the incident information.</h3>
+        <h3 class="form-section-title">Please provide the incident information</h3>
 
         <div class="grid-2-col">
             <div class="form-group">
                 <label for="sender_fullname">Full Name <span class="text-required">*</span></label>
-                <input type="text" id="sender_fullname" name="sender_fullname" placeholder="e.g., Juan A. Dela Cruz" required class="form-control">
+                <input type="text" id="sender_fullname" name="sender_fullname" placeholder="e.g., Juan A. Dela Cruz" required class="form-control" autocomplete="name">
             </div>
             <div class="form-group">
                 <label for="sender_email">Email Address <span class="text-required">*</span></label>
-                <input type="email" id="sender_email" name="sender_email" placeholder="e.g., j_delacruz@cda.gov.ph" required class="form-control">
+                <input type="email" id="sender_email" name="sender_email" placeholder="e.g., j_delacruz@cda.gov.ph" required class="form-control" autocomplete="email">
             </div>
         </div>
 
-        <div class="grid-3-col">
+        <div class="grid-3-col" style="margin-top: 1.5rem;">
             <div class="form-group">
                 <label for="date_occurrence">Date of Occurrence <span class="text-required">*</span></label>
                 <input type="datetime-local" id="date_occurrence" name="date_occurrence" required class="form-control">
@@ -225,49 +236,49 @@
             <label for="pic">Personal Information Controller <span class="text-required">*</span></label>
             <select id="pic" name="pic" required class="form-control">
                 <option value="">-- Select Region --</option>
-                <option>CDA HO</option>
-                <option>CDA CAR</option>
-                <option>CDA NIR</option>
-                <option>CDA NCR</option>
-                <option>CDA Region I</option>
-                <option>CDA Region II</option>
-                <option>CDA Region III</option>
-                <option>CDA Region IV-A</option>
-                <option>CDA Region IV-B</option>
-                <option>CDA Region V</option>
-                <option>CDA Region VI</option>
-                <option>CDA Region VII</option>
-                <option>CDA Region VIII</option>
-                <option>CDA Region IX</option>
-                <option>CDA Region X</option>
-                <option>CDA Region XI</option>
-                <option>CDA Region XII</option>
-                <option>CDA Region XIII</option>
+                <option value="CDA HO">CDA HO</option>
+                <option value="CDA CAR">CDA CAR</option>
+                <option value="CDA NIR">CDA NIR</option>
+                <option value="CDA NCR">CDA NCR</option>
+                <option value="CDA Region I">CDA Region I</option>
+                <option value="CDA Region II">CDA Region II</option>
+                <option value="CDA Region III">CDA Region III</option>
+                <option value="CDA Region IV-A">CDA Region IV-A</option>
+                <option value="CDA Region IV-B">CDA Region IV-B</option>
+                <option value="CDA Region V">CDA Region V</option>
+                <option value="CDA Region VI">CDA Region VI</option>
+                <option value="CDA Region VII">CDA Region VII</option>
+                <option value="CDA Region VIII">CDA Region VIII</option>
+                <option value="CDA Region IX">CDA Region IX</option>
+                <option value="CDA Region X">CDA Region X</option>
+                <option value="CDA Region XI">CDA Region XI</option>
+                <option value="CDA Region XII">CDA Region XII</option>
+                <option value="CDA Region XIII">CDA Region XIII</option>
             </select>
         </div>
 
         <div class="form-group">
             <label for="brief_summary">Brief Summary of the Incident <span class="text-required">*</span></label>
-            <textarea id="brief_summary" name="brief_summary" required rows="4" placeholder="Write a brief summary of the incident here..." class="form-control"></textarea>
+            <textarea id="brief_summary" name="brief_summary" required rows="4" placeholder="Provide a clear and concise description of the incident..." class="form-control"></textarea>
         </div>
 
         <div class="form-footer">
             <div class="recaptcha-wrapper" id="recaptcha-container">
-                <div class="g-recaptcha"
+                <div class="g-recaptcha" id="recaptcha"
                     data-sitekey="{{ config('services.recaptcha.site_key') }}"
                     data-callback="enableSubmitButton"
                     data-expired-callback="disableSubmitButton"
                     data-error-callback="disableSubmitButton"></div>
 
                 @if ($errors->has('g-recaptcha-response'))
-                    <span style="color: var(--error-border); font-size: 0.875rem; display: block; margin-top: 0.5rem; width: 100%;">
-                        {{ $errors->first('g-recaptcha-response') }}
+                    <span style="color: var(--error-border); font-size: 0.875rem; display: block; margin-top: 0.75rem; width: 100%; font-weight: 500;">
+                        <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i> {{ $errors->first('g-recaptcha-response') }}
                     </span>
                 @endif
             </div>
 
             <button type="submit" id="submitReportBtn" class="btn-submit" disabled>
-                <i class="fas fa-paper-plane"></i> Submit Report
+                <i class="fas fa-paper-plane"></i> <span>Submit Report</span>
             </button>
         </div>
     </form>
@@ -279,7 +290,7 @@
         Swal.fire({
             icon: 'success',
             title: 'Success!',
-            text: '{{ session('success') }}',
+            text: '{!! addslashes(session("success")) !!}',
             timer: 4000,
             showConfirmButton: false
         });
@@ -289,7 +300,7 @@
         Swal.fire({
             icon: 'error',
             title: 'Error!',
-            text: '{{ session('error') }}',
+            text: '{!! addslashes(session("error")) !!}',
             timer: 3000,
             showConfirmButton: false
         });
@@ -314,8 +325,8 @@
             Swal.fire({
                 icon: 'error',
                 title: 'Missing Information',
-                text: 'Please fill in all required fields marked with *.',
-                confirmButtonColor: '#3085d6'
+                text: 'Please fill in all required fields marked with an asterisk (*).',
+                confirmButtonColor: '#4f46e5'
             });
         }
     });
@@ -370,10 +381,15 @@
             // Standard reCAPTCHA size is 304px
             const scale = wrapperWidth / 304;
             
-            // Apply scale and fix dimensions
-            recaptcha.style.transform = `scale(${scale})`;
-            recaptcha.style.transformOrigin = '0 0';
-            wrapper.style.height = `${78 * scale}px`;
+            // Only scale down on very small screens, never scale up
+            if (scale < 1) {
+                recaptcha.style.transform = `scale(${scale})`;
+                recaptcha.style.transformOrigin = '0 0';
+                wrapper.style.height = `${78 * scale}px`;
+            } else {
+                recaptcha.style.transform = 'scale(1)';
+                wrapper.style.height = '78px';
+            }
         }
     }
 
@@ -382,7 +398,6 @@
     window.addEventListener('load', resizeRecaptcha);
     setTimeout(resizeRecaptcha, 300);
     setTimeout(resizeRecaptcha, 1000);
-    setTimeout(resizeRecaptcha, 2000); 
 </script>
 </body>
 </html>

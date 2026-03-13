@@ -26,7 +26,7 @@ class TechnicalServicesController extends Controller
         }
 
         // Paginate results
-        $technical_services = $query->orderBy('id', 'asc')->paginate(20);
+        $technical_services = $query->orderBy('id', 'asc')->paginate(10);
 
         return view('tech_services.index', compact('technical_services'));
     }

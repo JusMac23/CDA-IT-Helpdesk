@@ -138,7 +138,8 @@
             /* Responsive Mobile Footer adjustments for narrow screens */
             .app-footer { height: auto; min-height: 64px; padding: 16px 12px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); flex-direction: column; gap: 8px; text-align: center; }
             .app-footer p, .app-footer a { margin: 0; font-size: 12px; word-wrap: break-word; }
-            .sidebar-footer { height: auto; padding: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }}
+            .sidebar-footer { height: auto; padding: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
+        }
     </style>
 </head>
 
@@ -183,14 +184,10 @@
                             init() {
                                 this.updateTime();
                                 setInterval(() => this.updateTime(), 1000);
-                                window.addEventListener('resize', () => this.updateTime());
                             },
                             updateTime() {
-                                const isMobile = window.innerWidth < 768;
-                                const options = isMobile 
-                                    ? { timeZone: 'Asia/Manila', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true } 
-                                    : { timeZone: 'Asia/Manila', weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true };
-                                
+                                // Unified date format for all screen sizes
+                                const options = { timeZone: 'Asia/Manila', weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true };
                                 this.time = new Date().toLocaleString('en-US', options);
                             }
                         }">

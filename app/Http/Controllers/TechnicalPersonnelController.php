@@ -29,7 +29,7 @@ class TechnicalPersonnelController extends Controller
             });
         }
 
-        $technical_personnel = $query->paginate(20);
+        $technical_personnel = $query->paginate(10);
 
         return view('tech_personnel.index', compact('technical_personnel', 'region'));
     }

@@ -1,122 +1,175 @@
 <x-app-layout>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
+        /* Global Box Sizing & Font Fix */
+        *, *::before, *::after { box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
         /* Main Layout - Mobile First 100% Width */
-        .panel { background-color: #ffffff; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 1rem; width: 100%; box-sizing: border-box; }
+        .panel { background-color: #ffffff; border-radius: 1rem; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); padding: 1.25rem; width: 100%; }
         
         /* Typography */
         .header-flex { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 1.5rem; gap: 1rem; width: 100%; }
-        .title { font-size: 1.5rem; font-weight: 900; color: #111827; margin-bottom: 0; margin-top: 0; }
+        .title { font-size: 1.75rem; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: -0.025em; }
         
         /* --- Action Container & Search Toolbar - Mobile First --- */
         .action-container { display: flex; flex-direction: column; width: 100%; gap: 1rem; margin-bottom: 1.5rem; }
-        .action-btn { display: flex; align-items: stretch; width: 100%; border-radius: 0.375rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         
-        .action-btn .form-input { flex: 1; width: 100%; min-width: 0; max-width: none; border-top-right-radius: 0; border-bottom-right-radius: 0; border-right: none; margin: 0; padding: 0.75rem 1rem; font-size: 1rem; transition: all 0.2s; position: relative; z-index: 1; border: 1px solid #d1d5db; }
-        .action-btn .form-input:focus { z-index: 10; border-color: #4f46e5; box-shadow: inset 0 0 0 1px #4f46e5, 0 0 0 2px rgba(79,70,229,0.2); outline: none; }
-        
-        /* Stop search button from stretching to 100% */
-        .action-btn .btn-indigo { width: auto; border-top-left-radius: 0; border-bottom-left-radius: 0; margin: 0; padding: 0.5rem 1.25rem; z-index: 2; border: none; }
+        .search-form { display: flex; align-items: stretch; width: 100%; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border-radius: 0.5rem; }
+        .search-input { height: 44px; flex: 1; min-width: 0; padding: 0 1rem; font-size: 0.95rem; font-family: inherit; color: #334155; border: 1px solid #cbd5e1; border-right: none; border-top-left-radius: 0.5rem; border-bottom-left-radius: 0.5rem; outline: none; transition: all 0.2s; position: relative; z-index: 1; }
+        .search-input:focus { border-color: #6366f1; box-shadow: inset 0 0 0 1px #6366f1, 0 0 0 3px rgba(99, 102, 241, 0.15); z-index: 10; }
+        .search-btn { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 1.25rem; border: none; border-top-right-radius: 0.5rem; border-bottom-right-radius: 0.5rem; background-color: #4f46e5; color: white; cursor: pointer; transition: background-color 0.2s; z-index: 2; }
+        .search-btn:hover { background-color: #4338ca; }
 
-        /* --- Buttons - Mobile First (Full Width default) --- */
-        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.5rem 1.5rem; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; border: none; transition: background-color 0.2s, box-shadow 0.2s, transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.05); width: 100%; box-sizing: border-box; }
-        .btn i { margin-right: 0.5rem; }
+        /* --- Buttons - Uniform Heights --- */
+        .btn { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 1.5rem; border-radius: 0.5rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s ease; width: 100%; text-decoration: none; font-family: inherit; }
+        .btn i { margin-right: 0.5rem; font-size: 1rem; }
         
-        .btn-green { background-color: #16a34a; color: white; padding: 0.85rem 1rem; font-weight: 600; border: 1px solid #15803d; }
-        .btn-green:hover { background-color: #15803d; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(22, 163, 74, 0.25); }
-        .btn-green:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(22, 163, 74, 0.15); }
+        /* Modern Green */
+        .btn-green { background-color: #10b981; color: white; box-shadow: 0 1px 2px rgba(16, 185, 129, 0.2); }
+        .btn-green:hover { background-color: #059669; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+        .btn-green:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(16, 185, 129, 0.2); }
 
-        /* Taller Submit/Update Buttons matching DBRT */
-        .btn-indigo { background-color: #4f46e5; color: white; padding: 1rem 2rem; font-size: 1rem; font-weight: 600; }
-        .btn-indigo:hover { background-color: #4338ca; transform: translateY(-1px); box-shadow: 0 4px 6px rgba(79, 70, 229, 0.25); }
-        .btn-indigo:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(79, 70, 229, 0.15); }
+        /* Modern Indigo */
+        .btn-indigo { background-color: #4f46e5; color: white; box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
+        .btn-indigo:hover { background-color: #4338ca; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+        .btn-indigo:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
+
+        /* Modern Gray */
+        .btn-gray { background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+        .btn-gray:hover { background-color: #e2e8f0; color: #0f172a; }
+
+        /* Action Buttons inside Table */
+        .action-cell { display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 0.5rem; }
+        .action-link { display: inline-flex; align-items: center; justify-content: center; height: 34px; padding: 0 0.85rem; border-radius: 0.375rem; font-size: 0.85rem; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.2s; text-decoration: none; background: transparent; white-space: nowrap; box-sizing: border-box; }
+        .action-link i { margin-right: 0.35rem; font-size: 0.9rem; }
         
-        .btn-gray { background-color: #e5e7eb; color: #374151; }
-        .btn-gray:hover { background-color: #d1d5db; }
-
-        /* Action Buttons (Edit/Delete in Table) */
-        .action-cell { display: flex; justify-content: flex-start; align-items: center; gap: 0.75rem; height: 100%; }
-        .btn-action { display: inline-flex; align-items: center; padding: 0.35rem 0.75rem; border-radius: 0.375rem; font-size: 0.875rem; background: transparent; cursor: pointer; border: 1px solid; transition: 0.2s; white-space: nowrap; }
-        .btn-action i { margin-right: 0.25rem; }
-        .btn-edit { border-color: #93c5fd; color: #2563eb; }
-        .btn-edit:hover { background-color: #eff6ff; color: #1e40af; }
-        .btn-delete { border-color: #fca5a5; color: #dc2626; }
-        .btn-delete:hover { background-color: #fef2f2; color: #991b1b; }
+        .link-blue { color: #3b82f6; border: 1px solid #bfdbfe; } 
+        .link-blue:hover { background-color: #eff6ff; color: #1d4ed8; border-color: #93c5fd; }
+        
+        .link-red { color: #ef4444; border: 1px solid #fecaca; } 
+        .link-red:hover { background-color: #fef2f2; color: #b91c1c; border-color: #fca5a5; }
 
         /* Table */
-        .table-container { overflow-x: auto; background-color: #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 0.5rem; border: 1px solid #e5e7eb; width: 100%; -webkit-overflow-scrolling: touch; }
-        .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.875rem; min-width: 800px; }
-        .data-table th { padding: 0.75rem 1.5rem; background-color: #f3f4f6; color: #374151; font-weight: 600; text-transform: uppercase; border-bottom: 1px solid #e5e7eb; }
-        .data-table td { padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; color: #1f2937; vertical-align: middle; }
-        .data-table tbody tr:hover { background-color: #f9fafb; transition: background-color 0.15s; }
+        .table-container { overflow-x: auto; background-color: #ffffff; border-radius: 0.75rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); width: 100%; -webkit-overflow-scrolling: touch; margin-bottom: 1.5rem; }
+        .data-table { width: 100%; min-width: 800px; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+        .data-table th { padding: 1rem 1.5rem; background-color: #f8fafc; color: #64748b; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid #e2e8f0; white-space: nowrap; }
+        .data-table td { padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; font-weight: 500; }
+        .data-table tbody tr { transition: background-color 0.15s; }
+        .data-table tbody tr:hover { background-color: #f8fafc; }
         .text-center { text-align: center; }
+        .font-bold-name { font-weight: 700; color: #0f172a; }
 
-        /* --- Updated Pagination Fixes --- */
-        .pagination-wrapper { margin-top: 1.5rem; width: 100%; overflow-x: auto; padding-bottom: 0.5rem; }
-        .pagination-wrapper nav { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; }
-        /* Force SVG icons to stay normal sized */
-        .pagination-wrapper svg { width: 1.25rem !important; height: 1.25rem !important; display: inline-block; vertical-align: middle; }
-        /* Align text properly */
-        .pagination-wrapper a, .pagination-wrapper span { display: inline-flex; align-items: center; justify-content: center; }
-        .pagination-wrapper p { margin: 0; font-size: 0.875rem; color: #6b7280; }
-
-        /* Modals - Mobile First */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.6); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem; box-sizing: border-box; }
-        .modal-overlay.hidden { display: none; }
-        .modal-box { position: relative; background-color: white; border-radius: 0.75rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); width: 100%; max-width: 48rem; max-height: 90vh; overflow-y: auto; padding: 1.5rem; box-sizing: border-box; }
+        /* --- Modern UI Pagination (Laravel Structure Fix) --- */
+        .pagination-wrapper { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; width: 100%; }
+        .pagination-wrapper nav { display: flex; flex-direction: column; gap: 1.25rem; width: 100%; align-items: center; }
         
-        /* Fixed Modal Close Button */
-        .close-btn { position: absolute; top: 1rem; right: 1rem; color: #94a3b8; font-size: 2rem; background: none; border: none; cursor: pointer; transition: color 0.2s; line-height: 1; }
-        .close-btn:hover { color: #1f2937; }
-        .modal-title { font-size: 1.25rem; font-weight: 700; color: #111827; margin-top: 0; margin-bottom: 1.5rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 1rem; padding-right: 2.5rem; }
-        
-        /* Form Grid - Mobile First 100% Width */
-        .form-grid { display: flex; flex-direction: column; gap: 1rem; width: 100%; }
+        /* Pagination Sub-Text ("Showing 1 to 10 of...") */
+        .pagination-wrapper p { margin: 0; font-size: 0.875rem; color: #64748b; font-weight: 500; text-align: center; }
+        .pagination-wrapper p span { font-weight: 700; color: #0f172a; }
 
-        /* Form Controls - Mobile First 100% Width */
-        .form-group { display: flex; flex-direction: column; width: 100%; }
-        .form-label { font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.35rem; width: 100%; }
-        .form-input, .form-select { width: 100%; padding: 0.75rem 1rem; font-size: 1rem; border: 1px solid #d1d5db; border-radius: 0.5rem; background-color: white; outline: none; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box; display: block; font-family: inherit; }
-        .form-input:focus, .form-select:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); }
-        
-        .modal-footer { display: flex; flex-direction: column; padding-top: 1.5rem; border-top: 1px solid #e5e7eb; margin-top: 1.5rem; gap: 1rem; width: 100%; }
+        /* Container for links (Overrides Laravel's grouped flex) */
+        .pagination-wrapper div > span.relative.z-0.inline-flex,
+        .pagination-wrapper .flex.justify-between { display: flex; flex-wrap: wrap; gap: 0.5rem; box-shadow: none !important; justify-content: center; align-items: center; }
 
-        /* --------------------------------------------------- */
-        /* Mobile Specific Overrides (max-width: 640px)        */
-        /* --------------------------------------------------- */
-        @media (max-width: 640px) {
-            /* Native Laravel paginator cleanup for mobile */
-            .pagination-wrapper > nav > div:first-child { display: flex; width: 100%; justify-content: space-between; }
-            .pagination-wrapper > nav > div:last-child { display: none; }
+        /* Uniform Button Styling for Page Numbers & Arrows */
+        .pagination-wrapper a, 
+        .pagination-wrapper span[aria-current="page"] > span,
+        .pagination-wrapper span[aria-disabled="true"] > span { 
+            display: inline-flex; align-items: center; justify-content: center; 
+            min-width: 2.25rem; height: 2.25rem; padding: 0 0.5rem; 
+            border-radius: 0.375rem !important; /* Detached Rounded Look */
+            font-size: 0.875rem; font-weight: 600; font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease; border: 1px solid transparent; 
+            margin: 0 !important; /* Strips Laravel's -ml-px */
+            text-decoration: none; line-height: 1;
         }
 
+        /* Default Inactive Links */
+        .pagination-wrapper a { background-color: #ffffff; color: #475569; border-color: #e2e8f0; }
+        .pagination-wrapper a:hover { background-color: #f8fafc; color: #0f172a; border-color: #cbd5e1; transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+        /* Active Page Link */
+        .pagination-wrapper span[aria-current="page"] > span { background-color: #4f46e5; color: #ffffff; border-color: #4f46e5; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.25); z-index: 2; position: relative; }
+
+        /* Disabled Navigation Arrows */
+        .pagination-wrapper span[aria-disabled="true"] > span { background-color: #f8fafc; color: #94a3b8; border-color: #e2e8f0; cursor: not-allowed; opacity: 0.7; }
+
+        /* "..." Separator Fix */
+        .pagination-wrapper span[aria-disabled="true"]:not([aria-label]) > span { background: transparent; border: none; opacity: 1; color: #64748b; }
+
+        /* Standardize Arrow SVGs */
+        .pagination-wrapper svg { width: 1.25rem !important; height: 1.25rem !important; display: block; }
+
+        /* Modals - Mobile First */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+        .modal-overlay.hidden { display: none; }
+        .modal-box { position: relative; background-color: white; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); width: 100%; max-width: 48rem; max-height: 90vh; overflow-y: auto; padding: 1.5rem; }
+        
+        /* Fixed Modal Close Button */
+        .close-btn { position: absolute; top: 1.25rem; right: 1.25rem; color: #94a3b8; font-size: 2rem; background: none; border: none; cursor: pointer; transition: color 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0 0.5rem; }
+        .close-btn:hover { color: #0f172a; background-color: #f1f5f9; }
+        
+        .modal-title { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; padding-right: 2.5rem; }
+        
+        /* Form Grid - Mobile First 100% Width */
+        .form-grid { display: flex; flex-direction: column; gap: 1.25rem; width: 100%; }
+
+        /* Form Controls - Unified Heights */
+        .form-group { display: flex; flex-direction: column; width: 100%; }
+        .form-label { font-size: 0.875rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem; width: 100%; }
+        .form-input, .form-select { height: 44px; padding: 0 1rem; font-size: 0.95rem; color: #334155; border: 1px solid #cbd5e1; border-radius: 0.5rem; background-color: white; outline: none; transition: all 0.2s; font-family: inherit; width: 100%; box-sizing: border-box; }
+        .form-input:focus, .form-select:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
+        
+        .form-input[readonly] { background-color: #f8fafc !important; color: #64748b !important; cursor: not-allowed; border-color: #e2e8f0; }
+        .form-input[readonly]:focus { box-shadow: none; border-color: #e2e8f0; }
+        
+        .modal-footer { display: flex; flex-direction: column; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; margin-top: 1.5rem; gap: 0.75rem; width: 100%; }
+
+        /* Error Box */
+        .error-box { background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 1.25rem; border-radius: 0.5rem; margin-bottom: 1.5rem; }
+        .error-title { margin: 0 0 0.5rem 0; font-weight: 700; font-size: 0.95rem; color: #7f1d1d; }
+        .error-list { margin: 0; padding-left: 1.5rem; font-size: 0.9rem; font-weight: 500; }
+
         /* --------------------------------------------------- */
-        /* Desktop & Tablet Overrides (min-width: 640px/768px) */
+        /* Responsive Overrides                                */
         /* --------------------------------------------------- */
+        
+        /* Mobile Breakpoint for Pagination */
+        @media (max-width: 639px) {
+            .pagination-wrapper nav .hidden { display: none !important; }
+            .pagination-wrapper nav .sm\:hidden { display: flex; width: 100%; justify-content: space-between; }
+        }
+
+        /* Desktop & Tablet Overrides */
         @media (min-width: 640px) {
-            .panel { padding: 1.5rem; }
+            .panel { padding: 2rem; }
             .header-flex { flex-direction: row; justify-content: space-between; align-items: center; }
             
             /* Align Add button and Search inline */
             .action-container { flex-direction: row; justify-content: space-between; align-items: center; }
-            .action-btn { width: auto;}
-            .action-btn .form-input { min-width: 250px; max-width: 350px; }
+            .search-form { width: auto; min-width: 320px; }
             
             /* Un-stretch buttons on desktop */
-            .btn-green, .modal-footer .btn-indigo { width: auto; min-width: 140px; }
-            .action-btn .btn-indigo { min-width: auto; padding: 0.5rem 1.25rem; }
+            .btn { width: auto; }
             
             /* Restore Grid layout for Desktop */
-            .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); }
+            .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
             .col-span-2 { grid-column: span 2; }
             
             /* Modal formatting for Desktop */
-            .modal-box { padding: 2.5rem 2rem 2rem 2rem; }
-            .close-btn { top: 1.5rem; right: 2rem; font-size: 2.5rem; }
-            .modal-title { font-size: 1.5rem; margin-bottom: 2rem; }
+            .modal-box { padding: 2.5rem; }
+            .close-btn { top: 1.5rem; right: 2rem; }
             
             /* Modal Footer Buttons */
             .modal-footer { flex-direction: row; justify-content: flex-end; }
+
+            /* Pagination Layout */
+            .pagination-wrapper nav { flex-direction: row; justify-content: space-between; }
+            .pagination-wrapper nav > div.sm\:hidden { display: none !important; }
+            .pagination-wrapper nav > div.hidden.sm\:flex-1 { display: flex !important; width: 100%; justify-content: space-between; align-items: center; }
         }
     </style>
 
@@ -135,9 +188,9 @@
                 @endcan
 
                 @can('search_technical_personnel')
-                <form action="{{ route('tech_personnel.index') }}" method="GET" class="action-btn">
-                    <input type="text" name="search_query" value="{{ request('search_query') }}" placeholder="Search..." class="form-input">
-                    <button type="submit" class="btn btn-indigo">
+                <form action="{{ route('tech_personnel.index') }}" method="GET" class="search-form">
+                    <input type="text" name="search_query" value="{{ request('search_query') }}" placeholder="Search personnel..." class="search-input" autocomplete="off">
+                    <button type="submit" class="search-btn">
                         <i class="fas fa-search"></i>
                     </button>
                 </form>
@@ -148,9 +201,9 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>FullName/Division</th>
-                            <th>Email</th>
-                            <th>Region</th>
+                            <th>FullName / Division</th>
+                            <th>Email Address</th>
+                            <th>Region Assignment</th>
                             @if(auth()->user()->can('edit_technical_personnel') || auth()->user()->can('delete_technical_personnel'))
                                 <th class="text-center" @if(auth()->user()->can('edit_technical_personnel') && auth()->user()->can('delete_technical_personnel')) style="text-align: center;" @endif>Actions</th>
                             @endif
@@ -159,16 +212,17 @@
                     <tbody>
                         @forelse ($technical_personnel as $tech_personnel)
                             <tr>
-                                <td>{{ $tech_personnel->firstname }} {{ $tech_personnel->middle_initial }} {{ $tech_personnel->lastname }}</td>
+                                <td class="font-bold-name">{{ $tech_personnel->firstname }} {{ $tech_personnel->middle_initial }} {{ $tech_personnel->lastname }}</td>
                                 <td>{{ $tech_personnel->it_email }}</td>
                                 <td>{{ $tech_personnel->it_area }}</td>
                                 
                                 @if(auth()->user()->can('edit_technical_personnel') || auth()->user()->can('delete_technical_personnel'))
                                 <td>
                                     <div class="action-cell" @if(auth()->user()->can('edit_technical_personnel') && auth()->user()->can('delete_technical_personnel')) style="justify-content: center;" @endif>
+                                        
                                         {{-- Edit Button --}}
                                         @can('edit_technical_personnel')
-                                            <button class="btn-action btn-edit editBtn"
+                                            <button type="button" class="action-link link-blue editBtn"
                                                 data-id="{{ $tech_personnel->id }}"
                                                 data-firstname="{{ $tech_personnel->firstname }}"
                                                 data-middle_initial="{{ $tech_personnel->middle_initial }}"
@@ -184,7 +238,7 @@
                                             <form id="delete-form-{{ $tech_personnel->id }}" action="{{ route('tech_personnel.destroy', $tech_personnel->id) }}" method="POST" style="margin:0;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="button" class="btn-action btn-delete delete-btn" data-id="{{ $tech_personnel->id }}">
+                                                <button type="button" class="action-link link-red delete-btn" data-id="{{ $tech_personnel->id }}">
                                                     <i class="fas fa-trash-alt"></i> Delete
                                                 </button>
                                             </form>
@@ -195,7 +249,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center" style="padding: 2rem; color: #6b7280;">
+                                <td colspan="4" class="text-center" style="padding: 3rem; color: #94a3b8; font-size: 1rem;">
                                     No Technical Personnel found.
                                 </td>
                             </tr>
@@ -214,12 +268,12 @@
     {{-- Modal: Add Personnel --}}
     <div id="personnelModal" class="modal-overlay hidden">
         <div id="personnelModalContent" class="modal-box">
-            <button id="closeModal" class="close-btn" aria-label="Close">&times;</button>
+            <button id="closeModal" class="close-btn" aria-label="Close Modal">&times;</button>
 
             @if ($errors->any())
-                <div style="background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">
-                    <h4 style="margin:0 0 0.5rem 0; font-weight: bold;"><i class="fas fa-exclamation-triangle"></i> Please fix the following error(s):</h4>
-                    <ul style="margin:0; padding-left: 1.5rem; font-size: 0.875rem;">
+                <div class="error-box">
+                    <h4 class="error-title"><i class="fas fa-exclamation-circle"></i> Please fix the following error(s):</h4>
+                    <ul class="error-list">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -227,33 +281,33 @@
                 </div>
             @endif
 
-            <h2 class="modal-title">Create a Technical Personnel</h2>
+            <h2 class="modal-title">Create Technical Personnel</h2>
 
             <form action="{{ route('tech_personnel.store') }}" method="POST">
                 @csrf
                 <div class="form-grid">
                     <div class="form-group col-span-2">
                         <label for="firstname" class="form-label">First Name</label>
-                        <input type="text" name="firstname" id="firstname" required class="form-input">
+                        <input type="text" name="firstname" id="firstname" required class="form-input" autocomplete="off">
                     </div>
 
                     <div class="form-group col-span-2">
                         <label for="middle_initial" class="form-label">Middle Initial</label>
-                        <input type="text" name="middle_initial" id="middle_initial" class="form-input">
+                        <input type="text" name="middle_initial" id="middle_initial" class="form-input" autocomplete="off">
                     </div>
 
                     <div class="form-group col-span-2">
                         <label for="lastname" class="form-label">Last Name</label>
-                        <input type="text" name="lastname" id="lastname" required class="form-input">
+                        <input type="text" name="lastname" id="lastname" required class="form-input" autocomplete="off">
                     </div>
 
                     <div class="form-group col-span-2">
-                        <label for="it_email" class="form-label">Email</label>
-                        <input type="email" name="it_email" id="it_email" required class="form-input">
+                        <label for="it_email" class="form-label">Email Address</label>
+                        <input type="email" name="it_email" id="it_email" required class="form-input" autocomplete="email">
                     </div>
 
                     <div class="form-group col-span-2">
-                        <label for="it_area" class="form-label">IT Area <span style="color:#ef4444;">*</span></label>
+                        <label for="it_area" class="form-label">IT Area / Region <span style="color:#ef4444;">*</span></label>
                         <select name="it_area" id="it_area" required class="form-select">
                             <option value="" disabled selected>Select Region</option>
                             @foreach ($region as $area)
@@ -264,14 +318,15 @@
 
                     <div class="form-group col-span-2">
                         <label for="date_added" class="form-label">Date Added</label>
-                        <input type="text" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input" style="background-color: #f9fafb; cursor: not-allowed;">
+                        <input type="text" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input">
                         <input type="hidden" name="date_added" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('Y-m-d') }}">
                     </div>
                 </div>
 
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-gray" id="cancelAddModal">Cancel</button>
                     <button type="submit" class="btn btn-indigo">
-                        <i class="fas fa-paper-plane"></i> Submit
+                        <i class="fas fa-paper-plane"></i> Submit Personnel
                     </button>
                 </div>
             </form>
@@ -281,12 +336,12 @@
     {{-- Modal: Edit Personnel --}}
     <div id="editModal" class="modal-overlay hidden">
         <div id="editModalContent" class="modal-box">
-            <button id="closeEditModal" class="close-btn" aria-label="Close">&times;</button>
+            <button id="closeEditModal" class="close-btn" aria-label="Close Modal">&times;</button>
 
             @if ($errors->any())
-                <div style="background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 1rem; border-radius: 0.375rem; margin-bottom: 1rem;">
-                    <h4 style="margin:0 0 0.5rem 0; font-weight: bold;"><i class="fas fa-exclamation-triangle"></i> Please fix the following error(s):</h4>
-                    <ul style="margin:0; padding-left: 1.5rem; font-size: 0.875rem;">
+                <div class="error-box">
+                    <h4 class="error-title"><i class="fas fa-exclamation-circle"></i> Please fix the following error(s):</h4>
+                    <ul class="error-list">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -302,26 +357,26 @@
                 <div class="form-grid">
                     <div class="form-group col-span-2">
                         <label for="edit_firstname" class="form-label">First Name</label>
-                        <input type="text" name="firstname" id="edit_firstname" class="form-input" required>
+                        <input type="text" name="firstname" id="edit_firstname" class="form-input" required autocomplete="off">
                     </div>
 
                     <div class="form-group col-span-2">
                         <label for="edit_middle_initial" class="form-label">Middle Initial</label>
-                        <input type="text" name="middle_initial" id="edit_middle_initial" class="form-input">
+                        <input type="text" name="middle_initial" id="edit_middle_initial" class="form-input" autocomplete="off">
                     </div>
 
                     <div class="form-group col-span-2">
                         <label for="edit_lastname" class="form-label">Last Name</label>
-                        <input type="text" name="lastname" id="edit_lastname" class="form-input" required>
+                        <input type="text" name="lastname" id="edit_lastname" class="form-input" required autocomplete="off">
                     </div>
 
                     <div class="form-group col-span-2">
-                        <label for="edit_it_email" class="form-label">Email</label>
-                        <input type="email" name="it_email" id="edit_it_email" class="form-input" required>
+                        <label for="edit_it_email" class="form-label">Email Address</label>
+                        <input type="email" name="it_email" id="edit_it_email" class="form-input" required autocomplete="email">
                     </div>
 
                     <div class="form-group col-span-2">
-                        <label for="edit_it_area" class="form-label">IT Area</label>
+                        <label for="edit_it_area" class="form-label">IT Area / Region <span style="color:#ef4444;">*</span></label>
                         <select name="it_area" id="edit_it_area" class="form-select" required>
                             <option value="" disabled>Select Region</option>
                             @foreach ($region as $area)
@@ -332,14 +387,15 @@
 
                     <div class="form-group col-span-2">
                         <label class="form-label">Date Updated</label>
-                        <input type="text" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input" style="background-color: #f9fafb; cursor: not-allowed;">
+                        <input type="text" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input">
                         <input type="hidden" name="date_updated" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('Y-m-d') }}">
                     </div>
                 </div>
 
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-gray" id="cancelEditModal">Cancel</button>
                     <button type="submit" class="btn btn-indigo">
-                        <i class="fas fa-save"></i> Update
+                        <i class="fas fa-save"></i> Save Changes
                     </button>
                 </div>
             </form>
@@ -354,8 +410,8 @@
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
-                    text: '{{ session('success') }}',
-                    timer: 3000,
+                    text: @json(session('success')),
+                    timer: 2500,
                     showConfirmButton: false
                 });
             @endif
@@ -364,19 +420,9 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Notice!',
-                    text: '{{ session('error') }}',
+                    text: @json(session('error')),
                     timer: 3000,
                     showConfirmButton: false
-                });
-            @endif
-
-            @if ($errors->any())
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validation Error',
-                    html: `{!! implode('<br>', $errors->all()) !!}`,
-                    showConfirmButton: true,
-                    confirmButtonColor: '#4f46e5'
                 });
             @endif
 
@@ -384,28 +430,26 @@
             const addModal = document.getElementById("personnelModal");
             const openAddBtn = document.getElementById("openModal");
             const closeAddBtn = document.getElementById("closeModal");
+            const cancelAddBtn = document.getElementById("cancelAddModal");
 
             if (openAddBtn && addModal) {
-                openAddBtn.addEventListener("click", () => {
-                    addModal.classList.remove("hidden");
-                });
+                openAddBtn.addEventListener("click", () => addModal.classList.remove("hidden"));
             }
 
-            if (closeAddBtn && addModal) {
-                closeAddBtn.addEventListener("click", () => {
-                    addModal.classList.add("hidden");
-                });
-            }
+            const closeAddModalFunc = () => { if(addModal) addModal.classList.add("hidden"); };
+            if (closeAddBtn) closeAddBtn.addEventListener("click", closeAddModalFunc);
+            if (cancelAddBtn) cancelAddBtn.addEventListener("click", closeAddModalFunc);
 
             if (addModal) {
                 addModal.addEventListener("click", (e) => {
-                    if (e.target === addModal) closeAddBtn.click();
+                    if (e.target === addModal) closeAddModalFunc();
                 });
             }
 
             // Edit Modal Toggles
             const editModal = document.getElementById("editModal");
             const closeEditBtn = document.getElementById("closeEditModal");
+            const cancelEditBtn = document.getElementById("cancelEditModal");
             const editButtons = document.querySelectorAll(".editBtn");
             const editForm = document.getElementById("editForm");
             
@@ -420,18 +464,11 @@
                     e.preventDefault();
 
                     const id = button.dataset.id;
-                    const firstname = button.dataset.firstname;
-                    const middle_initial = button.dataset.middle_initial;
-                    const lastname = button.dataset.lastname;
-                    const it_email = button.dataset.it_email;
-                    const it_area = button.dataset.it_area;
-
-                    // Fill modal inputs
-                    editFirstname.value = firstname;
-                    editMiddleInitial.value = middle_initial;
-                    editLastname.value = lastname;
-                    editEmail.value = it_email;
-                    editArea.value = it_area;
+                    editFirstname.value = button.dataset.firstname;
+                    editMiddleInitial.value = button.dataset.middle_initial;
+                    editLastname.value = button.dataset.lastname;
+                    editEmail.value = button.dataset.it_email;
+                    editArea.value = button.dataset.it_area;
 
                     // Update form action dynamically
                     editForm.action = `/tech_personnel/${id}`;
@@ -441,16 +478,13 @@
                 });
             });
 
-            // Close Edit Modal
-            if (closeEditBtn && editModal) {
-                closeEditBtn.addEventListener("click", () => {
-                    editModal.classList.add("hidden");
-                });
-            }
+            const closeEditModalFunc = () => { if(editModal) editModal.classList.add("hidden"); };
+            if (closeEditBtn) closeEditBtn.addEventListener("click", closeEditModalFunc);
+            if (cancelEditBtn) cancelEditBtn.addEventListener("click", closeEditModalFunc);
 
             if (editModal) {
                 editModal.addEventListener("click", (e) => {
-                    if (e.target === editModal) closeEditBtn.click();
+                    if (e.target === editModal) closeEditModalFunc();
                 });
             }
 
@@ -465,15 +499,24 @@
                         text: "This action cannot be undone!",
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#dc2626',
-                        cancelButtonColor: '#6b7280',
-                        confirmButtonText: 'Delete'
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Yes, delete',
+                        cancelButtonText: 'Cancel'
                     }).then((result) => {
                         if (result.isConfirmed) {
                             form.submit();
                         }
                     });
                 });
+            });
+            
+            // Allow closing modals with Escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === "Escape") {
+                    closeAddModalFunc();
+                    closeEditModalFunc();
+                }
             });
         });
     </script>

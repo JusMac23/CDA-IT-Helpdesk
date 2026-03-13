@@ -1,55 +1,67 @@
 <x-app-layout>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
+        /* Global Box Sizing & Font Fix */
+        *, *::before, *::after { box-sizing: border-box; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+
         /* Main Layout */
-        .container { max-width: 80rem; width: 100%; margin: 0 auto; padding: 0 2rem; box-sizing: border-box; }
+        .container { max-width: 80rem; width: 100%; margin: 0 auto; padding: 0 2rem; }
         @media (max-width: 640px) { .container { padding: 0.5rem; } }
 
         /* Form Card */
-        .form-card { background-color: #ffffff; border-radius: 1rem; border: 1px solid #e5e7eb; box-shadow: 0 1px 2px rgba(0,0,0,0.05); padding: 2rem; position: relative; transition: all 0.3s ease; width: 100%; box-sizing: border-box; }
+        .form-card { background-color: #ffffff; border-radius: 1rem; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); padding: 2.5rem; position: relative; width: 100%; }
         @media (max-width: 640px) { .form-card { padding: 1.5rem; border-radius: 0.75rem; } }
 
         /* Header */
         .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        .section-title { font-size:1.5rem; font-weight:700; margin-bottom:2.5rem; border-bottom:2px solid #e5e7eb; padding-bottom:1rem; width: 100%; }
-        .form-section-title { font-size:1.125rem; font-weight:600; color:#1f2937; margin:1.5rem 0 1rem; padding-bottom:0.5rem; width: 100%; }
-        .close-btn { position:absolute; top:1.5rem; right:2rem; color:#94a3b8; font-size:1.5rem; background:none; border:none; cursor:pointer; transition:color 0.2s; }
-        .close-btn:hover { color:#1f2937; }
-        @media (max-width: 640px) { .close-btn { right: 1.5rem; } }
+        .section-title { font-size: 1.75rem; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 2rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem; letter-spacing: -0.025em; width: 100%; }
+        .form-section-title { font-size: 1.15rem; font-weight: 700; color: #0f172a; margin: 1.5rem 0 1.25rem; padding-bottom: 0.5rem; width: 100%; }
+        
+        .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; color: #94a3b8; font-size: 1.75rem; background: none; border: none; cursor: pointer; transition: all 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0.25rem 0.5rem; }
+        .close-btn:hover { color: #0f172a; background-color: #f1f5f9; }
 
         /* Error Box */
-        .error-box { background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 1rem 1.5rem; border-radius: 0.75rem; margin-bottom: 2rem; display: flex; gap: 0.75rem; align-items: flex-start; width: 100%; box-sizing: border-box; }
-        .error-icon { font-size: 1.5rem; margin-top: 0.125rem; }
-        .error-title { font-weight: 600; font-size: 0.875rem; margin: 0 0 0.5rem 0; }
-        .error-list { list-style-type: disc; padding-left: 1.25rem; margin: 0; font-size: 0.875rem; line-height: 1.5; }
+        .error-box { background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 1.25rem 1.5rem; border-radius: 0.75rem; margin-bottom: 2rem; display: flex; gap: 0.75rem; align-items: flex-start; width: 100%; }
+        .error-icon { font-size: 1.5rem; margin-top: 0.125rem; color: #ef4444; }
+        .error-title { font-weight: 700; font-size: 0.95rem; margin: 0 0 0.5rem 0; color: #7f1d1d; }
+        .error-list { list-style-type: disc; padding-left: 1.5rem; margin: 0; font-size: 0.9rem; line-height: 1.6; color: #991b1b; font-weight: 500; }
 
-        /* Form Controls - Mobile First 100% Width */
+        /* Form Controls - Unified Heights */
         form { width: 100%; }
         .form-group { display: flex; flex-direction: column; margin-top: 1.5rem; width: 100%; }
-        .form-label { font-size: 0.875rem; font-weight: 600; color: #374151; margin-bottom: 0.25rem; width: 100%; }
-        .required-mark { color: #ef4444; }
+        .form-label { font-size: 0.875rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem; width: 100%; }
+        .required-mark { color: #ef4444; margin-left: 0.125rem; }
         
-        .form-input, .form-select, .form-textarea { width: 100%; border: 1px solid #d1d5db; border-radius: 0.75rem; padding: 0.75rem 1rem; font-size: 1rem; box-sizing: border-box; background-color: #ffffff; transition: border-color 0.2s, box-shadow 0.2s; font-family: inherit; display: block; }
-        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2); }
-        .form-textarea { resize: vertical; min-height: 100px; }
+        .form-input, .form-select { height: 44px; padding: 0 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.95rem; color: #334155; width: 100%; background-color: #ffffff; transition: all 0.2s; font-family: inherit; }
+        .form-textarea { padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.95rem; color: #334155; width: 100%; background-color: #ffffff; transition: all 0.2s; font-family: inherit; resize: vertical; min-height: 120px; }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
+        .form-input::placeholder, .form-textarea::placeholder { color: #94a3b8; }
         
         /* Validation Error State */
-        .input-error { border-color: #ef4444 !important; background-color: #fef2f2; }
+        .input-error { border-color: #ef4444 !important; background-color: #fffafb; }
+        .input-error:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important; }
 
         /* Grid Layouts - Mobile First */
         .grid-2, .grid-3 { display: flex; flex-direction: column; gap: 0; width: 100%; margin-top: 0; }
         
         /* reCAPTCHA & Submit - Mobile First */
-        .recaptcha-wrapper { margin-top: 1.5rem; width: 100%; overflow: hidden; position: relative; }
+        .recaptcha-wrapper { margin-top: 2rem; width: 100%; overflow: hidden; position: relative; }
         
-        .submit-wrapper { display: flex; flex-direction: column; width: 100%; padding-top: 2rem; border-top: 1px solid #e5e7eb; margin-top: 1.5rem; }
-        .btn-submit { width: 100%; display: inline-flex; align-items: center; justify-content: center; padding: 0.85rem 1.5rem; background-color: #4f46e5; color: white; font-size: 0.875rem; font-weight: 600; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .submit-wrapper { display: flex; flex-direction: column; width: 100%; padding-top: 2rem; border-top: 1px solid #e2e8f0; margin-top: 2rem; }
+        
+        /* Unified Button Styling */
+        .btn-submit { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 2rem; background-color: #4f46e5; color: white; font-size: 0.95rem; font-weight: 600; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s ease; width: 100%; font-family: inherit; box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
         .btn-submit i { margin-right: 0.5rem; font-size: 1rem; }
-        .btn-submit:hover:not(:disabled) { background-color: #4338ca; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; pointer-events: none; }
+        .btn-submit:hover:not(:disabled) { background-color: #4338ca; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+        .btn-submit:active:not(:disabled) { transform: translateY(0); box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
+        .btn-submit:disabled { background-color: #cbd5e1; color: #f8fafc; cursor: not-allowed; box-shadow: none; transform: none; }
 
         /* --------------------------------------------------- */
-        /* Desktop & Tablet Overrides (min-width: 768px)       */
+        /* Desktop & Tablet Overrides                          */
         /* --------------------------------------------------- */
         @media (min-width: 768px) {
             .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
@@ -58,7 +70,8 @@
             
             .recaptcha-wrapper { max-width: 304px; }
             .submit-wrapper { flex-direction: row; justify-content: flex-end; }
-            .btn-submit { width: auto; padding: 0.75rem 2rem; }
+            .btn-submit { width: auto; }
+            .close-btn { top: 2rem; right: 2rem; }
         }
     </style>
 
@@ -67,7 +80,7 @@
         <div class="container">
             <div class="form-card">
 
-                <button id="close" onclick="window.location.href='{{ route('databreach.index') }}'" class="close-btn" title="Close">
+                <button id="close" onclick="window.location.href='{{ route('databreach.index') }}'" class="close-btn" aria-label="Close form" title="Close">
                     <i class="fas fa-times"></i>
                 </button>
 
@@ -90,21 +103,21 @@
                 <form action="{{ route('databreach.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
-                    <h3 class="form-section-title">Please provide the incident information.</h3>
+                    <h3 class="form-section-title">Please provide the incident information</h3>
 
                     <div class="grid-2">
                         <div class="form-group">
                             <label for="sender_fullname" class="form-label">
                                 Full Name <span class="required-mark">*</span>
                             </label>
-                            <input type="text" id="sender_fullname" name="sender_fullname" placeholder="e.g., Juan A. Dela Cruz" required class="form-input">
+                            <input type="text" id="sender_fullname" name="sender_fullname" placeholder="e.g., Juan A. Dela Cruz" required class="form-input" autocomplete="name">
                         </div>
 
                         <div class="form-group">
                             <label for="sender_email" class="form-label">
                                 Email Address <span class="required-mark">*</span>
                             </label>
-                            <input type="email" id="sender_email" name="sender_email" placeholder="e.g., j_delacruz@cda.gov.ph" required class="form-input">
+                            <input type="email" id="sender_email" name="sender_email" placeholder="e.g., j_delacruz@cda.gov.ph" required class="form-input" autocomplete="email">
                         </div>
                     </div>
 
@@ -128,7 +141,7 @@
                                 Date of Notification <span class="required-mark">*</span>
                             </label>
                             <input type="datetime-local" id="date_notification" name="date_notification" required readonly
-                                class="form-input" value="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d\TH:i') }}">
+                                class="form-input" style="background-color: #f8fafc; color: #64748b; cursor: not-allowed;" value="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d\TH:i') }}">
                         </div>
                     </div>
 
@@ -138,24 +151,24 @@
                         </label>
                         <select id="pic" name="pic" required class="form-select">
                             <option value="">-- Select Region --</option>
-                            <option>CDA HO</option>
-                            <option>CDA CAR</option>
-                            <option>CDA NIR</option>
-                            <option>CDA NCR</option>
-                            <option>CDA Region I</option>
-                            <option>CDA Region II</option>
-                            <option>CDA Region III</option>
-                            <option>CDA Region IV-A</option>
-                            <option>CDA Region IV-B</option>
-                            <option>CDA Region V</option>
-                            <option>CDA Region VI</option>
-                            <option>CDA Region VII</option>
-                            <option>CDA Region VIII</option>
-                            <option>CDA Region IX</option>
-                            <option>CDA Region X</option>
-                            <option>CDA Region XI</option>
-                            <option>CDA Region XII</option>
-                            <option>CDA Region XIII</option>
+                            <option value="CDA HO">CDA HO</option>
+                            <option value="CDA CAR">CDA CAR</option>
+                            <option value="CDA NIR">CDA NIR</option>
+                            <option value="CDA NCR">CDA NCR</option>
+                            <option value="CDA Region I">CDA Region I</option>
+                            <option value="CDA Region II">CDA Region II</option>
+                            <option value="CDA Region III">CDA Region III</option>
+                            <option value="CDA Region IV-A">CDA Region IV-A</option>
+                            <option value="CDA Region IV-B">CDA Region IV-B</option>
+                            <option value="CDA Region V">CDA Region V</option>
+                            <option value="CDA Region VI">CDA Region VI</option>
+                            <option value="CDA Region VII">CDA Region VII</option>
+                            <option value="CDA Region VIII">CDA Region VIII</option>
+                            <option value="CDA Region IX">CDA Region IX</option>
+                            <option value="CDA Region X">CDA Region X</option>
+                            <option value="CDA Region XI">CDA Region XI</option>
+                            <option value="CDA Region XII">CDA Region XII</option>
+                            <option value="CDA Region XIII">CDA Region XIII</option>
                         </select>
                     </div>
 
@@ -164,7 +177,7 @@
                             Brief Summary of the Incident <span class="required-mark">*</span>
                         </label>
                         <textarea id="brief_summary" name="brief_summary" required rows="4"
-                            placeholder="Write a brief summary of the incident here..."
+                            placeholder="Provide a clear and concise description of the incident..."
                             class="form-textarea"></textarea>
                     </div>
 
@@ -176,8 +189,8 @@
                             data-error-callback="disableSubmitButton"></div>
 
                         @if ($errors->has('g-recaptcha-response'))
-                            <div style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem; width: 100%;">
-                                {{ $errors->first('g-recaptcha-response') }}
+                            <div style="color: #ef4444; font-weight: 500; font-size: 0.875rem; margin-top: 0.75rem; width: 100%;">
+                                <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i> {{ $errors->first('g-recaptcha-response') }}
                             </div>
                         @endif
                     </div>
@@ -221,8 +234,9 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Missing Information',
-                            text: 'Please fill in all required fields marked with *.',
-                            confirmButtonColor: '#4f46e5'
+                            text: 'Please fill in all required fields marked with an asterisk (*).',
+                            confirmButtonColor: '#4f46e5',
+                            confirmButtonText: 'Okay'
                         });
                     }
                 });
@@ -245,7 +259,7 @@
                 });
             }
             
-            // Ensure button starts disabled
+            // Ensure button starts disabled (relies on reCAPTCHA callback to enable)
             disableSubmitButton();
         });
 
@@ -274,9 +288,15 @@
                 const wrapperWidth = wrapper.offsetWidth;
                 const scale = wrapperWidth / 304; // 304px is Google's default width
                 
-                recaptcha.style.transform = `scale(${scale})`;
-                recaptcha.style.transformOrigin = '0 0';
-                wrapper.style.height = `${78 * scale}px`; // 78px is Google's default height
+                // Only scale down on very small screens, never scale up
+                if (scale < 1) {
+                    recaptcha.style.transform = `scale(${scale})`;
+                    recaptcha.style.transformOrigin = '0 0';
+                    wrapper.style.height = `${78 * scale}px`; // 78px is Google's default height
+                } else {
+                    recaptcha.style.transform = 'scale(1)';
+                    wrapper.style.height = '78px';
+                }
             }
         }
 
@@ -285,7 +305,6 @@
         window.addEventListener('load', resizeRecaptcha);
         setTimeout(resizeRecaptcha, 300);
         setTimeout(resizeRecaptcha, 1000);
-        setTimeout(resizeRecaptcha, 2000);
     </script>
     @endcan
 
