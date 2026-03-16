@@ -3,23 +3,81 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
+        /* --- Theme Variables --- */
+        :root {
+            --card-bg: #ffffff;
+            --bg-alt: #f8fafc;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+            --border-subtle: #f1f5f9;
+            --input-bg: #ffffff;
+            --input-border: #cbd5e1;
+            --input-text: #334155;
+
+            /* Action Buttons (Gray) */
+            --btn-gray-bg: #f1f5f9;
+            --btn-gray-text: #475569;
+            --btn-gray-border: #e2e8f0;
+            --btn-gray-hover-bg: #e2e8f0;
+            --btn-gray-hover-text: #0f172a;
+
+            /* Error States */
+            --error-bg: #fef2f2;
+            --error-border: #fecaca;
+            --error-text: #991b1b;
+            --error-title: #7f1d1d;
+            
+            /* Readonly */
+            --readonly-bg: #f8fafc;
+        }
+
+        body.dark {
+            --card-bg: #0f172a; 
+            --bg-alt: #1e293b; 
+            --text-dark: #f8fafc;
+            --text-muted: #9ca3af;
+            --border-light: #334155; 
+            --border-subtle: #1e293b;
+            --input-bg: #0f172a;
+            --input-border: #4b5563;
+            --input-text: #f1f5f9;
+
+            /* Action Buttons (Gray) - Dark */
+            --btn-gray-bg: #1e293b;
+            --btn-gray-text: #9ca3af;
+            --btn-gray-border: #334155;
+            --btn-gray-hover-bg: #334155;
+            --btn-gray-hover-text: #f8fafc;
+
+            /* Error States - Dark */
+            --error-bg: rgba(153, 27, 27, 0.2);
+            --error-border: rgba(248, 113, 113, 0.4);
+            --error-text: #fca5a5;
+            --error-title: #f87171;
+            
+            /* Readonly */
+            --readonly-bg: #1e293b;
+        }
+
         /* Global Box Sizing & Font Fix */
         *, *::before, *::after { box-sizing: border-box; }
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
 
-        /* Main Layout - Mobile First 100% Width */
-        .panel { background-color: #ffffff; border-radius: 1rem; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); padding: 1.25rem; width: 100%; }
+        /* Main Layout - Mobile First 100% Width & Dark Mode Outline */
+        .panel { background-color: var(--card-bg); border-radius: 1rem; border: 1px solid var(--border-light); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); padding: 1.25rem; width: 100%; transition: background-color 0.3s ease, border-color 0.3s ease; }
         
         /* Typography */
         .header-flex { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 1.5rem; gap: 1rem; width: 100%; }
-        .title { font-size: 1.75rem; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: -0.025em; }
+        .title { font-size: 1.75rem; font-weight: 800; color: var(--text-dark); margin: 0; letter-spacing: -0.025em; transition: color 0.3s ease; }
         
         /* --- Action Container & Search Toolbar - Mobile First --- */
         .action-container { display: flex; flex-direction: column; width: 100%; gap: 1rem; margin-bottom: 1.5rem; }
         
         .search-form { display: flex; align-items: stretch; width: 100%; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border-radius: 0.5rem; }
-        .search-input { height: 44px; flex: 1; min-width: 0; padding: 0 1rem; font-size: 0.95rem; font-family: inherit; color: #334155; border: 1px solid #cbd5e1; border-right: none; border-top-left-radius: 0.5rem; border-bottom-left-radius: 0.5rem; outline: none; transition: all 0.2s; position: relative; z-index: 1; background-color: #ffffff; }
+        .search-input { height: 44px; flex: 1; min-width: 0; padding: 0 1rem; font-size: 0.95rem; font-family: inherit; background-color: var(--input-bg); color: var(--input-text); border: 1px solid var(--input-border); border-right: none; border-top-left-radius: 0.5rem; border-bottom-left-radius: 0.5rem; outline: none; transition: all 0.2s; position: relative; z-index: 1; }
         .search-input:focus { border-color: #6366f1; box-shadow: inset 0 0 0 1px #6366f1, 0 0 0 3px rgba(99, 102, 241, 0.15); z-index: 10; }
+        .search-input::placeholder { color: var(--text-muted); opacity: 0.7; }
         .search-btn { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 1.25rem; border: none; border-top-right-radius: 0.5rem; border-bottom-right-radius: 0.5rem; background-color: #4f46e5; color: white; cursor: pointer; transition: background-color 0.2s; z-index: 2; }
         .search-btn:hover { background-color: #4338ca; }
 
@@ -38,8 +96,8 @@
         .btn-indigo:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
 
         /* Modern Gray */
-        .btn-gray { background-color: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
-        .btn-gray:hover { background-color: #e2e8f0; color: #0f172a; }
+        .btn-gray { background-color: var(--btn-gray-bg); color: var(--btn-gray-text); border: 1px solid var(--btn-gray-border); transition: all 0.3s ease; }
+        .btn-gray:hover { background-color: var(--btn-gray-hover-bg); color: var(--btn-gray-hover-text); }
 
         /* Action Buttons inside Table */
         .action-cell { display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 0.5rem; }
@@ -52,22 +110,28 @@
         .link-red { color: #ef4444; border: 1px solid #fecaca; } 
         .link-red:hover { background-color: #fef2f2; color: #b91c1c; border-color: #fca5a5; }
 
+        /* Dark Mode Action Link Overrides */
+        body.dark .link-blue { color: #60a5fa; border-color: #1e3a8a; }
+        body.dark .link-blue:hover { background-color: rgba(30, 58, 138, 0.4); color: #93c5fd; }
+        body.dark .link-red { color: #f87171; border-color: #7f1d1d; }
+        body.dark .link-red:hover { background-color: rgba(127, 29, 29, 0.4); color: #fca5a5; }
+
         /* Table */
-        .table-container { overflow-x: auto; background-color: #ffffff; border-radius: 0.75rem; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); width: 100%; -webkit-overflow-scrolling: touch; margin-bottom: 1.5rem; }
+        .table-container { overflow-x: auto; background-color: var(--card-bg); border-radius: 0.75rem; border: 1px solid var(--border-light); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); width: 100%; -webkit-overflow-scrolling: touch; margin-bottom: 1.5rem; transition: background-color 0.3s ease, border-color 0.3s ease; }
         .data-table { width: 100%; min-width: 600px; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
-        .data-table th { padding: 1rem 1.5rem; background-color: #f8fafc; color: #64748b; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid #e2e8f0; white-space: nowrap; }
-        .data-table td { padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; color: #334155; vertical-align: middle; font-weight: 500; }
+        .data-table th { padding: 1rem 1.5rem; background-color: var(--bg-alt); color: var(--text-muted); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid var(--border-light); white-space: nowrap; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        .data-table td { padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border-subtle); color: var(--text-dark); vertical-align: middle; font-weight: 500; transition: color 0.3s ease, border-color 0.3s ease; }
         .data-table tbody tr { transition: background-color 0.15s; }
-        .data-table tbody tr:hover { background-color: #f8fafc; }
+        .data-table tbody tr:hover { background-color: var(--bg-alt); }
         .text-center { text-align: center; }
 
         /* --- Modern UI Pagination (Laravel Structure Fix) --- */
-        .pagination-wrapper { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; width: 100%; }
+        .pagination-wrapper { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-light); width: 100%; transition: border-color 0.3s ease; }
         .pagination-wrapper nav { display: flex; flex-direction: column; gap: 1.25rem; width: 100%; align-items: center; }
         
         /* Pagination Sub-Text */
-        .pagination-wrapper p { margin: 0; font-size: 0.875rem; color: #64748b; font-weight: 500; text-align: center; }
-        .pagination-wrapper p span { font-weight: 700; color: #0f172a; }
+        .pagination-wrapper p { margin: 0; font-size: 0.875rem; color: var(--text-muted); font-weight: 500; text-align: center; transition: color 0.3s ease; }
+        .pagination-wrapper p span { font-weight: 700; color: var(--text-dark); transition: color 0.3s ease; }
 
         /* Container for links */
         .pagination-wrapper div > span.relative.z-0.inline-flex,
@@ -87,17 +151,17 @@
         }
 
         /* Default Inactive Links */
-        .pagination-wrapper a { background-color: #ffffff; color: #475569; border-color: #e2e8f0; }
-        .pagination-wrapper a:hover { background-color: #f8fafc; color: #0f172a; border-color: #cbd5e1; transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .pagination-wrapper a { background-color: var(--card-bg); color: var(--text-muted); border-color: var(--border-light); }
+        .pagination-wrapper a:hover { background-color: var(--bg-alt); color: var(--text-dark); border-color: var(--input-border); transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
         /* Active Page Link */
         .pagination-wrapper span[aria-current="page"] > span { background-color: #4f46e5; color: #ffffff; border-color: #4f46e5; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.25); z-index: 2; position: relative; }
 
         /* Disabled Navigation Arrows */
-        .pagination-wrapper span[aria-disabled="true"] > span { background-color: #f8fafc; color: #94a3b8; border-color: #e2e8f0; cursor: not-allowed; opacity: 0.7; }
+        .pagination-wrapper span[aria-disabled="true"] > span { background-color: var(--bg-alt); color: var(--text-muted); border-color: var(--border-light); cursor: not-allowed; opacity: 0.7; }
 
         /* "..." Separator Fix */
-        .pagination-wrapper span[aria-disabled="true"]:not([aria-label]) > span { background: transparent; border: none; opacity: 1; color: #64748b; }
+        .pagination-wrapper span[aria-disabled="true"]:not([aria-label]) > span { background: transparent; border: none; opacity: 1; color: var(--text-muted); }
 
         /* Standardize Arrow SVGs */
         .pagination-wrapper svg { width: 1.25rem !important; height: 1.25rem !important; display: block; }
@@ -106,32 +170,32 @@
         .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); z-index: 50; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 1; visibility: visible; transition: all 0.3s ease; }
         .modal-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         
-        .modal-box { position: relative; background-color: white; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); width: 100%; max-width: 48rem; max-height: 90vh; overflow-y: auto; padding: 1.5rem; transform: scale(1); transition: transform 0.3s ease; }
+        .modal-box { position: relative; background-color: var(--card-bg); border-radius: 1rem; border: 1px solid var(--border-light); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); width: 100%; max-width: 48rem; max-height: 90vh; overflow-y: auto; padding: 1.5rem; transform: scale(1); transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease; }
         .modal-overlay.hidden .modal-box { transform: scale(0.95); }
         
         /* Fixed Modal Close Button */
-        .close-btn { position: absolute; top: 1.25rem; right: 1.25rem; color: #94a3b8; font-size: 2rem; background: none; border: none; cursor: pointer; transition: color 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0 0.5rem; }
-        .close-btn:hover { color: #0f172a; background-color: #f1f5f9; }
+        .close-btn { position: absolute; top: 1.25rem; right: 1.25rem; color: var(--text-muted); font-size: 2rem; background: none; border: none; cursor: pointer; transition: color 0.2s, background-color 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0 0.5rem; }
+        .close-btn:hover { color: var(--text-dark); background-color: var(--bg-alt); }
         
-        .modal-title { font-size: 1.5rem; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 1.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1rem; padding-right: 2.5rem; }
+        .modal-title { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin-top: 0; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem; padding-right: 2.5rem; transition: color 0.3s ease, border-color 0.3s ease; }
         
         /* Form Grid - Mobile First 100% Width */
         .form-grid { display: flex; flex-direction: column; gap: 1.25rem; width: 100%; }
 
         /* Form Controls - Unified Heights */
         .form-group { display: flex; flex-direction: column; width: 100%; }
-        .form-label { font-size: 0.875rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem; width: 100%; }
-        .form-input, .form-select { height: 44px; padding: 0 1rem; font-size: 0.95rem; color: #334155; border: 1px solid #cbd5e1; border-radius: 0.5rem; background-color: white; outline: none; transition: all 0.2s; font-family: inherit; width: 100%; box-sizing: border-box; }
+        .form-label { font-size: 0.875rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; width: 100%; transition: color 0.3s ease; }
+        .form-input, .form-select { height: 44px; padding: 0 1rem; font-size: 0.95rem; color: var(--input-text); border: 1px solid var(--input-border); border-radius: 0.5rem; background-color: var(--input-bg); outline: none; transition: all 0.2s; font-family: inherit; width: 100%; box-sizing: border-box; }
         .form-input:focus, .form-select:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
         
-        .form-input[readonly] { background-color: #f8fafc !important; color: #64748b !important; cursor: not-allowed; border-color: #e2e8f0; }
-        .form-input[readonly]:focus { box-shadow: none; border-color: #e2e8f0; }
+        .form-input[readonly] { background-color: var(--readonly-bg) !important; color: var(--text-muted) !important; cursor: not-allowed; border-color: var(--border-light); }
+        .form-input[readonly]:focus { box-shadow: none; border-color: var(--border-light); }
         
-        .modal-footer { display: flex; flex-direction: column; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; margin-top: 1.5rem; gap: 0.75rem; width: 100%; }
+        .modal-footer { display: flex; flex-direction: column; padding-top: 1.5rem; border-top: 1px solid var(--border-light); margin-top: 1.5rem; gap: 0.75rem; width: 100%; transition: border-color 0.3s ease; }
 
         /* Error Box */
-        .error-box { background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 1.25rem; border-radius: 0.5rem; margin-bottom: 1.5rem; }
-        .error-title { margin: 0 0 0.5rem 0; font-weight: 700; font-size: 0.95rem; color: #7f1d1d; }
+        .error-box { background-color: var(--error-bg); border: 1px solid var(--error-border); color: var(--error-text); padding: 1.25rem; border-radius: 0.5rem; margin-bottom: 1.5rem; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
+        .error-title { margin: 0 0 0.5rem 0; font-weight: 700; font-size: 0.95rem; color: var(--error-title); transition: color 0.3s ease; }
         .error-list { margin: 0; padding-left: 1.5rem; font-size: 0.9rem; font-weight: 500; }
 
         /* --------------------------------------------------- */
@@ -242,7 +306,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="2" class="text-center" style="padding: 3rem; color: #94a3b8; font-size: 1rem;">
+                                <td colspan="2" class="text-center" style="padding: 3rem; color: var(--text-muted); font-size: 1rem;">
                                     No Technical Services found.
                                 </td>
                             </tr>
@@ -349,13 +413,18 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
+            // Helper to get CSS variable colors for SweetAlert Dark Mode
+            const getComputedColor = (cssVar) => getComputedStyle(document.body).getPropertyValue(cssVar).trim();
+
             @if(session('success'))
                 Swal.fire({
                     icon: 'success',
                     title: 'Success!',
                     text: @json(session('success')),
                     timer: 2500,
-                    showConfirmButton: false
+                    showConfirmButton: false,
+                    background: getComputedColor('--card-bg'),
+                    color: getComputedColor('--text-dark')
                 });
             @endif
 
@@ -365,7 +434,9 @@
                     title: 'Notice!',
                     text: @json(session('error')),
                     timer: 3000,
-                    showConfirmButton: false
+                    showConfirmButton: false,
+                    background: getComputedColor('--card-bg'),
+                    color: getComputedColor('--text-dark')
                 });
             @endif
 
@@ -375,7 +446,9 @@
                     title: 'Validation Error',
                     html: `{!! implode('<br>', $errors->all()) !!}`,
                     showConfirmButton: true,
-                    confirmButtonColor: '#4f46e5'
+                    confirmButtonColor: '#4f46e5',
+                    background: getComputedColor('--card-bg'),
+                    color: getComputedColor('--text-dark')
                 });
             @endif
 
@@ -463,7 +536,9 @@
                         confirmButtonColor: '#ef4444',
                         cancelButtonColor: '#64748b',
                         confirmButtonText: 'Yes, delete',
-                        cancelButtonText: 'Cancel'
+                        cancelButtonText: 'Cancel',
+                        background: getComputedColor('--card-bg'),
+                        color: getComputedColor('--text-dark')
                     }).then((result) => {
                         if (result.isConfirmed) {
                             form.submit();

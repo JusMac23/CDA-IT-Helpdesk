@@ -19,33 +19,54 @@
 
     <style>
         :root {
+            /* Light Mode Variables */
             --sidebar-bg: #133e5e;
             --sidebar-hover: rgba(255, 255, 255, 0.1);
             --sidebar-active: rgba(255, 255, 255, 0.15);
             --sidebar-text: #cbd5e1;
             --sidebar-width: 256px;
             --sidebar-collapsed-width: 80px;
+            --sidebar-border: transparent;
             --body-bg: #f9fafb;
             --text-main: #1f2937;
             --text-muted: #6b7280;
             --border-color: #e5e7eb;
             --danger: #ef4444;
             --danger-hover: #fee2e2;
+            --header-bg: #ffffff;
+            --dropdown-bg: #ffffff;
+            --dropdown-hover: #f3f4f6;
+            --avatar-outline: transparent;
+        }
+
+        /* Dark Mode Variables - Unified Backgrounds */
+        body.dark {
+            --sidebar-bg: #0f172a; 
+            --sidebar-border: #334155; 
+            --body-bg: #0f172a; 
+            --text-main: #f3f4f6; 
+            --text-muted: #9ca3af; 
+            --border-color: #374151; 
+            --danger-hover: #7f1d1d;
+            --header-bg: #0f172a; 
+            --dropdown-bg: #1f2937;
+            --dropdown-hover: #374151;
+            --avatar-outline: #3b82f6;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Figtree', sans-serif; background-color: var(--body-bg); color: var(--text-main); overflow: hidden; }
+        body { font-family: 'Figtree', sans-serif; background-color: var(--body-bg); color: var(--text-main); overflow: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
         a { text-decoration: none; }
         button { background: none; border: none; cursor: pointer; font-family: inherit; }
         [x-cloak] { display: none !important; }
 
-        /* Layout - Added 100dvh for mobile browser UI compatibility */
+        /* Layout */
         .app-wrapper { display: flex; height: 100vh; height: 100dvh; width: 100%; overflow: hidden; }
         .main-content { display: flex; flex-direction: column; flex: 1; min-width: 0; overflow: hidden; transition: margin 0.3s ease; }
         .content-area { flex: 1; padding: 24px; overflow-y: auto; }
 
         /* Sidebar Base */
-        .sidebar { background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; transition: width 0.3s ease, transform 0.3s ease; z-index: 50; flex-shrink: 0; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
+        .sidebar { background-color: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); color: white; display: flex; flex-direction: column; transition: width 0.3s ease, transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease; z-index: 50; flex-shrink: 0; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
         .sidebar-header { height: 64px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; overflow: hidden; }
         .sidebar-logo { height: 32px; width: auto; background: rgba(255,255,255,0.1); padding: 4px; border-radius: 4px; }
         .sidebar-brand { display: flex; flex-direction: column; margin-left: 12px; white-space: nowrap; }
@@ -77,32 +98,55 @@
         .chevron.open { transform: rotate(90deg); }
 
         /* Header */
-        .top-header { height: 64px; background-color: white; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 24px; z-index: 30; flex-shrink: 0; }
-        .header-left, .header-right { display: flex; align-items: center; height: 100%; }
+        .top-header { height: 64px; background-color: var(--header-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 24px; z-index: 30; flex-shrink: 0; transition: background-color 0.3s ease, border-color 0.3s ease; }
+        .header-left, .header-right { display: flex; align-items: center; height: 100%; gap: 12px; }
         .icon-btn { padding: 8px; color: var(--text-muted); border-radius: 8px; transition: background 0.2s; display: flex; align-items: center; justify-content: center; }
-        .icon-btn:hover { background-color: var(--border-color); color: var(--text-main); }
+        .icon-btn:hover { background-color: var(--dropdown-hover); color: var(--text-main); }
         
-        .clock-widget { display: flex; align-items: center; color: var(--text-muted); font-size: 14px; font-weight: 500; margin-right: 24px; white-space: nowrap; }
+        .clock-widget { display: flex; align-items: center; color: var(--text-muted); font-size: 14px; font-weight: 500; white-space: nowrap; }
         .clock-widget .material-icons-outlined { font-size: 18px; margin-right: 8px; }
+        
+        /* Theme Toggle Button */
+        .theme-toggle { margin-right: 12px; }
 
-        /* Profile Dropdown */
-        .profile-dropdown { position: relative; }
-        .avatar-btn { width: 40px; height: 40px; border-radius: 50%; background-color: var(--sidebar-bg); color: white; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: 0.2s; flex-shrink: 0; }
-        .avatar-btn:hover { background-color: #1a537d; box-shadow: 0 0 0 2px white, 0 0 0 4px var(--sidebar-bg); }
-        .dropdown-menu { position: absolute; right: 0; top: 100%; margin-top: 8px; width: 220px; background: white; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid var(--border-color); z-index: 50; overflow: hidden; }
+        /* Profile Dropdown & Avatar */
+        .profile-dropdown { position: relative; margin-left: 8px; }
+        
+        .avatar-btn { 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            background-color: var(--sidebar-bg); 
+            color: white; 
+            font-weight: bold; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 14px; 
+            letter-spacing: 1px; /* Looks better with 2 letters */
+            transition: all 0.2s; 
+            flex-shrink: 0;
+            border: 2px solid var(--avatar-outline);
+        }
+        .avatar-btn:hover { 
+            background-color: #1a537d; 
+            box-shadow: 0 0 0 2px var(--header-bg), 0 0 0 4px var(--sidebar-bg); 
+        }
+
+        .dropdown-menu { position: absolute; right: 0; top: 100%; margin-top: 8px; width: 220px; background: var(--dropdown-bg); border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid var(--border-color); z-index: 50; overflow: hidden; transition: background-color 0.3s ease, border-color 0.3s ease; }
         .dropdown-header { padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
         .dropdown-name { font-weight: bold; color: var(--text-main); font-size: 14px; }
         .dropdown-email { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .dropdown-role { display: inline-block; padding: 2px 8px; background: #e0f2fe; color: var(--sidebar-bg); font-size: 10px; font-weight: bold; border-radius: 12px; margin-top: 6px; text-transform: uppercase; }
-        .dropdown-item { display: flex; align-items: center; width: 100%; padding: 10px 16px; color: var(--text-main); font-size: 14px; text-decoration: none; transition: 0.2s; background: transparent; text-align: left; }
-        .dropdown-item:hover { background-color: #f3f4f6; }
+        .dropdown-role { display: inline-block; padding: 2px 8px; background: #e0f2fe; color: #133e5e; font-size: 10px; font-weight: bold; border-radius: 12px; margin-top: 6px; text-transform: uppercase; }
+        .dropdown-item { display: flex; align-items: center; width: 100%; padding: 10px 16px; color: var(--text-main); font-size: 14px; text-decoration: none; transition: 0.2s; background: transparent; text-align: left; border: none; cursor: pointer; font-family: inherit; }
+        .dropdown-item:hover { background-color: var(--dropdown-hover); }
         .dropdown-item .material-icons-outlined { font-size: 18px; margin-right: 10px; color: var(--text-muted); }
         .dropdown-item.logout { color: var(--danger); }
         .dropdown-item.logout:hover { background-color: var(--danger-hover); color: #b91c1c; }
         .dropdown-item.logout .material-icons-outlined { color: inherit; }
 
         /* App Footer Desktop */
-        .app-footer { height: 64px; background: white; border-top: 1px solid var(--border-color); padding: 0 24px; display: flex; justify-content: center; align-items: center; gap: 24px; font-size: 14px; color: var(--text-muted); flex-shrink: 0; }
+        .app-footer { height: 64px; background: var(--header-bg); border-top: 1px solid var(--border-color); padding: 0 24px; display: flex; justify-content: center; align-items: center; gap: 24px; font-size: 14px; color: var(--text-muted); flex-shrink: 0; transition: background-color 0.3s ease, border-color 0.3s ease; }
         .app-footer a { color: var(--text-muted); transition: color 0.2s; }
         .app-footer a:hover { color: var(--sidebar-bg); }
 
@@ -132,10 +176,10 @@
             .header-left .icon-btn { margin-right: 8px; }
             .top-header { padding: 0 16px; } 
             
-            .clock-widget { font-size: 12px; margin-right: 12px;}
+            .clock-widget { font-size: 12px; margin-right: 4px;}
             .clock-widget .material-icons-outlined { font-size: 16px; margin-right: 4px; }
+            .theme-toggle { margin-right: 4px; }
             
-            /* Responsive Mobile Footer adjustments for narrow screens */
             .app-footer { height: auto; min-height: 64px; padding: 16px 12px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); flex-direction: column; gap: 8px; text-align: center; }
             .app-footer p, .app-footer a { margin: 0; font-size: 12px; word-wrap: break-word; }
             .sidebar-footer { height: auto; padding: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
@@ -146,11 +190,17 @@
 <body x-data="{ 
         sidebarOpen: localStorage.getItem('sidebarOpen') !== 'false',
         mobileSidebarOpen: false,
+        darkMode: localStorage.getItem('darkMode') === 'true',
         toggleSidebar() {
             this.sidebarOpen = !this.sidebarOpen;
             localStorage.setItem('sidebarOpen', this.sidebarOpen);
+        },
+        toggleTheme() {
+            this.darkMode = !this.darkMode;
+            localStorage.setItem('darkMode', this.darkMode);
         }
-    }">
+    }" 
+    :class="{ 'dark': darkMode }">
     
     <div class="app-wrapper">
 
@@ -186,7 +236,6 @@
                                 setInterval(() => this.updateTime(), 1000);
                             },
                             updateTime() {
-                                // Unified date format for all screen sizes
                                 const options = { timeZone: 'Asia/Manila', weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true };
                                 this.time = new Date().toLocaleString('en-US', options);
                             }
@@ -195,9 +244,27 @@
                         <span x-text="time"></span>
                     </div>
 
+                    <button @click="toggleTheme()" class="icon-btn theme-toggle" :title="darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+                        <span class="material-icons-outlined" x-text="darkMode ? 'light_mode' : 'dark_mode'"></span>
+                    </button>
+
                     <div class="profile-dropdown" x-data="{ open: false }" @click.away="open = false">
                         <button @click="open = !open" class="avatar-btn" title="{{ $user->name ?? 'User' }}">
-                            {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
+                            @php
+                                $initials = '';
+                                // Check if firstname and lastname exist in your database
+                                if (!empty($user->firstname) && !empty($user->lastname)) {
+                                    $initials = strtoupper(substr($user->firstname, 0, 1) . substr($user->lastname, 0, 1));
+                                } else {
+                                    // Fallback: Split the 'name' column and grab the first and last word's letters
+                                    $nameParts = explode(' ', trim($user->name ?? 'User'));
+                                    $initials = strtoupper(substr($nameParts[0], 0, 1));
+                                    if (count($nameParts) > 1) {
+                                        $initials .= strtoupper(substr(end($nameParts), 0, 1));
+                                    }
+                                }
+                            @endphp
+                            {{ $initials }}
                         </button>
 
                         <div x-show="open" x-transition.opacity style="display: none;" class="dropdown-menu">
@@ -208,7 +275,7 @@
                                 @forelse($user->roles as $role)
                                     <span class="dropdown-role">{{ $role->name }}</span>
                                 @empty
-                                    <span class="dropdown-role" style="background: #f3f4f6; color: #4b5563;">No Role</span>
+                                    <span class="dropdown-role" style="background: var(--dropdown-hover); color: var(--text-muted);">No Role</span>
                                 @endforelse
                             </div>
 
@@ -218,7 +285,7 @@
 
                             <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
                                 @csrf
-                                <button type="submit" class="dropdown-item logout">
+                                <button type="submit" class="dropdown-item logout" style="width: 100%; text-align: left;">
                                     <span class="material-icons-outlined">logout</span> Log out
                                 </button>
                             </form>

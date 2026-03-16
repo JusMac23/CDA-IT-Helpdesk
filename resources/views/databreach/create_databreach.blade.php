@@ -3,6 +3,45 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
+        /* --- Theme Variables --- */
+        :root {
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #475569;
+            --border-light: #e2e8f0;
+            --input-bg: #ffffff;
+            --input-border: #cbd5e1;
+            --input-text: #334155;
+            --error-bg: #fef2f2;
+            --error-border: #fecaca;
+            --error-text: #991b1b;
+            --error-title: #7f1d1d;
+            --close-btn-hover: #f1f5f9;
+            --close-btn-text: #94a3b8;
+            --disabled-btn-bg: #cbd5e1;
+            --disabled-btn-text: #f8fafc;
+            --readonly-bg: #f8fafc;
+        }
+
+        body.dark {
+            --card-bg: #0f172a; 
+            --text-dark: #f8fafc;
+            --text-muted: #9ca3af;
+            --border-light: #334155; 
+            --input-bg: #0f172a;
+            --input-border: #4b5563;
+            --input-text: #f1f5f9;
+            --error-bg: rgba(153, 27, 27, 0.2);
+            --error-border: rgba(248, 113, 113, 0.4);
+            --error-text: #fca5a5;
+            --error-title: #f87171;
+            --close-btn-hover: #1e293b;
+            --close-btn-text: #64748b;
+            --disabled-btn-bg: #334155;
+            --disabled-btn-text: #94a3b8;
+            --readonly-bg: #1e293b;
+        }
+
         /* Global Box Sizing & Font Fix */
         *, *::before, *::after { box-sizing: border-box; }
         body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
@@ -11,38 +50,38 @@
         .container { max-width: 80rem; width: 100%; margin: 0 auto; padding: 0 2rem; }
         @media (max-width: 640px) { .container { padding: 0.5rem; } }
 
-        /* Form Card */
-        .form-card { background-color: #ffffff; border-radius: 1rem; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); padding: 2.5rem; position: relative; width: 100%; }
+        /* Form Card - Added outline matching dark mode specs */
+        .form-card { background-color: var(--card-bg); border-radius: 1rem; border: 1px solid var(--border-light); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); padding: 2.5rem; position: relative; width: 100%; transition: background-color 0.3s ease, border-color 0.3s ease; }
         @media (max-width: 640px) { .form-card { padding: 1.5rem; border-radius: 0.75rem; } }
 
         /* Header */
         .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        .section-title { font-size: 1.75rem; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 2rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem; letter-spacing: -0.025em; width: 100%; }
-        .form-section-title { font-size: 1.15rem; font-weight: 700; color: #0f172a; margin: 1.5rem 0 1.25rem; padding-bottom: 0.5rem; width: 100%; }
+        .section-title { font-size: 1.75rem; font-weight: 800; color: var(--text-dark); margin-top: 0; margin-bottom: 2rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1.5rem; letter-spacing: -0.025em; width: 100%; transition: color 0.3s ease, border-color 0.3s ease; }
+        .form-section-title { font-size: 1.15rem; font-weight: 700; color: var(--text-dark); margin: 1.5rem 0 1.25rem; padding-bottom: 0.5rem; width: 100%; transition: color 0.3s ease; }
         
-        .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; color: #94a3b8; font-size: 1.75rem; background: none; border: none; cursor: pointer; transition: all 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0.25rem 0.5rem; }
-        .close-btn:hover { color: #0f172a; background-color: #f1f5f9; }
+        .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; color: var(--close-btn-text); font-size: 1.75rem; background: none; border: none; cursor: pointer; transition: all 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0.25rem 0.5rem; }
+        .close-btn:hover { color: var(--text-dark); background-color: var(--close-btn-hover); }
 
         /* Error Box */
-        .error-box { background-color: #fef2f2; border: 1px solid #fecaca; color: #991b1b; padding: 1.25rem 1.5rem; border-radius: 0.75rem; margin-bottom: 2rem; display: flex; gap: 0.75rem; align-items: flex-start; width: 100%; }
+        .error-box { background-color: var(--error-bg); border: 1px solid var(--error-border); color: var(--error-text); padding: 1.25rem 1.5rem; border-radius: 0.75rem; margin-bottom: 2rem; display: flex; gap: 0.75rem; align-items: flex-start; width: 100%; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
         .error-icon { font-size: 1.5rem; margin-top: 0.125rem; color: #ef4444; }
-        .error-title { font-weight: 700; font-size: 0.95rem; margin: 0 0 0.5rem 0; color: #7f1d1d; }
-        .error-list { list-style-type: disc; padding-left: 1.5rem; margin: 0; font-size: 0.9rem; line-height: 1.6; color: #991b1b; font-weight: 500; }
+        .error-title { font-weight: 700; font-size: 0.95rem; margin: 0 0 0.5rem 0; color: var(--error-title); transition: color 0.3s ease; }
+        .error-list { list-style-type: disc; padding-left: 1.5rem; margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--error-text); font-weight: 500; transition: color 0.3s ease; }
 
         /* Form Controls - Unified Heights */
         form { width: 100%; }
         .form-group { display: flex; flex-direction: column; margin-top: 1.5rem; width: 100%; }
-        .form-label { font-size: 0.875rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem; width: 100%; }
+        .form-label { font-size: 0.875rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; width: 100%; transition: color 0.3s ease; }
         .required-mark { color: #ef4444; margin-left: 0.125rem; }
         
-        .form-input, .form-select { height: 44px; padding: 0 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.95rem; color: #334155; width: 100%; background-color: #ffffff; transition: all 0.2s; font-family: inherit; }
-        .form-textarea { padding: 0.75rem 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.95rem; color: #334155; width: 100%; background-color: #ffffff; transition: all 0.2s; font-family: inherit; resize: vertical; min-height: 120px; }
+        .form-input, .form-select { height: 44px; padding: 0 1rem; border: 1px solid var(--input-border); border-radius: 0.5rem; font-size: 0.95rem; color: var(--input-text); width: 100%; background-color: var(--input-bg); transition: all 0.2s; font-family: inherit; }
+        .form-textarea { padding: 0.75rem 1rem; border: 1px solid var(--input-border); border-radius: 0.5rem; font-size: 0.95rem; color: var(--input-text); width: 100%; background-color: var(--input-bg); transition: all 0.2s; font-family: inherit; resize: vertical; min-height: 120px; }
         
         .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
-        .form-input::placeholder, .form-textarea::placeholder { color: #94a3b8; }
+        .form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); opacity: 0.7; }
         
         /* Validation Error State */
-        .input-error { border-color: #ef4444 !important; background-color: #fffafb; }
+        .input-error { border-color: #ef4444 !important; }
         .input-error:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important; }
 
         /* Grid Layouts - Mobile First */
@@ -51,14 +90,14 @@
         /* reCAPTCHA & Submit - Mobile First */
         .recaptcha-wrapper { margin-top: 2rem; width: 100%; overflow: hidden; position: relative; }
         
-        .submit-wrapper { display: flex; flex-direction: column; width: 100%; padding-top: 2rem; border-top: 1px solid #e2e8f0; margin-top: 2rem; }
+        .submit-wrapper { display: flex; flex-direction: column; width: 100%; padding-top: 2rem; border-top: 1px solid var(--border-light); margin-top: 2rem; transition: border-color 0.3s ease; }
         
         /* Unified Button Styling */
         .btn-submit { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 2rem; background-color: #4f46e5; color: white; font-size: 0.95rem; font-weight: 600; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s ease; width: 100%; font-family: inherit; box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
         .btn-submit i { margin-right: 0.5rem; font-size: 1rem; }
         .btn-submit:hover:not(:disabled) { background-color: #4338ca; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
         .btn-submit:active:not(:disabled) { transform: translateY(0); box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
-        .btn-submit:disabled { background-color: #cbd5e1; color: #f8fafc; cursor: not-allowed; box-shadow: none; transform: none; }
+        .btn-submit:disabled { background-color: var(--disabled-btn-bg); color: var(--disabled-btn-text); cursor: not-allowed; box-shadow: none; transform: none; transition: background-color 0.3s ease, color 0.3s ease; }
 
         /* --------------------------------------------------- */
         /* Desktop & Tablet Overrides                          */
@@ -126,14 +165,14 @@
                             <label for="date_occurrence" class="form-label">
                                 Date of Occurrence <span class="required-mark">*</span>
                             </label>
-                            <input type="datetime-local" id="date_occurrence" name="date_occurrence" required class="form-input">
+                            <input type="datetime-local" id="date_occurrence" name="date_occurrence" required class="form-input" style="color: var(--input-text);">
                         </div>
 
                         <div class="form-group">
                             <label for="date_discovery" class="form-label">
                                 Date of Discovery <span class="required-mark">*</span>
                             </label>
-                            <input type="datetime-local" id="date_discovery" name="date_discovery" required class="form-input">
+                            <input type="datetime-local" id="date_discovery" name="date_discovery" required class="form-input" style="color: var(--input-text);">
                         </div>
 
                         <div class="form-group">
@@ -141,7 +180,7 @@
                                 Date of Notification <span class="required-mark">*</span>
                             </label>
                             <input type="datetime-local" id="date_notification" name="date_notification" required readonly
-                                class="form-input" style="background-color: #f8fafc; color: #64748b; cursor: not-allowed;" value="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d\TH:i') }}">
+                                class="form-input" style="background-color: var(--readonly-bg); color: var(--text-muted); cursor: not-allowed;" value="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d\TH:i') }}">
                         </div>
                     </div>
 

@@ -1,16 +1,16 @@
 <section class="delete-section">
     <style>
         /* Section Header Title */ 
-        .title { font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 0.25rem; margin-top: 0; }
+        .title { font-size: 1.25rem; font-weight: 800; color: var(--text-dark); margin-bottom: 0.25rem; margin-top: 0; transition: color 0.3s ease; }
         
         /* Section Header Desc */ 
-        .section-header p { font-size: 0.9rem; color: #64748b; margin-bottom: 0; font-weight: 500; line-height: 1.5; }
+        .section-header p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0; font-weight: 500; line-height: 1.5; transition: color 0.3s ease; }
         
         /* Delete Section Spacing */ 
         .delete-section { display: flex; flex-direction: column; gap: 1.5rem; }
         
         /* Form Input - Unified 44px Height */ 
-        .form-input { height: 44px; width: 100%; padding: 0 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.95rem; color: #334155; background-color: #ffffff; transition: all 0.2s ease; font-family: inherit; box-sizing: border-box; }
+        .form-input { height: 44px; width: 100%; padding: 0 1rem; border: 1px solid var(--input-border); border-radius: 0.5rem; font-size: 0.95rem; color: var(--input-text); background-color: var(--input-bg); transition: all 0.2s ease; font-family: inherit; box-sizing: border-box; }
         
         /* Form Input Focus - Red theme for destructive action */ 
         .form-input:focus { outline: none; border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15); }
@@ -25,19 +25,20 @@
         .btn-danger:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(239, 68, 68, 0.2); }
         
         /* Secondary Button (Cancel) */ 
-        .btn-secondary { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 2rem; border-radius: 0.5rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; border: 1px solid #cbd5e1; color: #475569; background-color: #ffffff; transition: all 0.2s ease; font-family: inherit; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-        .btn-secondary:hover { background-color: #f8fafc; color: #0f172a; border-color: #94a3b8; transform: translateY(-1px); }
+        .btn-secondary { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 2rem; border-radius: 0.5rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; border: 1px solid var(--border-light); color: var(--text-muted); background-color: transparent; transition: all 0.2s ease; font-family: inherit; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+        .btn-secondary:hover { background-color: var(--bg-alt); color: var(--text-dark); border-color: var(--input-border); transform: translateY(-1px); }
         .btn-secondary:active { transform: translateY(0); }
         
         /* Modal Spacing */ 
-        .modal-content-pad { padding: 2rem; }
+        .modal-content-pad { padding: 2rem; background-color: var(--card-bg); transition: background-color 0.3s ease; }
         .modal-actions { margin-top: 2rem; display: flex; justify-content: flex-end; gap: 1rem; }
         
         .mt-6 { margin-top: 1.5rem; }
         .mt-2 { margin-top: 0.5rem; }
         
         /* Error Text */ 
-        .text-error { font-size: 0.875rem; color: #ef4444; font-weight: 500; display: block; margin-top: 0.5rem; }
+        .text-error { font-size: 0.875rem; color: #ef4444; font-weight: 500; display: block; margin-top: 0.5rem; transition: color 0.3s ease; }
+        body.dark .text-error { color: #f87171; }
         
         /* Screen Reader Only */ 
         .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }

@@ -1,10 +1,26 @@
 <section>
     <style>
-        /* Section Header Title */ 
-        .title { font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 0.25rem; margin-top: 0; }
-        
-        /* Section Header Desc */ 
-        .section-header p { font-size: 0.9rem; color: #64748b; margin-bottom: 0; font-weight: 500; }
+        /* --- Theme Variables --- */
+        :root {
+            --input-bg: #ffffff;
+            --input-border: #cbd5e1;
+            --input-text: #334155;
+            --text-dark: #0f172a;
+            --text-muted: #475569;
+        }
+
+        body.dark {
+            /* Elevated input backgrounds and brighter borders for visibility */
+            --input-bg: #1e293b; 
+            --input-border: #64748b; 
+            --input-text: #f1f5f9;
+            --text-dark: #f8fafc;
+            --text-muted: #9ca3af;
+        }
+
+        /* Section Header */ 
+        .title { font-size: 1.25rem; font-weight: 800; color: var(--text-dark); margin-bottom: 0.25rem; margin-top: 0; transition: color 0.3s ease; }
+        .section-header p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0; font-weight: 500; transition: color 0.3s ease; }
         
         /* Form Spacing */ 
         .form-spacing { margin-top: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
@@ -13,13 +29,21 @@
         .form-group { display: flex; flex-direction: column; }
         
         /* Form Label */ 
-        .form-label { font-size: 0.875rem; font-weight: 600; color: #475569; margin-bottom: 0.5rem; display: block; }
+        .form-label { font-size: 0.875rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; display: block; transition: color 0.3s ease; }
         
-        /* Form Input - Unified 44px Height */ 
-        .form-input { height: 44px; width: 100%; padding: 0 1rem; border: 1px solid #cbd5e1; border-radius: 0.5rem; font-size: 0.95rem; color: #334155; background-color: #ffffff; transition: all 0.2s ease; font-family: inherit; box-sizing: border-box; }
+        /* Form Input - Unified 44px Height & Dynamic Outline */ 
+        .form-input { 
+            height: 44px; width: 100%; padding: 0 1rem; 
+            border: 1px solid var(--input-border); 
+            border-radius: 0.5rem; font-size: 0.95rem; 
+            color: var(--input-text); 
+            background-color: var(--input-bg); 
+            transition: all 0.2s ease; font-family: inherit; box-sizing: border-box; 
+        }
         
         /* Form Input Focus */ 
         .form-input:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
+        body.dark .form-input:focus { border-color: #818cf8; box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.25); }
         
         /* Primary Button - Unified Styling */ 
         .btn-primary { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 2rem; border-radius: 0.5rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; border: none; color: white; background-color: #4f46e5; transition: all 0.2s ease; font-family: inherit; box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
@@ -30,10 +54,11 @@
         .form-actions { display: flex; align-items: center; gap: 1rem; margin-top: 0.5rem; }
         
         /* Error Text */ 
-        .text-error { font-size: 0.875rem; color: #ef4444; margin-top: 0.5rem; font-weight: 500; }
+        .text-error { font-size: 0.875rem; color: #ef4444; margin-top: 0.5rem; font-weight: 500; transition: color 0.3s ease; }
+        body.dark .text-error { color: #f87171; }
         
         /* Saved Text */ 
-        .text-saved { font-size: 0.9rem; font-weight: 500; color: #64748b; }
+        .text-saved { font-size: 0.9rem; font-weight: 500; color: var(--text-muted); transition: color 0.3s ease; }
         
         /* Mobile Button Stretch */ 
         @media (max-width: 640px) { 
@@ -82,7 +107,7 @@
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
                     class="text-saved"
-                ><i class="fas fa-check text-green-500" style="margin-right: 0.25rem;"></i> {{ __('Saved successfully.') }}</p>
+                ><i class="fas fa-check" style="margin-right: 0.25rem; color: #10b981;"></i> {{ __('Saved successfully.') }}</p>
             @endif
         </div>
     </form>

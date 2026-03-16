@@ -4,9 +4,50 @@
     
     @can('view_databreach')
     <style>
+        /* --- Theme Variables --- */
+        :root {
+            --card-bg: #ffffff;
+            --bg-alt: #f8fafc;
+            --text-dark: #0f172a;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+            --border-subtle: #f1f5f9;
+            
+            /* Badges & Status Text */
+            --badge-rep-bg: #eff6ff;
+            --badge-rep-text: #1e40af;
+            --text-success: #166534;
+            --text-danger: #991b1b;
+
+            /* Close Button */
+            --close-btn-hover: #f1f5f9;
+            --close-btn-text: #94a3b8;
+        }
+
+        body.dark {
+            --card-bg: #0f172a; 
+            --bg-alt: #1e293b; 
+            --text-dark: #f8fafc;
+            --text-main: #e2e8f0;
+            --text-muted: #9ca3af;
+            --border-light: #334155; 
+            --border-subtle: #1e293b;
+            
+            /* Badges & Status Text - Dark */
+            --badge-rep-bg: rgba(30, 58, 138, 0.4);
+            --badge-rep-text: #60a5fa;
+            --text-success: #4ade80;
+            --text-danger: #f87171;
+
+            /* Close Button - Dark */
+            --close-btn-hover: #1e293b;
+            --close-btn-text: #64748b;
+        }
+
         /* Global Box Sizing & Font Fix */
         *, *::before, *::after { box-sizing: border-box; }
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
 
         /* Action Bar */
         .action-bar { 
@@ -14,21 +55,27 @@
             justify-content: flex-end; 
             align-items: center; 
             gap: 1rem; 
-            max-width: 56rem; /* Slightly wider for better reading */
+            max-width: 56rem;
             margin: 0 auto 1.5rem auto; 
             padding: 0 0.5rem;
         }
         
         /* Main Document Wrapper */
         .view-wrapper { 
+            position: relative; /* Added for absolute positioning of close button */
             max-width: 56rem; 
             margin: 0 auto; 
-            background: #ffffff; 
+            background-color: var(--card-bg); 
             border-radius: 1rem; 
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); 
             padding: 2rem; 
-            border: 1px solid #f1f5f9; 
+            border: 1px solid var(--border-light); 
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
+
+        /* Close Button */
+        .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; color: var(--close-btn-text); font-size: 1.75rem; background: none; border: none; cursor: pointer; transition: all 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0.25rem 0.5rem; }
+        .close-btn:hover { color: var(--text-dark); background-color: var(--close-btn-hover); }
 
         /* --- Unified Buttons --- */
         .btn { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 1.5rem; border-radius: 0.5rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s ease; text-decoration: none; font-family: inherit; }
@@ -40,34 +87,39 @@
         .btn-green:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(16, 185, 129, 0.2); }
 
         /* Typography & Layout */
-        .report-title { font-size: 1.75rem; font-weight: 800; color: #0f172a; text-align: center; margin-top: 0; margin-bottom: 2.5rem; letter-spacing: -0.025em; }
+        .report-title { font-size: 1.75rem; font-weight: 800; color: var(--text-dark); text-align: center; margin-top: 0; margin-bottom: 2.5rem; letter-spacing: -0.025em; transition: color 0.3s ease; padding: 0 2.5rem; } /* Added padding to prevent close btn overlap */
         
-        .section-title { font-size: 1.15rem; font-weight: 700; color: #0f172a; margin-bottom: 1.25rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .section-title { font-size: 1.15rem; font-weight: 700; color: var(--text-dark); margin-bottom: 1.25rem; border-bottom: 2px solid var(--border-light); padding-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; transition: color 0.3s ease, border-color 0.3s ease; }
         
         .content-group { margin-bottom: 1.75rem; padding: 0 0.5rem; }
-        .content-label { font-size: 0.85rem; font-weight: 700; color: #64748b; margin-bottom: 0.5rem; display: block; text-transform: uppercase; letter-spacing: 0.05em; }
-        .content-text { color: #334155; font-size: 1rem; line-height: 1.6; font-weight: 500; margin: 0; background: #f8fafc; padding: 1rem 1.25rem; border-radius: 0.5rem; border: 1px solid #f1f5f9; }
+        .content-label { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); margin-bottom: 0.5rem; display: block; text-transform: uppercase; letter-spacing: 0.05em; transition: color 0.3s ease; }
+        .content-text { color: var(--text-main); font-size: 1rem; line-height: 1.6; font-weight: 500; margin: 0; background-color: var(--bg-alt); padding: 1rem 1.25rem; border-radius: 0.5rem; border: 1px solid var(--border-subtle); transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
         
         .text-centered { text-align: center; }
         .text-centered .content-text { background: transparent; border: none; padding: 0; font-size: 1.05rem; }
 
         /* Lists */
-        .list-clean { list-style: none; padding-left: 0; margin: 0; background: #f8fafc; padding: 1rem 1.25rem; border-radius: 0.5rem; border: 1px solid #f1f5f9; }
-        .list-clean li { margin-bottom: 0.5rem; color: #334155; font-weight: 500; display: flex; align-items: flex-start; gap: 0.5rem; line-height: 1.5; }
+        .list-clean { list-style: none; padding-left: 0; margin: 0; background-color: var(--bg-alt); padding: 1rem 1.25rem; border-radius: 0.5rem; border: 1px solid var(--border-subtle); transition: background-color 0.3s ease, border-color 0.3s ease; }
+        .list-clean li { margin-bottom: 0.5rem; color: var(--text-main); font-weight: 500; display: flex; align-items: flex-start; gap: 0.5rem; line-height: 1.5; transition: color 0.3s ease; }
         .list-clean li:last-child { margin-bottom: 0; }
         .list-clean i { color: #4f46e5; margin-top: 0.2rem; font-size: 0.9rem; }
 
         /* Modern Table Styling */
-        .table-responsive { overflow-x: auto; margin-bottom: 2.5rem; border-radius: 0.75rem; border: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
+        .table-responsive { overflow-x: auto; margin-bottom: 2.5rem; border-radius: 0.75rem; border: 1px solid var(--border-light); box-shadow: 0 1px 2px rgba(0,0,0,0.02); transition: border-color 0.3s ease; }
         .info-table { width: 100%; border-collapse: collapse; min-width: 500px; table-layout: fixed; }
-        .info-table th, .info-table td { padding: 1rem 1.25rem; font-size: 0.95rem; border-bottom: 1px solid #e2e8f0; vertical-align: top; word-break: break-word; }
-        .info-table th { width: 35%; background: #f8fafc; font-weight: 700; color: #475569; border-right: 1px solid #e2e8f0; }
-        .info-table td { width: 65%; color: #0f172a; font-weight: 500; background-color: #ffffff; }
+        .info-table th, .info-table td { padding: 1rem 1.25rem; font-size: 0.95rem; border-bottom: 1px solid var(--border-light); vertical-align: top; word-break: break-word; transition: border-color 0.3s ease; }
+        .info-table th { width: 35%; background-color: var(--bg-alt); font-weight: 700; color: var(--text-muted); border-right: 1px solid var(--border-light); transition: background-color 0.3s ease, color 0.3s ease; }
+        .info-table td { width: 65%; color: var(--text-dark); font-weight: 500; background-color: var(--card-bg); transition: background-color 0.3s ease, color 0.3s ease; }
         .info-table tr:last-child th, .info-table tr:last-child td { border-bottom: none; }
+
+        /* Status Badges */
+        .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; text-align: center; white-space: nowrap; letter-spacing: 0.025em; transition: background-color 0.3s ease, color 0.3s ease; }
+        .status-reported { background-color: var(--badge-rep-bg); color: var(--badge-rep-text); }
 
         @media(min-width: 640px) {
             .report-title { font-size: 2rem; }
             .view-wrapper { padding: 3rem; }
+            .close-btn { top: 2rem; right: 2rem; }
         }
     </style>
 
@@ -82,6 +134,11 @@
         </div>
 
         <div class="view-wrapper">
+            
+            <button id="close" onclick="window.location.href='{{ route('databreach.index') }}'" class="close-btn" aria-label="Close form" title="Close">
+                <i class="fas fa-times"></i>
+            </button>
+
             <h1 class="report-title">DATA BREACH INCIDENT REPORT</h1>
 
             <div class="content-group text-centered" style="margin-bottom: 2.5rem;">
@@ -165,7 +222,7 @@
                             <tr>
                                 <th>Type of Notification</th>
                                 <td>
-                                    <span class="badge status-reported" style="background-color: #eff6ff; color: #1e40af; padding: 0.25rem 0.75rem; border-radius: 9999px; font-weight: 700; font-size: 0.8rem;">
+                                    <span class="badge status-reported">
                                         {{ $notification->notification_type }}
                                     </span>
                                 </td>
@@ -186,9 +243,9 @@
                                 <th>With Request?</th>
                                 <td>
                                     @if(strtoupper($notification->with_request) === 'YES')
-                                        <span style="color: #166534; font-weight: 700;"><i class="fas fa-check mr-1"></i> YES</span>
+                                        <span style="color: var(--text-success); font-weight: 700; transition: color 0.3s ease;"><i class="fas fa-check mr-1"></i> YES</span>
                                     @else
-                                        <span style="color: #991b1b; font-weight: 700;"><i class="fas fa-times mr-1"></i> NO</span>
+                                        <span style="color: var(--text-danger); font-weight: 700; transition: color 0.3s ease;"><i class="fas fa-times mr-1"></i> NO</span>
                                     @endif
                                 </td>
                             </tr>
@@ -214,7 +271,7 @@
                     <span class="content-label">Number of Data Subjects / Records</span>
                     <div class="content-text">
                         <p style="margin: 0 0 0.5rem 0;"><strong>Count:</strong> {{ $notification->num_records }} records @if($notification->hundred_plus) (≥100) @endif</p>
-                        <p style="margin: 0; padding-top: 0.5rem; border-top: 1px solid #e2e8f0;">{{ $notification->num_records_provide_details }}</p>
+                        <p style="margin: 0; padding-top: 0.5rem; border-top: 1px solid var(--border-light); transition: border-color 0.3s ease;">{{ $notification->num_records_provide_details }}</p>
                     </div>
                 </div>
 
