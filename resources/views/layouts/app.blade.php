@@ -112,26 +112,8 @@
         /* Profile Dropdown & Avatar */
         .profile-dropdown { position: relative; margin-left: 8px; }
         
-        .avatar-btn { 
-            width: 40px; 
-            height: 40px; 
-            border-radius: 50%; 
-            background-color: var(--sidebar-bg); 
-            color: white; 
-            font-weight: bold; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 14px; 
-            letter-spacing: 1px; /* Looks better with 2 letters */
-            transition: all 0.2s; 
-            flex-shrink: 0;
-            border: 2px solid var(--avatar-outline);
-        }
-        .avatar-btn:hover { 
-            background-color: #1a537d; 
-            box-shadow: 0 0 0 2px var(--header-bg), 0 0 0 4px var(--sidebar-bg); 
-        }
+        .avatar-btn { width: 40px; height: 40px; border-radius: 50%; background-color: var(--sidebar-bg); color: white; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 14px; letter-spacing: 1px; transition: all 0.2s; flex-shrink: 0; border: 2px solid var(--avatar-outline); }
+        .avatar-btn:hover { background-color: #1a537d; box-shadow: 0 0 0 2px var(--header-bg), 0 0 0 4px var(--sidebar-bg); }
 
         .dropdown-menu { position: absolute; right: 0; top: 100%; margin-top: 8px; width: 220px; background: var(--dropdown-bg); border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid var(--border-color); z-index: 50; overflow: hidden; transition: background-color 0.3s ease, border-color 0.3s ease; }
         .dropdown-header { padding: 12px 16px; border-bottom: 1px solid var(--border-color); }

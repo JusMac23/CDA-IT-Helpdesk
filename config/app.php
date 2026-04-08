@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'CDA IT-Helpdesk'),
+    'name' => env('APP_NAME', 'CDA DBRS'),
 
     /*
     |--------------------------------------------------------------------------

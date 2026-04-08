@@ -257,6 +257,18 @@
                 @can('filter_databreach')
                 <form method="GET" action="{{ route('databreach.index') }}" class="filter-section">
                     <div class="form-group">
+                        <label for="year" class="form-label">Filter by Year</label>
+                        <select name="year" id="year" class="form-select">
+                            <option value="">All Years</option>
+                            @foreach($formYears as $y)
+                                <option value="{{ $y }}" @if(isset($year) && $year == $y) selected @endif>
+                                    {{ $y }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
                         <label for="picFilter" class="form-label">Filter by Region</label>
                         <select name="pic" id="picFilter" class="form-select">
                             <option value="">All Regions</option>
@@ -338,7 +350,7 @@
                                             @endcan
 
                                             @can('assess_databreach')
-                                                @if (!in_array($notification->status, ['Reported', 'For Evaluation']))
+                                                @if (!in_array($notification->status, ['Reported', 'For Evaluation', 'For Reporting to NPC']))
                                                     <a href="{{ route('databreach.assess', $notification->dbn_id) }}" class="action-link link-yellow">
                                                         <i class="fa-solid fa-magnifying-glass-plus"></i> Assess
                                                     </a>

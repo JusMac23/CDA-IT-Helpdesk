@@ -22,42 +22,37 @@ use App\Mail\IncidentEvaluated;
 
 class DataBreachAllReportsController extends Controller
 {
-    // Handle Provide List
     public function index(Request $request)
     {
         $status = $request->input('status');
         $region = $request->input('pic');
+        $year   = $request->input('year'); 
 
-        // Start the query with a join between notifications and team
         $query = DataBreachNotification::query()
-            ->leftJoin('databreach_dbrt_team', function ($join) {
-                $join->on('databreach_dbrt_team.region', '=', 'databreach_notifications.pic');
-            })
+            ->leftJoin('databreach_dbrt_team', 'databreach_dbrt_team.region', '=', 'databreach_notifications.pic')
             ->select('databreach_notifications.*')
             ->distinct(); 
 
-        // Apply both filters together
-        if (!empty($status) && !empty($region)) {
-            $query->where('databreach_notifications.status', $status)
-                ->where('databreach_dbrt_team.region', $region);
-        } 
-        // Allow filtering individually too
-        elseif (!empty($status)) {
-            $query->where('databreach_notifications.status', $status);
-        } 
-        elseif (!empty($region)) {
-            $query->where('databreach_dbrt_team.region', $region);
-        }
+        $query->when(!empty($status), function ($q) use ($status) {
+            $q->where('databreach_notifications.status', $status);
+        });
 
-        // Get paginated results
+        $query->when(!empty($region), function ($q) use ($region) {
+            $q->where('databreach_dbrt_team.region', $region);
+        });
+
+        $query->when(!empty($year), function ($q) use ($year) {
+            $q->whereYear('databreach_notifications.created_at', $year);
+        });
+
         $notifications = $query->orderBy('databreach_notifications.created_at', 'desc')
             ->paginate(10)
             ->appends([
                 'status' => $status,
-                'pic' => $region,
+                'pic'    => $region,
+                'year'   => $year, 
             ]);
 
-        // Dropdown for region filter
         $pic = DatabreachTeam::select('region')
             ->distinct()
             ->orderBy('region', 'asc')
@@ -65,7 +60,14 @@ class DataBreachAllReportsController extends Controller
             ->filter()
             ->values();    
 
-        return view('databreach.index', compact('notifications', 'pic'));
+        $formYears = DataBreachNotification::selectRaw('EXTRACT(YEAR FROM created_at) as year')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->filter()
+            ->values();
+
+        return view('databreach.index', compact('notifications', 'pic', 'year', 'formYears'));
     }
 
     // Handle Overview

@@ -48,9 +48,6 @@
 
         /* --- Action Container (Toolbar Layout) - Mobile First --- */
         .action-container { display: flex; flex-direction: column; width: 100%; gap: 1rem; margin-bottom: 1.5rem; }
-        
-        .auto-reload-label { display: flex; align-items: center; font-size: 0.9rem; font-weight: 500; color: var(--text-muted); cursor: pointer; width: 100%; padding: 0.5rem 0; transition: color 0.3s ease; }
-        .auto-reload-checkbox { margin-right: 0.5rem; cursor: pointer; width: 1.25rem; height: 1.25rem; accent-color: #4f46e5; border-radius: 0.25rem; }
 
         /* --- Filters Section - Mobile First --- */
         .filter-form { display: flex; flex-direction: column; align-items: stretch; width: 100%; gap: 1rem; margin-bottom: 2rem; background: var(--bg-alt); padding: 1.25rem; border-radius: 0.75rem; border: 1px solid var(--border-light); transition: background-color 0.3s ease, border-color 0.3s ease; }
@@ -194,7 +191,6 @@
             .header-flex { flex-direction: row; justify-content: space-between; align-items: center; }
             
             .action-container { flex-direction: row; justify-content: space-between; align-items: center; }
-            .auto-reload-label { width: auto; padding: 0; justify-content: flex-end; }
             
             .btn { width: auto; }
             
@@ -211,19 +207,6 @@
                 
                 <div class="header-flex">
                     <h3 class="title">Data Breach Notifications Overview</h3>
-                </div>
-
-                <div class="action-container">
-                    @can('create_databreach')
-                        <a href="{{ route('databreach.create') }}" class="btn btn-green">
-                            <i class="fa-solid fa-plus"></i> Add Incident Report
-                        </a>
-                    @endcan
-
-                    <label class="auto-reload-label">
-                        <input type="checkbox" id="autoReloadCheckbox" class="auto-reload-checkbox">
-                        <span>(<span id="countdown">60</span>s) Auto-Reload</span>
-                    </label>
                 </div>
 
                 <form method="GET" action="{{ route('databreach.overview') }}" class="filter-form">
