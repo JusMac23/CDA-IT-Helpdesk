@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -21,35 +20,18 @@ class AuthenticatedSessionController extends Controller
     }
 
     /**
-     * Handle an incoming authentication request with reCAPTCHA verification.
+     * Handle an incoming authentication request.
      */
     public function store(Request $request): RedirectResponse
     {
-        // 🔥 DESTROY ANY EXISTING SESSION BEFORE PROCESSING LOGIN
+        // DESTROY ANY EXISTING SESSION BEFORE PROCESSING LOGIN
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // Validate credentials and reCAPTCHA
+        // Validate credentials
         $request->validate([
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
-            'g-recaptcha-response' => [
-                'required',
-                function ($attribute, $value, $fail) use ($request) {
-                    $response = Http::asForm()->post(
-                        'https://www.google.com/recaptcha/api/siteverify',
-                        [
-                            'secret' => config('services.recaptcha.secret_key'),
-                            'response' => $value,
-                            'remoteip' => $request->ip(),
-                        ]
-                    );
-
-                    if (!($response->json()['success'] ?? false)) {
-                        $fail('CAPTCHA verification failed.');
-                    }
-                },
-            ],
         ]);
 
         // Attempt to authenticate the user
@@ -59,7 +41,7 @@ class AuthenticatedSessionController extends Controller
             ]);
         }
 
-        // 🔥 REGENERATE SESSION ONCE AUTHENTICATED
+        // REGENERATE SESSION ONCE AUTHENTICATED
         $request->session()->regenerate();
 
         $user = Auth::user();

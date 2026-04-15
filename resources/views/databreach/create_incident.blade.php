@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <script src="/assets/js/sweetalert2.min.js"></script>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
     <style>
         /* CSS Variables for consistent theming */
@@ -104,8 +103,15 @@
         /* Grids - Default to 1 column (100% width) for Mobile */
         .grid-2-col, .grid-3-col { display: flex; flex-direction: column; width: 100%; gap: 0; }
         
+        /* Terms and Conditions Checkbox */
+        .terms-wrapper { margin-top: 1.5rem; margin-bottom: 1.5rem; width: 100%; }
+        .terms-label { display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; font-size: 0.9rem; color: #475569; line-height: 1.6; }
+        .terms-checkbox { margin-top: 0.25rem; width: 1.125rem; height: 1.125rem; accent-color: var(--primary-indigo); cursor: pointer; flex-shrink: 0; }
+        .terms-link { color: var(--primary-indigo); text-decoration: none; font-weight: 600; transition: color 0.2s; }
+        .terms-link:hover { color: var(--indigo-hover); text-decoration: underline; }
+
         /* Footer & Buttons - Mobile First (100% width) */
-        .form-footer { display: flex; flex-direction: column; width: 100%; gap: 1.5rem; align-items: stretch; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e2e8f0; }
+        .form-footer { display: flex; flex-direction: column; width: 100%; align-items: stretch; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; }
         
         .btn-submit { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 2rem; background-color: var(--primary-indigo); color: white; font-size: 0.95rem; font-weight: 600; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s ease; width: 100%; font-family: inherit; box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
         .btn-submit i { margin-right: 0.5rem; font-size: 1rem; }
@@ -113,9 +119,6 @@
         .btn-submit:active:not(:disabled) { transform: translateY(0); box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
         .btn-submit:disabled { background-color: #cbd5e1; color: #f8fafc; cursor: not-allowed; box-shadow: none; transform: none; }
         
-        /* reCAPTCHA wrapper - Mobile First (100% width scaling) */
-        .recaptcha-wrapper { width: 100%; margin: 0; overflow: hidden; position: relative; }
-
         /* --------------------------------------------------- */
         /* Desktop & Tablet Overrides                          */
         /* --------------------------------------------------- */
@@ -134,9 +137,8 @@
             .grid-2-col .form-group, .grid-3-col .form-group { margin-bottom: 0; }
             
             /* Horizontal Footer */
-            .form-footer { flex-direction: row; justify-content: space-between; align-items: flex-start; }
+            .form-footer { flex-direction: row; justify-content: flex-end; }
             .btn-submit { width: auto; }
-            .recaptcha-wrapper { max-width: 304px; }
         }
     </style>
 </head>
@@ -227,8 +229,7 @@
             </div>
             <div class="form-group">
                 <label for="date_notification">Date of Notification <span class="text-required">*</span></label>
-                <input type="datetime-local" id="date_notification" name="date_notification" required readonly class="form-control"
-                    value="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d\TH:i') }}">
+                <input type="datetime-local" id="date_notification" name="date_notification" required readonly class="form-control">
             </div>
         </div>
 
@@ -262,21 +263,14 @@
             <textarea id="brief_summary" name="brief_summary" required rows="4" placeholder="Provide a clear and concise description of the incident..." class="form-control"></textarea>
         </div>
 
+        <div class="terms-wrapper">
+            <label class="terms-label" for="terms_agree">
+                <input type="checkbox" id="terms_agree" name="terms_agree" required class="terms-checkbox">
+                <span>I have read and agree to the <a href="https://cda.gov.ph/cda-privacy-policy/" class="terms-link" target="_blank">Terms and Conditions</a> and the <a href="https://cda.gov.ph/cda-privacy-policy/" class="terms-link" target="_blank">Privacy Policy</a>, and I confirm that the information provided is accurate and true to the best of my knowledge. <span class="text-required">*</span></span>
+            </label>
+        </div>
+
         <div class="form-footer">
-            <div class="recaptcha-wrapper" id="recaptcha-container">
-                <div class="g-recaptcha" id="recaptcha"
-                    data-sitekey="{{ config('services.recaptcha.site_key') }}"
-                    data-callback="enableSubmitButton"
-                    data-expired-callback="disableSubmitButton"
-                    data-error-callback="disableSubmitButton"></div>
-
-                @if ($errors->has('g-recaptcha-response'))
-                    <span style="color: var(--error-border); font-size: 0.875rem; display: block; margin-top: 0.75rem; width: 100%; font-weight: 500;">
-                        <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i> {{ $errors->first('g-recaptcha-response') }}
-                    </span>
-                @endif
-            </div>
-
             <button type="submit" id="submitReportBtn" class="btn-submit" disabled>
                 <i class="fas fa-paper-plane"></i> <span>Submit Report</span>
             </button>
@@ -306,98 +300,83 @@
         });
     @endif
 
-    // Form validation enhancement
-    document.querySelector('form').addEventListener('submit', function(e) {
-        let isValid = true;
-        const requiredFields = this.querySelectorAll('[required]');
+    document.addEventListener('DOMContentLoaded', function () {
         
-        requiredFields.forEach(field => {
-            if (!field.value.trim()) {
-                isValid = false;
-                field.classList.add('is-invalid');
-            } else {
-                field.classList.remove('is-invalid');
-            }
-        });
+        // Fix: Sync exact device/laptop time to prevent 4-minute server delay
+        const dateNotificationInput = document.getElementById('date_notification');
+        if (dateNotificationInput) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            
+            // Format: YYYY-MM-DDThh:mm
+            dateNotificationInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
 
-        if (!isValid) {
-            e.preventDefault();
-            Swal.fire({
-                icon: 'error',
-                title: 'Missing Information',
-                text: 'Please fill in all required fields marked with an asterisk (*).',
-                confirmButtonColor: '#4f46e5'
+        const form = document.querySelector('form');
+        const termsCheckbox = document.getElementById('terms_agree');
+        const submitBtn = document.getElementById('submitReportBtn');
+
+        // Form validation enhancement
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+                const requiredFields = this.querySelectorAll('[required]');
+                
+                requiredFields.forEach(field => {
+                    if (field.type === 'checkbox') {
+                        if (!field.checked) isValid = false;
+                    } else if (!field.value.trim()) {
+                        isValid = false;
+                        field.classList.add('is-invalid');
+                    } else {
+                        field.classList.remove('is-invalid');
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Missing Information',
+                        text: 'Please fill in all required fields marked with an asterisk (*), and agree to the CDA Terms and Conditions and Privacy Policy.',
+                        confirmButtonColor: '#4f46e5'
+                    });
+                }
+            });
+
+            // Real-time validation
+            form.querySelectorAll('input[type="text"], input[type="email"], input[type="datetime-local"], select, textarea').forEach(field => {
+                field.addEventListener('blur', function() {
+                    if (this.hasAttribute('required') && !this.value.trim()) {
+                        this.classList.add('is-invalid');
+                    } else {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+
+                field.addEventListener('input', function() {
+                    if (this.value.trim()) {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+            });
+        }
+
+        // Terms and Conditions Checkbox Logic
+        if (termsCheckbox && submitBtn) {
+            // Ensure initial state matches checkbox status on reload
+            submitBtn.disabled = !termsCheckbox.checked;
+
+            // Toggle submit button state when checkbox is clicked
+            termsCheckbox.addEventListener('change', function() {
+                submitBtn.disabled = !this.checked;
             });
         }
     });
-
-    // Real-time validation
-    document.querySelectorAll('[required]').forEach(field => {
-        field.addEventListener('blur', function() {
-            if (!this.value.trim()) {
-                this.classList.add('is-invalid');
-            } else {
-                this.classList.remove('is-invalid');
-            }
-        });
-
-        field.addEventListener('input', function() {
-            if (this.value.trim()) {
-                this.classList.remove('is-invalid');
-            }
-        });
-    });
-
-    // Called when reCAPTCHA is successfully completed
-    function enableSubmitButton() {
-        const button = document.getElementById('submitReportBtn');
-        if (button) {
-            button.disabled = false;
-        }
-    }
-
-    // Called when reCAPTCHA expires or fails
-    function disableSubmitButton() {
-        const button = document.getElementById('submitReportBtn');
-        if (button) {
-            button.disabled = true;
-        }
-    }
-
-    // Always start disabled when page loads
-    document.addEventListener('DOMContentLoaded', function () {
-        disableSubmitButton();
-    });
-
-    // Dynamically Resize reCAPTCHA to stretch accurately on all screens
-    function resizeRecaptcha() {
-        const wrapper = document.getElementById('recaptcha-container');
-        const recaptcha = document.querySelector('.g-recaptcha');
-        
-        if (wrapper && recaptcha) {
-            // Measure actual container width
-            const wrapperWidth = wrapper.offsetWidth;
-            
-            // Standard reCAPTCHA size is 304px
-            const scale = wrapperWidth / 304;
-            
-            // Only scale down on very small screens, never scale up
-            if (scale < 1) {
-                recaptcha.style.transform = `scale(${scale})`;
-                recaptcha.style.transformOrigin = '0 0';
-                wrapper.style.height = `${78 * scale}px`;
-            } else {
-                recaptcha.style.transform = 'scale(1)';
-                wrapper.style.height = '78px';
-            }
-        }
-    }
-
-    // Re-run the scaling function heavily to ensure it catches Google API load times
-    window.addEventListener('resize', resizeRecaptcha);
-    window.addEventListener('load', resizeRecaptcha);
-    setTimeout(resizeRecaptcha, 300);
-    setTimeout(resizeRecaptcha, 1000);
 </script>
 </body>
 </html>

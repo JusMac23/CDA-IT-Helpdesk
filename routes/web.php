@@ -15,8 +15,8 @@ use App\Http\Controllers\TechnicalPersonnelController;
 use App\Http\Controllers\TechnicalServicesController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\RolesController;
-use App\Http\Controllers\CreateIncidentReportPublicController;
-use App\Http\Controllers\DataBreachAllReportsController;
+use App\Http\Controllers\CreateIncidentReportController;
+use App\Http\Controllers\DataBreachReportsController;
 use App\Http\Controllers\DatabreachPerRegionController;
 use App\Http\Controllers\GenerateDocsController;
 use App\Http\Controllers\DatabreachTeamController;
@@ -45,8 +45,8 @@ Route::get('/create_ticket', [CreateTicketController::class, 'showForm'])->name(
 Route::post('/create_ticket', [CreateTicketController::class, 'store'])->name('tickets.store.client');
 
 // Create Incident Report (public)
-Route::get('/create_incident', [CreateIncidentReportPublicController::class, 'create'])->name('incident.create');
-Route::post('/create_incident', [CreateIncidentReportPublicController::class, 'store'])->name('incident.store');
+Route::get('/create_incident', [CreateIncidentReportController::class, 'create'])->name('incident.create');
+Route::post('/create_incident', [CreateIncidentReportController::class, 'store'])->name('incident.store');
 
 // Client Signature Routes
 Route::get('/tickets/{ticket_id}/client-signature', [UploadClientSignatureController::class, 'showSignatureForm'])->name('tickets.client_signature');
@@ -89,20 +89,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/tickets/save', [MyRequestedTicketsController::class, 'save'])->name('tickets.save')->middleware('permission:create_myrequested_tickets');
 
      // Create Data Breach Notification
-    Route::get('/databreach', [DataBreachAllReportsController::class, 'index'])->name('databreach.index')
+    Route::get('/databreach', [DataBreachReportsController::class, 'index'])->name('databreach.index')
         ->middleware('permission:view_all_databreach|view_overview_databreach|create_databreach|view_databreach|assess_databreach|evaluate_databreach|report_databreach|delete_databreach|search_databreach');
-    Route::get('/overview_databreach', [DataBreachAllReportsController::class, 'overview'])->name('databreach.overview')->middleware('permission:view_overview_databreach');
-    Route::get('/create_databreach', [DataBreachAllReportsController::class, 'create'])->name('databreach.create')->middleware('permission:create_databreach');
-    Route::post('/create_databreach', [DataBreachAllReportsController::class, 'store'])->name('databreach.store')->middleware('permission:create_databreach');
-    Route::get('/databreach/{dbn_id}', [DataBreachAllReportsController::class, 'show'])->name('databreach.show')->middleware('permission:view_databreach');
-    Route::get('/assess_databreach/{dbn_id}/assess', [DataBreachAllReportsController::class, 'assess'])->name('databreach.assess')->middleware('permission:assess_databreach');
-    Route::get('/evaluate_databreach/{dbn_id}/evaluate', [DataBreachAllReportsController::class, 'evaluate'])->name('databreach.evaluate')->middleware('permission:evaluate_databreach');
-    Route::patch('/databreach/{dbn_id}/report', [DataBreachAllReportsController::class, 'report_to_npc'])->name('databreach.report_to_npc')->middleware('permission:report_databreach');
-    Route::get('/get-dbrt-email/{region}', [DataBreachAllReportsController::class, 'assess_getDbrtEmail']);
-    Route::get('/get-dbrt-email/{region}', [DataBreachAllReportsController::class, 'evaluate_getDbrtEmail']);
-    Route::put('/assess_databreach/{dbn_id}', [DataBreachAllReportsController::class, 'update_assessment'])->name('databreach.update_assessment')->middleware('permission:assess_databreach');
-    Route::put('/evaluate_databreach/{dbn_id}', [DataBreachAllReportsController::class, 'update_evaluation'])->name('databreach.update_evaluation')->middleware('permission:evaluate_databreach');
-    Route::delete('/databreach/{dbn_id}', [DataBreachAllReportsController::class, 'destroy'])->name('databreach.destroy')->middleware('permission:delete_databreach');
+    Route::get('/overview_databreach', [DataBreachReportsController::class, 'overview'])->name('databreach.overview')->middleware('permission:view_overview_databreach');
+    Route::get('/create_databreach', [DataBreachReportsController::class, 'create'])->name('databreach.create')->middleware('permission:create_databreach');
+    Route::post('/create_databreach', [DataBreachReportsController::class, 'store'])->name('databreach.store')->middleware('permission:create_databreach');
+    Route::get('/databreach/{dbn_id}', [DataBreachReportsController::class, 'show'])->name('databreach.show')->middleware('permission:view_databreach');
+    Route::get('/assess_databreach/{dbn_id}/assess', [DataBreachReportsController::class, 'assess'])->name('databreach.assess')->middleware('permission:assess_databreach');
+    Route::get('/evaluate_databreach/{dbn_id}/evaluate', [DataBreachReportsController::class, 'evaluate'])->name('databreach.evaluate')->middleware('permission:evaluate_databreach');
+    Route::patch('/databreach/{dbn_id}/report', [DataBreachReportsController::class, 'report_to_npc'])->name('databreach.report_to_npc')->middleware('permission:report_databreach');
+    Route::get('/get-dbrt-email/{region}', [DataBreachReportsController::class, 'assess_getDbrtEmail']);
+    Route::get('/get-dbrt-email/{region}', [DataBreachReportsController::class, 'evaluate_getDbrtEmail']);
+    Route::put('/assess_databreach/{dbn_id}', [DataBreachReportsController::class, 'update_assessment'])->name('databreach.update_assessment')->middleware('permission:assess_databreach');
+    Route::put('/evaluate_databreach/{dbn_id}', [DataBreachReportsController::class, 'update_evaluation'])->name('databreach.update_evaluation')->middleware('permission:evaluate_databreach');
+    Route::delete('/databreach/{dbn_id}', [DataBreachReportsController::class, 'destroy'])->name('databreach.destroy')->middleware('permission:delete_databreach');
 
     // Generate Data Breach Report
     Route::get('/databreach/{id}/generate-pdf', [GenerateDocsController::class, 'generatePdf'])->name('databreach.generatePdf');

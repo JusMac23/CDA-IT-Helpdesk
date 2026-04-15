@@ -23,7 +23,7 @@
         body { font-family: 'Inter', system-ui, -apple-system, sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
 
         /* Profile Layout Constraints */
-        .profile-wrapper { max-width: 56rem; margin: 0 auto; width: 100%; }
+        .profile-wrapper { max-width: 76rem; margin: 0 auto; width: 100%; }
         
         /* Header */
         .header-flex { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 1.5rem; gap: 1rem; width: 100%; }
@@ -58,7 +58,7 @@
         }
     </style>
 
-    <div id="main-content" class="page-wrapper" style="transition: all 0.3s ease-in-out;">
+    <div id="main-content" class="page-wrapper">
         <div class="profile-wrapper">
             
             <div class="header-flex">

@@ -21,6 +21,8 @@
             --disabled-btn-bg: #cbd5e1;
             --disabled-btn-text: #f8fafc;
             --readonly-bg: #f8fafc;
+            --link-color: #4f46e5;
+            --link-hover: #4338ca;
         }
 
         body.dark {
@@ -40,6 +42,8 @@
             --disabled-btn-bg: #334155;
             --disabled-btn-text: #94a3b8;
             --readonly-bg: #1e293b;
+            --link-color: #818cf8;
+            --link-hover: #a5b4fc;
         }
 
         /* Global Box Sizing & Font Fix */
@@ -50,7 +54,7 @@
         .container { max-width: 80rem; width: 100%; margin: 0 auto; padding: 0 2rem; }
         @media (max-width: 640px) { .container { padding: 0.5rem; } }
 
-        /* Form Card - Added outline matching dark mode specs */
+        /* Form Card */
         .form-card { background-color: var(--card-bg); border-radius: 1rem; border: 1px solid var(--border-light); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); padding: 2.5rem; position: relative; width: 100%; transition: background-color 0.3s ease, border-color 0.3s ease; }
         @media (max-width: 640px) { .form-card { padding: 1.5rem; border-radius: 0.75rem; } }
 
@@ -68,7 +72,7 @@
         .error-title { font-weight: 700; font-size: 0.95rem; margin: 0 0 0.5rem 0; color: var(--error-title); transition: color 0.3s ease; }
         .error-list { list-style-type: disc; padding-left: 1.5rem; margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--error-text); font-weight: 500; transition: color 0.3s ease; }
 
-        /* Form Controls - Unified Heights */
+        /* Form Controls */
         form { width: 100%; }
         .form-group { display: flex; flex-direction: column; margin-top: 1.5rem; width: 100%; }
         .form-label { font-size: 0.875rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; width: 100%; transition: color 0.3s ease; }
@@ -87,8 +91,12 @@
         /* Grid Layouts - Mobile First */
         .grid-2, .grid-3 { display: flex; flex-direction: column; gap: 0; width: 100%; margin-top: 0; }
         
-        /* reCAPTCHA & Submit - Mobile First */
-        .recaptcha-wrapper { margin-top: 2rem; width: 100%; overflow: hidden; position: relative; }
+        /* Terms and Conditions Checkbox */
+        .terms-wrapper { margin-top: 2rem; width: 100%; }
+        .terms-label { display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; transition: color 0.3s ease; }
+        .terms-checkbox { margin-top: 0.25rem; width: 1.125rem; height: 1.125rem; accent-color: #4f46e5; cursor: pointer; flex-shrink: 0; }
+        .terms-link { color: var(--link-color); text-decoration: none; font-weight: 600; transition: color 0.2s; }
+        .terms-link:hover { color: var(--link-hover); text-decoration: underline; }
         
         .submit-wrapper { display: flex; flex-direction: column; width: 100%; padding-top: 2rem; border-top: 1px solid var(--border-light); margin-top: 2rem; transition: border-color 0.3s ease; }
         
@@ -107,7 +115,6 @@
             .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
             .grid-2 .form-group, .grid-3 .form-group { margin-top: 0; }
             
-            .recaptcha-wrapper { max-width: 304px; }
             .submit-wrapper { flex-direction: row; justify-content: flex-end; }
             .btn-submit { width: auto; }
             .close-btn { top: 2rem; right: 2rem; }
@@ -180,7 +187,7 @@
                                 Date of Notification <span class="required-mark">*</span>
                             </label>
                             <input type="datetime-local" id="date_notification" name="date_notification" required readonly
-                                class="form-input" style="background-color: var(--readonly-bg); color: var(--text-muted); cursor: not-allowed;" value="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d\TH:i') }}">
+                                class="form-input" style="background-color: var(--readonly-bg); color: var(--text-muted); cursor: not-allowed;">
                         </div>
                     </div>
 
@@ -220,18 +227,11 @@
                             class="form-textarea"></textarea>
                     </div>
 
-                    <div class="recaptcha-wrapper" id="recaptcha-container">
-                        <div class="g-recaptcha" id="recaptcha"
-                            data-sitekey="{{ config('services.recaptcha.site_key') }}"
-                            data-callback="enableSubmitButton"
-                            data-expired-callback="disableSubmitButton"
-                            data-error-callback="disableSubmitButton"></div>
-
-                        @if ($errors->has('g-recaptcha-response'))
-                            <div style="color: #ef4444; font-weight: 500; font-size: 0.875rem; margin-top: 0.75rem; width: 100%;">
-                                <i class="fas fa-info-circle" style="margin-right: 0.25rem;"></i> {{ $errors->first('g-recaptcha-response') }}
-                            </div>
-                        @endif
+                    <div class="terms-wrapper">
+                        <label class="terms-label" for="terms_agree">
+                            <input type="checkbox" id="terms_agree" name="terms_agree" required class="terms-checkbox">
+                            <span>I have read and agree to the <a href="https://cda.gov.ph/cda-privacy-policy/" class="terms-link" target="_blank">Terms and Conditions</a> and the <a href="https://cda.gov.ph/cda-privacy-policy/" class="terms-link" target="_blank">Privacy Policy</a>, and I confirm that the information provided is accurate and true to the best of my knowledge. <span class="required-mark">*</span></span>
+                        </label>
                     </div>
 
                     <div class="submit-wrapper">
@@ -246,21 +246,39 @@
         </div>
     </div>
 
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             
+            // Set Exact Time
+            const dateNotificationInput = document.getElementById('date_notification');
+            if (dateNotificationInput) {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                
+                dateNotificationInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
+
             // FORM VALIDATION ENHANCEMENT
             const form = document.querySelector('form');
+            const termsCheckbox = document.getElementById('terms_agree');
+            const submitBtn = document.getElementById('submitReportBtn');
+
             if (form) {
                 form.addEventListener('submit', function (e) {
                     let isValid = true;
                     const requiredFields = this.querySelectorAll('[required]');
 
                     requiredFields.forEach(field => {
-                        if (!field.value.trim()) {
+                        // For checkboxes, check if it's checked, otherwise check if value is trimmed
+                        if (field.type === 'checkbox') {
+                            if (!field.checked) isValid = false;
+                        } else if (!field.value.trim()) {
                             isValid = false;
                             field.classList.add('input-error');
                         } else {
@@ -273,7 +291,7 @@
                         Swal.fire({
                             icon: 'error',
                             title: 'Missing Information',
-                            text: 'Please fill in all required fields marked with an asterisk (*).',
+                            text: 'Please fill in all required fields marked with an asterisk (*), and agree to the CDA Terms and Conditions and Privacy Policy.',
                             confirmButtonColor: '#4f46e5',
                             confirmButtonText: 'Okay'
                         });
@@ -281,9 +299,9 @@
                 });
 
                 // Real-time validation feedback
-                form.querySelectorAll('[required]').forEach(field => {
+                form.querySelectorAll('input[type="text"], input[type="email"], input[type="datetime-local"], select, textarea').forEach(field => {
                     field.addEventListener('blur', function () {
-                        if (!this.value.trim()) {
+                        if (this.hasAttribute('required') && !this.value.trim()) {
                             this.classList.add('input-error');
                         } else {
                             this.classList.remove('input-error');
@@ -298,52 +316,17 @@
                 });
             }
             
-            // Ensure button starts disabled (relies on reCAPTCHA callback to enable)
-            disableSubmitButton();
+            // Terms and Conditions Checkbox Logic
+            if (termsCheckbox && submitBtn) {
+                // Ensure initial state matches checkbox status on reload
+                submitBtn.disabled = !termsCheckbox.checked;
+
+                // Toggle submit button state when checkbox is clicked
+                termsCheckbox.addEventListener('change', function() {
+                    submitBtn.disabled = !this.checked;
+                });
+            }
         });
-
-        // Called when reCAPTCHA is successfully completed
-        function enableSubmitButton() {
-            const button = document.getElementById('submitReportBtn');
-            if (button) {
-                button.disabled = false;
-            }
-        }
-
-        // Called when reCAPTCHA expires or fails
-        function disableSubmitButton() {
-            const button = document.getElementById('submitReportBtn');
-            if (button) {
-                button.disabled = true;
-            }
-        }
-
-        // Dynamically Resize reCAPTCHA to stretch accurately on all screens
-        function resizeRecaptcha() {
-            const wrapper = document.getElementById('recaptcha-container');
-            const recaptcha = document.querySelector('.g-recaptcha');
-            
-            if (wrapper && recaptcha) {
-                const wrapperWidth = wrapper.offsetWidth;
-                const scale = wrapperWidth / 304; // 304px is Google's default width
-                
-                // Only scale down on very small screens, never scale up
-                if (scale < 1) {
-                    recaptcha.style.transform = `scale(${scale})`;
-                    recaptcha.style.transformOrigin = '0 0';
-                    wrapper.style.height = `${78 * scale}px`; // 78px is Google's default height
-                } else {
-                    recaptcha.style.transform = 'scale(1)';
-                    wrapper.style.height = '78px';
-                }
-            }
-        }
-
-        // Add event listeners to trigger resize logic reliably
-        window.addEventListener('resize', resizeRecaptcha);
-        window.addEventListener('load', resizeRecaptcha);
-        setTimeout(resizeRecaptcha, 300);
-        setTimeout(resizeRecaptcha, 1000);
     </script>
     @endcan
 

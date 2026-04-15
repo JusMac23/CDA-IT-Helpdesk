@@ -218,8 +218,7 @@
 
 <footer class="app-footer">
     <div class="container" style="flex-direction: column; gap: 0.75rem;">
-        <p>© {{ $year }} Cooperative Development Authority - ICTD. All rights reserved.</p>
-        <p>For urgent assistance, contact us at <a href="mailto:ictd@cda.gov.ph">ictd@cda.gov.ph</a></p>
+        <p>© {{ $year }} CDA-DBRS. All rights reserved.</p>
     </div>
 </footer>
 

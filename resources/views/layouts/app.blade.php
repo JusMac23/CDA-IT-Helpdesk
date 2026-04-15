@@ -218,7 +218,7 @@
                                 setInterval(() => this.updateTime(), 1000);
                             },
                             updateTime() {
-                                const options = { timeZone: 'Asia/Manila', weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true };
+                                const options = { timeZone: 'Asia/Manila', weekday: 'long', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true };
                                 this.time = new Date().toLocaleString('en-US', options);
                             }
                         }">
@@ -281,8 +281,7 @@
             </main>
 
             <footer class="app-footer">
-                <p>&copy; {{ date('Y') }} CDA ICTD. All rights reserved.</p>
-                <a href="mailto:ictd@cda.gov.ph">Contact us at ictd@cda.gov.ph</a>
+                <p>&copy; {{ date('Y') }} CDA-DBRS. All rights reserved.</p>
             </footer>
 
         </div>

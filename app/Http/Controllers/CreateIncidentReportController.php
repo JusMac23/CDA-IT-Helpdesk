@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http; 
 use Illuminate\Support\Facades\Mail;
 
-class CreateIncidentReportPublicController extends Controller
+class CreateIncidentReportController extends Controller
 {
     // Handle Create
     public function create()
@@ -22,18 +22,6 @@ class CreateIncidentReportPublicController extends Controller
     // Handle Store
    public function store(Request $request)
     {
-        // CAPTCHA Validation
-        $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-            'secret'   => config('services.recaptcha.secret_key'),
-            'response' => $request->input('g-recaptcha-response'),
-            'remoteip' => $request->ip(),
-        ]);
-
-        if (!($response->json()['success'] ?? false)) {
-            return back()->withErrors(['g-recaptcha-response' => 'CAPTCHA verification failed. Please try again.'])
-                        ->withInput();
-        }
-
         // Validate user inputs
         $data = $request->validate([
             'sender_fullname'       => 'required|string|max:255',
