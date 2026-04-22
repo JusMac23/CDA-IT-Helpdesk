@@ -32,14 +32,7 @@
         .form-label { font-size: 0.875rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; display: block; transition: color 0.3s ease; }
         
         /* Form Input - Unified 44px Height & Dynamic Outline */ 
-        .form-input { 
-            height: 44px; width: 100%; padding: 0 1rem; 
-            border: 1px solid var(--input-border); 
-            border-radius: 0.5rem; font-size: 0.95rem; 
-            color: var(--input-text); 
-            background-color: var(--input-bg); 
-            transition: all 0.2s ease; font-family: inherit; box-sizing: border-box; 
-        }
+        .form-input { height: 44px; width: 100%; padding: 0 1rem; border: 1px solid var(--input-border); border-radius: 0.5rem; font-size: 0.95rem; color: var(--input-text); background-color: var(--input-bg); transition: all 0.2s ease; font-family: inherit; box-sizing: border-box; }
         
         /* Form Input Focus */ 
         .form-input:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }

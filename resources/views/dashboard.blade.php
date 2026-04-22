@@ -58,12 +58,7 @@
         .dashboard-title { font-size: 1.75rem; font-weight: 800; margin-top: 0; margin-bottom: 2rem; color: var(--text-dark); letter-spacing: -0.025em; transition: color 0.3s ease; }
         
         /* Stats Cards */
-        .stat-cards { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); 
-            gap: 1.5rem; 
-            margin-bottom: 2.5rem; 
-        }
+        .stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
         .stat-card { border-radius: 1rem; padding: 1.5rem; background-color: var(--card-bg); border: 1px solid var(--border-light); box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; border-left: 5px solid; transition: all 0.3s ease; }
         .stat-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
         
@@ -86,13 +81,7 @@
         .card-red .stat-icon { background-color: var(--icon-red-bg); color: var(--icon-red-text); }
         
         /* Grid Tables (Middle Section) */
-        .tables-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); 
-            gap: 1.5rem; 
-            margin-bottom: 3rem; 
-        }
-        
+        .tables-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
         .table-card { background-color: var(--card-bg); border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 1.5rem; border: 1px solid var(--border-light); border-top: 4px solid #cbd5e1; overflow: hidden; display: flex; flex-direction: column; transition: all 0.3s ease; }
         .table-card-title { font-size: 1.15rem; font-weight: 700; margin-top: 0; margin-bottom: 1.25rem; color: var(--text-dark); display: flex; align-items: center; gap: 0.75rem; transition: color 0.3s ease; }
         

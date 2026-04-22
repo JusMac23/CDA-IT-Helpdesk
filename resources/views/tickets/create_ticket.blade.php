@@ -27,36 +27,13 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .animate-fade-in-down {
-            animation: fade-in-down 0.7s ease-out both;
-        }
-
-        .card-hover {
-            transition: all 0.3s ease;
-        }
-
-        .card-hover:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-        }
-
-        .input-focus:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
-        }
-
-        body, button, input, select, textarea, h1, h2, h3, h4, p, a, span, li, legend, label, option {
-            font-family: 'Figtree', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-                Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif !important;
-        }
-
-        .material-icons-outlined {
-            font-family: 'Material Icons Outlined' !important;
-        }
-
-        .fa, .fas, .far, .fal, .fab {
-            font-family: 'Font Awesome 6 Free' !important;
-        }
+        .animate-fade-in-down { animation: fade-in-down 0.7s ease-out both; }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1); }
+        .input-focus:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); }
+        body, button, input, select, textarea, h1, h2, h3, h4, p, a, span, li, legend, label, option { font-family: 'Figtree', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif !important; }
+        .material-icons-outlined { font-family: 'Material Icons Outlined' !important; }
+        .fa, .fas, .far, .fal, .fab { font-family: 'Font Awesome 6 Free' !important; }
     </style>
 </head>
 

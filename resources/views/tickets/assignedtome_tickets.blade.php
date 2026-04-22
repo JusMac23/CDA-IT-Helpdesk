@@ -164,15 +164,7 @@
         .pagination-wrapper .flex.justify-between { display: flex; flex-wrap: wrap; gap: 0.5rem; box-shadow: none !important; justify-content: center; align-items: center; }
         .pagination-wrapper a, 
         .pagination-wrapper span[aria-current="page"] > span,
-        .pagination-wrapper span[aria-disabled="true"] > span { 
-            display: inline-flex; align-items: center; justify-content: center; 
-            min-width: 2.25rem; height: 2.25rem; padding: 0 0.5rem; 
-            border-radius: 0.375rem !important; 
-            font-size: 0.875rem; font-weight: 600; font-family: 'Inter', sans-serif;
-            transition: all 0.2s ease; border: 1px solid transparent; 
-            margin: 0 !important; 
-            text-decoration: none; line-height: 1;
-        }
+        .pagination-wrapper span[aria-disabled="true"] > span { display: inline-flex; align-items: center; justify-content: center; min-width: 2.25rem; height: 2.25rem; padding: 0 0.5rem; border-radius: 0.375rem !important; font-size: 0.875rem; font-weight: 600; font-family: 'Inter', sans-serif; transition: all 0.2s ease; border: 1px solid transparent; margin: 0 !important; text-decoration: none; line-height: 1; }
         .pagination-wrapper a { background-color: var(--card-bg); color: var(--text-muted); border-color: var(--border-light); }
         .pagination-wrapper a:hover { background-color: var(--bg-alt); color: var(--text-dark); border-color: var(--input-border); transform: translateY(-1px); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .pagination-wrapper span[aria-current="page"] > span { background-color: #4f46e5; color: #ffffff; border-color: #4f46e5; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.25); z-index: 2; position: relative; }

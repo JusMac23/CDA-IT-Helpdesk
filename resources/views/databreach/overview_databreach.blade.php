@@ -108,40 +108,10 @@
         .table-header { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); margin-top: 2rem; margin-bottom: 1rem; display: flex; align-items: center; transition: color 0.3s ease; }
         .table-header i { margin-right: 0.5rem; color: #4f46e5; }
         
-        .table-container { 
-            width: 100%; 
-            overflow-x: auto; 
-            -webkit-overflow-scrolling: touch;
-            background-color: var(--card-bg); 
-            border-radius: 0.75rem; 
-            border: 1px solid var(--border-light); 
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); 
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-        }
-        
+        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; background-color: var(--card-bg); border-radius: 0.75rem; border: 1px solid var(--border-light); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: background-color 0.3s ease, border-color 0.3s ease; }
         .data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem; min-width: 800px; }
-        
-        .data-table th { 
-            padding: 0.75rem 1rem; 
-            background-color: var(--bg-alt); 
-            color: var(--text-muted); 
-            font-weight: 700; 
-            font-size: 0.75rem; 
-            text-transform: uppercase; 
-            letter-spacing: 0.05em; 
-            border-bottom: 2px solid var(--border-light); 
-            white-space: nowrap; 
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-        }
-        
-        .data-table td { 
-            padding: 1rem; 
-            border-bottom: 1px solid var(--border-subtle); 
-            color: var(--text-dark); 
-            vertical-align: middle; 
-            font-weight: 500; 
-            transition: color 0.3s ease, border-color 0.3s ease;
-        }
+        .data-table th { padding: 0.75rem 1rem; background-color: var(--bg-alt); color: var(--text-muted); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid var(--border-light); white-space: nowrap; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+        .data-table td { padding: 1rem; border-bottom: 1px solid var(--border-subtle); color: var(--text-dark); vertical-align: middle; font-weight: 500; transition: color 0.3s ease, border-color 0.3s ease; }
         .data-table tbody tr { transition: background-color 0.15s; }
         .data-table tbody tr:hover { background-color: var(--bg-alt); }
 

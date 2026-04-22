@@ -50,28 +50,10 @@
         body { font-family: 'Inter', system-ui, -apple-system, sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
 
         /* Action Bar */
-        .action-bar { 
-            display: flex; 
-            justify-content: flex-end; 
-            align-items: center; 
-            gap: 1rem; 
-            max-width: 56rem;
-            margin: 0 auto 1.5rem auto; 
-            padding: 0 0.5rem;
-        }
+        .action-bar { display: flex; justify-content: flex-end; align-items: center; gap: 1rem; max-width: 56rem; margin: 0 auto 1.5rem auto; padding: 0 0.5rem; }
         
         /* Main Document Wrapper */
-        .view-wrapper { 
-            position: relative; /* Added for absolute positioning of close button */
-            max-width: 56rem; 
-            margin: 0 auto; 
-            background-color: var(--card-bg); 
-            border-radius: 1rem; 
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); 
-            padding: 2rem; 
-            border: 1px solid var(--border-light); 
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-        }
+        .view-wrapper { position: relative; max-width: 56rem; margin: 0 auto; background-color: var(--card-bg); border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); padding: 2rem; border: 1px solid var(--border-light); transition: background-color 0.3s ease, border-color 0.3s ease; }
 
         /* Close Button */
         .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; color: var(--close-btn-text); font-size: 1.75rem; background: none; border: none; cursor: pointer; transition: all 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0.25rem 0.5rem; }

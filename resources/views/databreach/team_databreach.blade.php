@@ -128,15 +128,7 @@
         /* Uniform Button Styling for Page Numbers & Arrows */
         .pagination-wrapper a, 
         .pagination-wrapper span[aria-current="page"] > span,
-        .pagination-wrapper span[aria-disabled="true"] > span { 
-            display: inline-flex; align-items: center; justify-content: center; 
-            min-width: 2.25rem; height: 2.25rem; padding: 0 0.5rem; 
-            border-radius: 0.375rem !important; 
-            font-size: 0.875rem; font-weight: 600; font-family: 'Inter', sans-serif;
-            transition: all 0.2s ease; border: 1px solid transparent; 
-            margin: 0 !important; 
-            text-decoration: none; line-height: 1;
-        }
+        .pagination-wrapper span[aria-disabled="true"] > span { display: inline-flex; align-items: center; justify-content: center; min-width: 2.25rem; height: 2.25rem; padding: 0 0.5rem; border-radius: 0.375rem !important; font-size: 0.875rem; font-weight: 600; font-family: 'Inter', sans-serif; transition: all 0.2s ease; border: 1px solid transparent; margin: 0 !important; text-decoration: none; line-height: 1; }
 
         /* Default Inactive Links */
         .pagination-wrapper a { background-color: var(--card-bg); color: var(--text-muted); border-color: var(--border-light); }

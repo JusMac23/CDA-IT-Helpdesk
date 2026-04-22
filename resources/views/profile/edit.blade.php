@@ -33,14 +33,7 @@
         .profile-container { display: flex; flex-direction: column; gap: 2rem; }
         
         /* Modern Profile Card - Added outline matching dark mode specs */
-        .profile-card { 
-            background-color: var(--card-bg); 
-            border-radius: 1rem; 
-            border: 1px solid var(--border-light); 
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); 
-            padding: 1.5rem; 
-            transition: background-color 0.3s ease, border-color 0.3s ease; 
-        }
+        .profile-card { background-color: var(--card-bg); border-radius: 1rem; border: 1px solid var(--border-light); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); padding: 1.5rem; transition: background-color 0.3s ease, border-color 0.3s ease; }
 
         /* Specifically for the Delete Account card */
         .profile-card-danger {
@@ -50,9 +43,7 @@
         /* Profile Card Content Area */
         .profile-card-content { max-width: 48rem; }
 
-        /* --------------------------------------------------- */
-        /* Desktop & Tablet Overrides                          */
-        /* --------------------------------------------------- */
+        /* Desktop & Tablet Overrides */
         @media (min-width: 640px) { 
             .profile-card { padding: 2.5rem; } 
         }
