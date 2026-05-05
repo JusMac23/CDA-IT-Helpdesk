@@ -141,7 +141,7 @@
         @endif
 
     </nav>
-
+    <!--
     <div class="sidebar-footer">
         <form method="POST" action="{{ route('logout') }}" style="margin: 0; width: 100%;">
             @csrf
@@ -151,4 +151,5 @@
             </button>
         </form>
     </div>
+    -->
 </aside>

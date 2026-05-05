@@ -21,13 +21,13 @@
         }
 
         body.dark {
-            --card-bg: #0f172a; /* Matched to sidebar, header, and footer */
-            --bg-alt: #1e293b; /* Slightly lighter for contrast in table headers/filters */
+            --card-bg: #0f172a; 
+            --bg-alt: #1e293b; 
             --text-dark: #f8fafc;
             --text-muted: #9ca3af;
-            --border-light: #334155; /* Used for explicit outlines */
+            --border-light: #334155; 
             --border-subtle: #1e293b;
-            --input-bg: #0f172a; /* Matched to main background */
+            --input-bg: #0f172a; 
 
             /* Status Badges - Dark */
             --badge-eval-bg: rgba(22, 101, 52, 0.4); --badge-eval-text: #4ade80;
@@ -76,12 +76,14 @@
 
         /* Dashboard Grid & Stat Cards */
         .overview-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 1.5rem; width: 100%; }
-        @media (min-width: 1024px) { .overview-grid { grid-template-columns: 1fr 1.25fr; align-items: stretch; } }
+        @media (min-width: 1024px) { 
+            .overview-grid { grid-template-columns: 1fr 1.25fr; align-items: stretch; } 
+        }
         
         .stat-list { display: grid; grid-template-columns: 1fr; gap: 1.25rem; align-content: start; min-width: 0; width: 100%; }
         @media (min-width: 640px) and (max-width: 1023px) { .stat-list { grid-template-columns: repeat(2, 1fr); } }
 
-        /* Enhanced Stat Cards - Mobile adjustments - Added explicit var(--border-light) */
+        /* Enhanced Stat Cards */
         .stat-card { background-color: var(--card-bg); border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 1.25rem; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid; border-top: 1px solid var(--border-light); border-right: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); transition: all 0.2s ease; cursor: default; overflow: hidden; }
         .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); }
         
@@ -98,11 +100,19 @@
         .border-gray { border-left-color: #64748b; } .text-gray { color: #64748b; }
         .border-green { border-left-color: #22c55e; } .text-green { color: #22c55e; }
 
-        /* Chart Area - Mobile adjustments - Changed to var(--border-light) */
-        .chart-box { background-color: var(--card-bg); box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-radius: 1rem; padding: 1.25rem; border: 1px solid var(--border-light); display: flex; flex-direction: column; min-width: 0; width: 100%; overflow: hidden; transition: background-color 0.3s ease, border-color 0.3s ease; }
-        .chart-box h3 { margin-top: 0; font-size: 1.1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-light); transition: color 0.3s ease, border-color 0.3s ease; }
-        .chart-wrapper { position: relative; width: 100%; height: 300px; flex-grow: 1; }
-        @media (min-width: 1024px) { .chart-wrapper { height: 100%; min-height: 400px; } }
+        /* Chart Area - Scrollable Legend Layout */
+        .chart-box { background-color: var(--card-bg); box-shadow: 0 1px 3px rgba(0,0,0,0.05); border-radius: 1rem; padding: 1.25rem; border: 1px solid var(--border-light); display: flex; flex-direction: column; min-width: 0; width: 100%; height: 100%; transition: background-color 0.3s ease, border-color 0.3s ease; }
+        .chart-box h3 { margin-top: 0; font-size: 1.1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 1.25rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border-light); transition: color 0.3s ease, border-color 0.3s ease; flex-shrink: 0; }
+        
+        .chart-wrapper { display: flex; flex-direction: column; width: 100%; flex: 1 1 auto; gap: 1.5rem; min-height: 350px; }
+        .canvas-container { position: relative; width: 100%; flex: 1 1 250px; min-height: 250px; }
+        
+        /* Custom Legend Styling */
+        .custom-legend-container { max-height: 200px; overflow-y: auto; padding-right: 5px; }
+        .custom-legend-container::-webkit-scrollbar { width: 6px; }
+        .custom-legend-container::-webkit-scrollbar-track { background: transparent; }
+        .custom-legend-container::-webkit-scrollbar-thumb { background-color: var(--border-light); border-radius: 10px; }
+        body.dark .custom-legend-container::-webkit-scrollbar-thumb { background-color: var(--border-light); }
 
         /* --- Table Section (Mobile First) --- */
         .table-header { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); margin-top: 2rem; margin-bottom: 1rem; display: flex; align-items: center; transition: color 0.3s ease; }
@@ -147,7 +157,6 @@
             
             .chart-box { padding: 1.75rem; }
             .chart-box h3 { font-size: 1.25rem; margin-bottom: 1.5rem; }
-            .chart-wrapper { height: 350px; }
 
             .table-header { font-size: 1.25rem; margin-top: 3rem; margin-bottom: 1.25rem; }
             .table-header i { margin-right: 0.75rem; }
@@ -159,14 +168,16 @@
         @media (min-width: 768px) {
             .panel { padding: 2rem; }
             .header-flex { flex-direction: row; justify-content: space-between; align-items: center; }
-            
             .action-container { flex-direction: row; justify-content: space-between; align-items: center; }
-            
             .btn { width: auto; }
-            
             .filter-form { flex-direction: row; align-items: flex-end; background: transparent; padding: 0; border: none; margin-bottom: 2rem; }
             .form-group { width: 280px; }
             .form-btn-group { flex-direction: row; width: auto; margin-top: 0; gap: 0.75rem; }
+
+            /* Desktop Chart Layout */
+            .chart-wrapper { flex-direction: row; align-items: center; min-height: 0; height: 350px; }
+            .canvas-container { flex: 1; height: 100%; }
+            .custom-legend-container { max-height: 100%; width: 220px; flex-shrink: 0; margin-left: 1rem; }
         }
     </style>
 
@@ -271,7 +282,12 @@
                     <div class="chart-box">
                         <h3>Incidents per Specific Cause</h3>
                         <div class="chart-wrapper">
-                            <canvas id="causePieChart"></canvas>
+                            <div class="canvas-container">
+                                <canvas id="causePieChart"></canvas>
+                            </div>
+                            <div class="custom-legend-container">
+                                <ul id="customLegend" style="margin: 0; padding: 0; list-style: none;"></ul>
+                            </div>
                         </div>
                     </div>
 
@@ -440,23 +456,73 @@
             }
         };
 
-        const getLegendPosition = () => window.innerWidth < 768 ? 'bottom' : 'right';
+        // Custom HTML Legend Plugin for Scrollable Specific Causes
+        const htmlLegendPlugin = {
+            id: 'htmlLegend',
+            afterUpdate(chart, args, options) {
+                const ul = document.getElementById(options.containerID);
+                if (!ul) return;
+
+                // Remove old legend items
+                while (ul.firstChild) { ul.firstChild.remove(); }
+
+                if (!hasData) return; // Do not show legend if no data
+
+                // Get native legend items
+                const items = chart.options.plugins.legend.labels.generateLabels(chart);
+
+                items.forEach(item => {
+                    const li = document.createElement('li');
+                    li.style.display = 'flex';
+                    li.style.alignItems = 'flex-start';
+                    li.style.cursor = 'pointer';
+                    li.style.marginBottom = '12px';
+                    li.style.transition = 'opacity 0.2s ease';
+                    li.style.opacity = item.hidden ? '0.4' : '1';
+
+                    // Toggle visibility on click
+                    li.onclick = () => {
+                        chart.toggleDataVisibility(item.index);
+                        chart.update();
+                    };
+
+                    // Legend Color Box
+                    const boxSpan = document.createElement('span');
+                    boxSpan.style.background = item.fillStyle;
+                    boxSpan.style.display = 'inline-block';
+                    boxSpan.style.width = '14px';
+                    boxSpan.style.height = '14px';
+                    boxSpan.style.borderRadius = '50%';
+                    boxSpan.style.marginRight = '10px';
+                    boxSpan.style.marginTop = '2px';
+                    boxSpan.style.flexShrink = '0';
+
+                    // Legend Text
+                    const textContainer = document.createElement('span');
+                    textContainer.style.color = getComputedColor('--text-muted');
+                    textContainer.style.fontFamily = "'Inter', sans-serif";
+                    textContainer.style.fontSize = '12px';
+                    textContainer.style.fontWeight = '500';
+                    textContainer.style.lineHeight = '1.4';
+                    textContainer.style.textDecoration = item.hidden ? 'line-through' : 'none';
+                    textContainer.textContent = item.text;
+
+                    li.appendChild(boxSpan);
+                    li.appendChild(textContainer);
+                    ul.appendChild(li);
+                });
+            }
+        };
 
         const chartOptions = {
             responsive: true,
-            maintainAspectRatio: false,
+            maintainAspectRatio: false, 
             plugins: {
                 legend: {
-                    position: getLegendPosition(),
-                    display: hasData,
-                    labels: {
-                        boxWidth: 12,
-                        usePointStyle: true,
-                        pointStyle: 'circle',
-                        font: { size: 13, family: "'Inter', sans-serif" },
-                        color: getComputedColor('--text-muted'),
-                        padding: 20
-                    }
+                    display: false // We disable the native legend to use our HTML scrollable one
+                },
+                htmlLegend: {
+                    containerID: 'customLegend' // Connect to our new HTML list
                 },
                 tooltip: {
                     enabled: hasData,
@@ -473,23 +539,12 @@
             type: 'doughnut',
             data: chartData,
             options: chartOptions,
-            plugins: [noDataPlugin]
-        });
-
-        // Resize observer for Chart layout
-        window.addEventListener('resize', () => {
-            const newPos = getLegendPosition();
-            if (myPieChart.options.plugins.legend.position !== newPos) {
-                myPieChart.options.plugins.legend.position = newPos;
-                myPieChart.update();
-            }
+            plugins: [noDataPlugin, htmlLegendPlugin] // Load the custom plugin
         });
 
         // MutationObserver to detect dark mode toggle and update Chart colors
         const observer = new MutationObserver(() => {
-            const newTextColor = getComputedColor('--text-muted');
-            myPieChart.options.plugins.legend.labels.color = newTextColor;
-            myPieChart.update();
+            myPieChart.update(); // Calling update will re-render the custom HTML legend with the correct dark mode text colors
         });
 
         observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
