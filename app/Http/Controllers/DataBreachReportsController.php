@@ -37,8 +37,9 @@ class DataBreachReportsController extends Controller
             $q->where('databreach_notifications.status', $status);
         });
 
+        // Filter by the base table's column ('pic')
         $query->when(!empty($region), function ($q) use ($region) {
-            $q->where('databreach_dbrt_team.region', $region);
+            $q->where('databreach_notifications.pic', $region);
         });
 
         $query->when(!empty($year), function ($q) use ($year) {
@@ -53,12 +54,16 @@ class DataBreachReportsController extends Controller
                 'year'   => $year, 
             ]);
 
-        $pic = DatabreachTeam::select('region')
-            ->distinct()
-            ->orderBy('region', 'asc')
-            ->pluck('region')
+        // Gather distinct regions from BOTH tables so no region is left behind.
+        $teamRegions = DatabreachTeam::select('region')->distinct()->pluck('region');
+        $notificationRegions = DataBreachNotification::select('pic')->distinct()->pluck('pic');
+        
+        // Merge them together, remove nulls/empties, ensure they are unique, and sort alphabetically
+        $pic = $teamRegions->concat($notificationRegions)
             ->filter()
-            ->values();    
+            ->unique()
+            ->sort()
+            ->values();
 
         $formYears = DataBreachNotification::selectRaw('EXTRACT(YEAR FROM created_at) as year')
             ->distinct()

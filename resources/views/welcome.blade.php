@@ -122,7 +122,10 @@
         @media (max-width: 768px) {
             .hero-title { font-size: 2.25rem; }
             .hero-subtitle { font-size: 1.1rem; }
-            .nav-links span.text-lg { display: none; }
+            /* Hide the text label on mobile, leaving only the icon */
+            .nav-text { display: none; }
+            /* Adjust padding so the icon button looks balanced */
+            .nav-link { padding: 0.6rem 0.8rem; }
         }
         @media (max-width: 400px) {
             .service-grid { margin-bottom: 0.5rem; }
@@ -145,21 +148,21 @@
                 @auth
                     <li>
                         <a href="{{ url('/dashboard') }}" class="nav-link">
-                            <span class="material-icons-outlined text-lg">dashboard</span> Dashboard
+                            <span class="material-icons-outlined text-lg">dashboard</span> <span class="nav-text">Dashboard</span>
                         </a>
                     </li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="nav-link nav-link-logout">
-                                <span class="material-icons-outlined text-lg">logout</span> Logout
+                                <span class="material-icons-outlined text-lg">logout</span> <span class="nav-text">Logout</span>
                             </button>
                         </form>
                     </li>
                 @else
                     <li>
                         <a href="{{ route('login') }}" class="nav-link">
-                            <span class="material-icons-outlined text-lg">login</span> Login
+                            <span class="material-icons-outlined text-lg">login</span> <span class="nav-text">Login</span>
                         </a>
                     </li>
                 @endauth

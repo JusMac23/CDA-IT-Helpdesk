@@ -4,15 +4,12 @@
         /* layout */
         .login-form-container { width: 100%; background: #ffffff; border-radius: 0.5rem; }
 
-        /* floating label animation logic (Material Outline Style) */
-        .floating-group { position: relative; margin-bottom: 1.5rem; }
+        /* standard inputs and labels */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label { display: block; margin-bottom: 0.5rem; color: #374151; font-size: 0.95rem; font-weight: 500; }
         .custom-input { width: 100%; padding: 0.85rem 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; display: block; box-sizing: border-box; font-family: inherit; font-size: 0.95rem; transition: all 0.2s ease; background-color: transparent; color: #374151; }
         .custom-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 1px #2563eb; }
-        .floating-label { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 0.95rem; pointer-events: none; transition: all 0.2s ease; margin: 0; background-color: #ffffff; padding: 0 0.25rem; z-index: 1; }
-
-        /* Triggers the float when focused OR when there is text inside */
-        .custom-input:focus ~ .floating-label,
-        .custom-input:not(:placeholder-shown) ~ .floating-label { top: 0; transform: translateY(-50%) scale(0.85); color: #2563eb; font-weight: 600; }
+        .custom-input::placeholder { color: #9ca3af; }
 
         /* helpers */
         .flex-between{ display:flex;align-items:center;justify-content:space-between;font-size:.875rem;margin:.5rem 0 1.5rem; }
@@ -55,12 +52,12 @@
             @csrf
 
             {{-- Email --}}
-            <div class="floating-group">
+            <div class="form-group">
+                <label for="email" class="form-label">Email</label>
                 <input id="email" class="custom-input" 
                     type="email" name="email" value="{{ old('email') }}" 
                     required autofocus autocomplete="username" 
-                    placeholder=" " />
-                <label for="email" class="floating-label">Email</label>
+                    placeholder="Enter your email" />
                 
                 @if ($errors->has('email'))
                     <span class="error-text">{{ $errors->first('email') }}</span>
@@ -68,11 +65,11 @@
             </div>
 
             {{-- Password --}}
-            <div class="floating-group">
+            <div class="form-group">
+                <label for="password" class="form-label">Password</label>
                 <input id="password" class="custom-input"
                     type="password" name="password" required autocomplete="current-password" 
-                    placeholder=" " />
-                <label for="password" class="floating-label">Password</label>
+                    placeholder="Enter your password" />
 
                 @if ($errors->has('password'))
                     <span class="error-text">{{ $errors->first('password') }}</span>
