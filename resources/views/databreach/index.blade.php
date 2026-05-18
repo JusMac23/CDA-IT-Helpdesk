@@ -303,6 +303,7 @@
                                 <th>Date of Notification</th>
                                 <th>General Cause</th>
                                 <th>Status</th>
+                                <th>Time Period</th>
                                 <th class="text-center">Actions</th>
                             </tr>
                         </thead>
@@ -333,6 +334,24 @@
                                     </td>
 
                                     <td>
+                                        {{-- We use the exact same deadline logic we built earlier so the frontend JS and the backend validation are perfectly synced --}}
+                                        @if(in_array($notification->status, ['For Assessment', 'Pending']))
+                                            @php
+                                                $hours = $notification->time_countdown ?? 24;
+                                                $deadline = \Carbon\Carbon::parse($notification->created_at)->addHours($hours);
+                                            @endphp
+                                            
+                                            <span class="incident-countdown font-semibold" 
+                                                data-deadline="{{ $deadline->toIso8601String() }}" 
+                                                style="color: var(--text-muted);">
+                                                <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+                                            </span>
+                                        @else
+                                            <span class="badge status-reported"><i class="fa-solid fa-check"></i> Action Taken</span>
+                                        @endif
+                                    </td>
+                                    
+                                    <td>
                                         <div class="action-group">
                                             
                                             @can('view_databreach')
@@ -342,8 +361,16 @@
                                             @endcan
 
                                             @can('assess_databreach')
-                                                @if (!in_array($notification->status, ['Reported', 'For Evaluation', 'For Reporting to NPC']))
-                                                    <a href="{{ route('databreach.assess', $notification->dbn_id) }}" class="action-link link-yellow">
+                                                @if (!in_array($notification->status, ['Reported', 'For Evaluation', 'For Reporting to NPC']) && (auth()->user()->email === $notification->email || auth()->user()->hasRole('Super Admin')))
+                                                    @php
+                                                        // Ensure we have a deadline available for the JavaScript check
+                                                        $hours = $notification->time_countdown ?? 24;
+                                                        $deadline = \Carbon\Carbon::parse($notification->created_at)->addHours($hours);
+                                                    @endphp
+                                                    {{-- The href points to the route, but the onclick intercepts it --}}
+                                                    <a href="{{ route('databreach.assess', $notification->dbn_id) }}" 
+                                                       class="action-link link-yellow assess-btn"
+                                                       data-deadline="{{ $deadline->toIso8601String() }}">
                                                         <i class="fa-solid fa-magnifying-glass-plus"></i> Assess
                                                     </a>
                                                 @endif
@@ -405,7 +432,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="text-center" style="padding: 3rem; color: var(--text-muted); font-size: 1rem;">
+                                    <td colspan="9" class="text-center" style="padding: 3rem; color: var(--text-muted); font-size: 1rem;">
                                         No Incident Reports found.
                                     </td>
                                 </tr>
@@ -483,6 +510,81 @@
                 if (countdownDisplay) countdownDisplay.textContent = countdown;
             }
 
+            // === 24-HOUR COUNTDOWN TIMERS ===
+            const timers = document.querySelectorAll('.incident-countdown');
+
+            function updateCountdowns() {
+                const now = new Date().getTime();
+
+                timers.forEach(timer => {
+                    const deadlineStr = timer.getAttribute('data-deadline');
+                    if (!deadlineStr) return;
+
+                    const deadline = new Date(deadlineStr).getTime();
+                    const distance = deadline - now;
+
+                    // If the 24 hours have completely run out
+                    if (distance < 0) {
+                        timer.innerHTML = "<i class='fa-solid fa-circle-exclamation'></i> Time Expired";
+                        timer.style.color = "#ef4444"; 
+                        return;
+                    }
+
+                    // Math to calculate hours, minutes, and seconds
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    const h = String(hours).padStart(2, '0');
+                    const m = String(minutes).padStart(2, '0');
+                    const s = String(seconds).padStart(2, '0');
+
+                    timer.innerHTML = `<i class="fa-regular fa-clock"></i> ${h}h ${m}m ${s}s`;
+                    
+                    if (hours < 2) {
+                        timer.style.color = "#ef4444";
+                    } else if (hours < 6) {
+                        timer.style.color = "#f59e0b";
+                    } else {
+                        timer.style.color = "#10b981";
+                    }
+                });
+            }
+
+            if (timers.length > 0) {
+                updateCountdowns();
+                setInterval(updateCountdowns, 1000);
+            }
+
+            // === ASSESS BUTTON DEADLINE CHECK ===
+            document.querySelectorAll('.assess-btn').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    const deadlineStr = this.getAttribute('data-deadline');
+                    
+                    // If there's no deadline attribute for some reason, just let the link proceed normally
+                    if (!deadlineStr) return;
+
+                    const deadline = new Date(deadlineStr).getTime();
+                    const now = new Date().getTime();
+
+                    // If the deadline is in the past (distance is negative)
+                    if (deadline - now < 0) {
+                        e.preventDefault(); // Stop the browser from following the href link
+                        
+                        Swal.fire({
+                            title: 'Time Expired',
+                            text: 'The initial reporting and preliminary assessment has overlapped. Please contact the CDA Data Privacy Officer.',
+                            icon: 'warning',
+                            confirmButtonColor: '#ef4444',
+                            confirmButtonText: 'Close',
+                            background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
+                            color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim()
+                        });
+                    }
+                    // Else: the link will naturally fire and take the user to the assess page
+                });
+            });
+
             // === DELETE CONFIRMATION ALERT ===
             document.querySelectorAll('.delete-btn').forEach(button => {
                 button.addEventListener('click', function (e) {
@@ -496,7 +598,7 @@
                         showCancelButton: true,
                         confirmButtonColor: '#ef4444',
                         cancelButtonColor: '#64748b',
-                        confirmButtonText: 'Yes, delete it!',
+                        confirmButtonText: 'Confirm Delete',
                         cancelButtonText: 'Cancel',
                         background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
                         color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim()

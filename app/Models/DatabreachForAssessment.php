@@ -23,7 +23,8 @@ class DatabreachForAssessment extends Model
         'date_discovery',       
         'date_notification',
         'pic',                  
-        'brief_summary',         
+        'brief_summary',     
+        'time_countdown',    
     ];
 
     protected $casts = [
@@ -31,7 +32,7 @@ class DatabreachForAssessment extends Model
         'date_discovery' => 'datetime',
         'date_notification' => 'datetime',
         'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'updated_at' => 'datetime',
     ];
 
 }

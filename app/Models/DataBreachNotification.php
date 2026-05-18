@@ -55,7 +55,8 @@ class DataBreachNotification extends Model
         'data_subjects',
         'status',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'time_countdown',
     ];
 
     protected $casts = [

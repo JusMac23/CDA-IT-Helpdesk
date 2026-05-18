@@ -56,13 +56,14 @@
         .brand img { width: 44px; height: 44px; object-fit: contain; transition: transform 0.3s ease; }
         .brand:hover img { transform: scale(1.1) rotate(-5deg); }
 
-        /* Navigation */
-        .nav-links { display: flex; gap: 1rem; align-items: center; font-weight: 600; font-size: 0.95rem; }
-        .nav-link { color: #e2e8f0; padding: 0.6rem 1.25rem; border-radius: 0.5rem; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s ease; border: 1px solid transparent; font-family: inherit; }
+        /* Navigation - Mobile First */
+        .nav-links { display: flex; gap: 0.5rem; align-items: center; font-weight: 600; font-size: 0.95rem; }
+        .nav-link { color: #e2e8f0; padding: 0.6rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s ease; border: 1px solid transparent; font-family: inherit; }
         .nav-link:hover { color: #ffffff; background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
         
-        /* Hide nav icons on mobile to save space */
-        .nav-link .material-icons-outlined { display: none; font-size: 1.25rem; }
+        /* Icon & Text Display Logic */
+        .nav-link .material-icons-outlined { font-size: 1.5rem; display: inline-block; }
+        .nav-text { display: none; } /* Hidden on mobile */
 
         /* Logout Link Specifics */
         .nav-link.nav-link-logout { color: #fca5a5; background: transparent; border: none; font: inherit; cursor: pointer; }
@@ -126,8 +127,10 @@
             .incident-section { padding: 2.5rem; margin: 3rem auto 4rem; }
             .close-btn { top: 2rem; right: 2.5rem; }
             
-            /* Show Nav Icons on Desktop/Tablet */
-            .nav-link .material-icons-outlined { display: inline-block; }
+            /* Show Nav Text and adjust padding on Desktop */
+            .nav-text { display: inline-block; }
+            .nav-link { padding: 0.6rem 1.25rem; }
+            .nav-link .material-icons-outlined { font-size: 1.25rem; }
 
             /* Activate Grids */
             .grid-2-col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
@@ -157,22 +160,25 @@
             <ul class="nav-links">
                 @auth
                     <li>
-                        <a href="{{ url('/dashboard') }}" class="nav-link">
-                            <span class="material-icons-outlined">dashboard</span> Dashboard
+                        <a href="{{ url('/dashboard') }}" class="nav-link" title="Dashboard">
+                            <span class="material-icons-outlined">dashboard</span> 
+                            <span class="nav-text">Dashboard</span>
                         </a>
                     </li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
                             @csrf
-                            <button type="submit" class="nav-link nav-link-logout">
-                                <span class="material-icons-outlined">logout</span> Logout
+                            <button type="submit" class="nav-link nav-link-logout" title="Logout">
+                                <span class="material-icons-outlined">logout</span> 
+                                <span class="nav-text">Logout</span>
                             </button>
                         </form>
                     </li>
                 @else
                     <li>
-                        <a href="{{ route('login') }}" class="nav-link">
-                            <span class="material-icons-outlined">login</span> Login
+                        <a href="{{ route('login') }}" class="nav-link" title="Login">
+                            <span class="material-icons-outlined">login</span> 
+                            <span class="nav-text">Login</span>
                         </a>
                     </li>
                 @endauth
@@ -197,6 +203,12 @@
                     @endforeach
                 </ul>
             </div>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
         </div>
     @endif
 

@@ -249,6 +249,27 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+        // SweetAlert notifications
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: '{!! addslashes(session("success")) !!}',
+                timer: 4000,
+                showConfirmButton: false
+            });
+        @endif
+
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: '{!! addslashes(session("error")) !!}',
+                timer: 3000,
+                showConfirmButton: false
+            });
+        @endif
+
         document.addEventListener("DOMContentLoaded", function () {
             
             // Set Exact Time
