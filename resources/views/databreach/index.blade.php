@@ -334,20 +334,135 @@
                                     </td>
 
                                     <td>
-                                        {{-- We use the exact same deadline logic we built earlier so the frontend JS and the backend validation are perfectly synced --}}
+                                        {{-- ======================================================== --}}
+                                        {{-- PHASE 1: Active 24-Hour Timer (Pending / For Assessment) --}}
+                                        {{-- ======================================================== --}}
                                         @if(in_array($notification->status, ['For Assessment', 'Pending']))
+                                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; font-weight: 700;">Assessment (24h)</div>
                                             @php
-                                                $hours = $notification->time_countdown ?? 24;
-                                                $deadline = \Carbon\Carbon::parse($notification->created_at)->addHours($hours);
+                                                $deadline = \Carbon\Carbon::parse($notification->created_at)->addHours(24);
                                             @endphp
-                                            
-                                            <span class="incident-countdown font-semibold" 
-                                                data-deadline="{{ $deadline->toIso8601String() }}" 
-                                                style="color: var(--text-muted);">
+                                            <span class="incident-countdown font-semibold" data-deadline="{{ $deadline->toIso8601String() }}" style="color: var(--text-muted);">
                                                 <i class="fa-solid fa-spinner fa-spin"></i> Loading...
                                             </span>
-                                        @else
-                                            <span class="badge status-reported"><i class="fa-solid fa-check"></i> Action Taken</span>
+
+
+                                        {{-- ======================================================== --}}
+                                        {{-- PHASE 2: Frozen 24h Math + Active 72h Timer (For Eval)   --}}
+                                        {{-- ======================================================== --}}
+                                        @elseif($notification->status === 'For Evaluation')
+                                            
+                                            {{-- 1. Frozen 24-Hour Math --}}
+                                            @php
+                                                $rem24 = $notification->time_countdown ?? 0;
+                                                $elap24 = max(0, (24 * 3600) - $rem24);
+                                                
+                                                $r24H = str_pad(floor($rem24 / 3600), 2, '0', STR_PAD_LEFT);
+                                                $r24M = str_pad(floor(($rem24 % 3600) / 60), 2, '0', STR_PAD_LEFT);
+                                                $r24S = str_pad($rem24 % 60, 2, '0', STR_PAD_LEFT);
+                                                
+                                                $e24H = str_pad(floor($elap24 / 3600), 2, '0', STR_PAD_LEFT);
+                                                $e24M = str_pad(floor(($elap24 % 3600) / 60), 2, '0', STR_PAD_LEFT);
+                                                $e24S = str_pad($elap24 % 60, 2, '0', STR_PAD_LEFT);
+                                            @endphp
+                                            
+                                            <div style="margin-bottom: 12px; border-bottom: 1px dashed var(--border-light); padding-bottom: 8px;">
+                                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; font-weight: 700;">Assessment Elapsed</div>
+                                                @if($rem24 == 0)
+                                                    <span style="color: #ef4444; font-weight: 600; font-size: 0.85rem;"><i class="fa-solid fa-circle-exclamation"></i> Time Expired</span>
+                                                @else
+                                                    <span style="color: #10b981; font-weight: 600; font-size: 0.85rem; display: block;">
+                                                        24h 00m 00s <br> - {{ $r24H }}h {{ $r24M }}m {{ $r24S }}s <br> <b>= {{ $e24H }}h {{ $e24M }}m {{ $e24S }}s</b>
+                                                    </span>
+                                                @endif
+                                            </div>
+
+                                            {{-- 2. Active 72-Hour Timer --}}
+                                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; font-weight: 700;">Evaluation (72h)</div>
+                                            @php
+                                                $deadline = \Carbon\Carbon::parse($notification->updated_at)->addHours(72);
+                                            @endphp
+                                            <span class="incident-countdown font-semibold" data-deadline="{{ $deadline->toIso8601String() }}" style="color: var(--text-muted);">
+                                                <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+                                            </span>
+
+
+                                        {{-- ======================================================== --}}
+                                        {{-- PHASE 3: Assessment Elapsed & Evaluation Discrepancy Math--}}
+                                        {{-- ======================================================== --}}
+                                        @elseif($notification->status === 'For Reporting to NPC')
+                                            
+                                            @php
+                                                // Calculate Assessment Elapsed
+                                                $rem24 = $notification->time_countdown ?? 0;
+                                                $elap24 = max(0, (24 * 3600) - $rem24);
+                                                $e24H = str_pad(floor($elap24 / 3600), 2, '0', STR_PAD_LEFT);
+                                                $e24M = str_pad(floor(($elap24 % 3600) / 60), 2, '0', STR_PAD_LEFT);
+                                                $e24S = str_pad($elap24 % 60, 2, '0', STR_PAD_LEFT);
+
+                                                // Calculate Evaluation Elapsed (Using your new column name)
+                                                $remEval = $notification->evaluation_time_countdown ?? 0;
+                                                $elapEval = max(0, (72 * 3600) - $remEval);
+                                                $eEvalH = str_pad(floor($elapEval / 3600), 2, '0', STR_PAD_LEFT);
+                                                $eEvalM = str_pad(floor(($elapEval % 3600) / 60), 2, '0', STR_PAD_LEFT);
+                                                $eEvalS = str_pad($elapEval % 60, 2, '0', STR_PAD_LEFT);
+
+                                                // Calculate Total Elapsed (Assessment + Evaluation)
+                                                $totElap = $elap24 + $elapEval;
+                                                $totElapH = str_pad(floor($totElap / 3600), 2, '0', STR_PAD_LEFT);
+                                                $totElapM = str_pad(floor(($totElap % 3600) / 60), 2, '0', STR_PAD_LEFT);
+                                                $totElapS = str_pad($totElap % 60, 2, '0', STR_PAD_LEFT);
+
+                                                // Calculate Discrepancy (72h - Total Elapsed)
+                                                $totalLimit = 72 * 3600;
+                                                $totRem = max(0, $totalLimit - $totElap);
+                                                $totRemH = str_pad(floor($totRem / 3600), 2, '0', STR_PAD_LEFT);
+                                                $totRemM = str_pad(floor(($totRem % 3600) / 60), 2, '0', STR_PAD_LEFT);
+                                                $totRemS = str_pad($totRem % 60, 2, '0', STR_PAD_LEFT);
+                                            @endphp
+                                            
+                                            {{-- Display Assessment Elapsed --}}
+                                            <div style="margin-bottom: 8px; border-bottom: 1px dashed var(--border-light); padding-bottom: 6px;">
+                                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; font-weight: 700;">Assessment Elapsed</div>
+                                                <span style="color: var(--text-dark); font-weight: 600; font-size: 0.85rem;">{{ $e24H }}h {{ $e24M }}m {{ $e24S }}s</span>
+                                            </div>
+
+                                            {{-- Display Evaluation Elapsed and 72h Discrepancy Math --}}
+                                            <div style="margin-bottom: 8px;">
+                                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; font-weight: 700;">Evaluation Elapsed</div>
+                                                <span style="color: var(--text-dark); font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 4px;">{{ $eEvalH }}h {{ $eEvalM }}m {{ $eEvalS }}s</span>
+                                                
+                                                @if($totElap >= $totalLimit)
+                                                    <span style="color: #ef4444; font-weight: 600; font-size: 0.85rem; display: block;">
+                                                        <i class="fa-solid fa-circle-exclamation"></i> 72h Limit Exceeded
+                                                    </span>
+                                                @else
+                                                    <span style="color: #10b981; font-weight: 600; font-size: 0.85rem; display: block;">
+                                                        72h 00m 00s <br> - {{ $totElapH }}h {{ $totElapM }}m {{ $totElapS }}s <br> <b>= {{ $totRemH }}h {{ $totRemM }}m {{ $totRemS }}s</b>
+                                                    </span>
+                                                @endif
+                                            </div>
+
+                                            {{-- Display Action Taken (Restored per your request) --}}
+                                            <span class="badge status-reported" style="margin-top: 4px;">
+                                                <i class="fa-solid fa-check"></i> Action Taken
+                                            </span>
+
+
+                                        {{-- ======================================================== --}}
+                                        {{-- PHASE 4: Completely Reported (Show Date and Action Taken)--}}
+                                        {{-- ======================================================== --}}
+                                        @elseif($notification->status === 'Reported')
+                                            
+                                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; font-weight: 700;">Date Reported</div>
+                                            <div style="font-weight: 600; font-size: 0.85rem; color: var(--text-dark); margin-bottom: 6px;">
+                                                {{ \Carbon\Carbon::parse($notification->updated_at)->format('M d, Y h:i A') }}
+                                            </div>
+                                            
+                                            <span class="badge status-reported" style="margin-top: 4px;">
+                                                <i class="fa-solid fa-check"></i> Action Taken
+                                            </span>
+
                                         @endif
                                     </td>
                                     
@@ -510,7 +625,7 @@
                 if (countdownDisplay) countdownDisplay.textContent = countdown;
             }
 
-            // === 24-HOUR COUNTDOWN TIMERS ===
+            // === COUNTDOWN TIMERS (Handles both 24h and 72h) ===
             const timers = document.querySelectorAll('.incident-countdown');
 
             function updateCountdowns() {
@@ -523,15 +638,15 @@
                     const deadline = new Date(deadlineStr).getTime();
                     const distance = deadline - now;
 
-                    // If the 24 hours have completely run out
+                    // If the time has completely run out
                     if (distance < 0) {
                         timer.innerHTML = "<i class='fa-solid fa-circle-exclamation'></i> Time Expired";
                         timer.style.color = "#ef4444"; 
                         return;
                     }
 
-                    // Math to calculate hours, minutes, and seconds
-                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    // Removed the modulo 24 limit so hours can count above 24 (up to 72)
+                    const hours = Math.floor(distance / (1000 * 60 * 60));
                     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
@@ -541,12 +656,13 @@
 
                     timer.innerHTML = `<i class="fa-regular fa-clock"></i> ${h}h ${m}m ${s}s`;
                     
+                    // Visual warnings based on time left
                     if (hours < 2) {
-                        timer.style.color = "#ef4444";
-                    } else if (hours < 6) {
-                        timer.style.color = "#f59e0b";
+                        timer.style.color = "#ef4444"; // Red for < 2 hours
+                    } else if (hours < 12) {
+                        timer.style.color = "#f59e0b"; // Orange for < 12 hours
                     } else {
-                        timer.style.color = "#10b981";
+                        timer.style.color = "#10b981"; // Green otherwise
                     }
                 });
             }
@@ -556,21 +672,17 @@
                 setInterval(updateCountdowns, 1000);
             }
 
-            // === ASSESS BUTTON DEADLINE CHECK ===
+            // === ASSESS BUTTON DEADLINE ALERTS ===
             document.querySelectorAll('.assess-btn').forEach(button => {
                 button.addEventListener('click', function (e) {
                     const deadlineStr = this.getAttribute('data-deadline');
-                    
-                    // If there's no deadline attribute for some reason, just let the link proceed normally
                     if (!deadlineStr) return;
 
                     const deadline = new Date(deadlineStr).getTime();
                     const now = new Date().getTime();
 
-                    // If the deadline is in the past (distance is negative)
                     if (deadline - now < 0) {
-                        e.preventDefault(); // Stop the browser from following the href link
-                        
+                        e.preventDefault(); 
                         Swal.fire({
                             title: 'Time Expired',
                             text: 'The initial reporting and preliminary assessment has overlapped. Please contact the CDA Data Privacy Officer.',
@@ -581,7 +693,30 @@
                             color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim()
                         });
                     }
-                    // Else: the link will naturally fire and take the user to the assess page
+                });
+            });
+
+            // === EVALUATE BUTTON DEADLINE ALERTS ===
+            document.querySelectorAll('.evaluate-btn').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    const deadlineStr = this.getAttribute('data-deadline');
+                    if (!deadlineStr) return;
+
+                    const deadline = new Date(deadlineStr).getTime();
+                    const now = new Date().getTime();
+
+                    if (deadline - now < 0) {
+                        e.preventDefault(); 
+                        Swal.fire({
+                            title: 'Time Expired',
+                            text: 'Evaluation Time has overlapped. Please contact the System Administrator.',
+                            icon: 'error',
+                            confirmButtonColor: '#ef4444',
+                            confirmButtonText: 'Close',
+                            background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
+                            color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim()
+                        });
+                    }
                 });
             });
 

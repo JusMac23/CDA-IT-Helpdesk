@@ -57,6 +57,7 @@ class DataBreachNotification extends Model
         'created_at',
         'updated_at',
         'time_countdown',
+        'evaluation_time_countdown',
     ];
 
     protected $casts = [
@@ -67,7 +68,7 @@ class DataBreachNotification extends Model
         'hundred_plus' => 'boolean',
         'num_records' => 'integer',
         'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'updated_at' => 'datetime',
     ];
 
     /**

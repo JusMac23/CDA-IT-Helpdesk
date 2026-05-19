@@ -16,6 +16,8 @@ use App\Models\DatabreachTeam;
 use App\Models\Role;
 use App\Models\User;
 
+use Carbon\Carbon;
+
 use App\Mail\IncidentSubmitted;     
 use App\Mail\IncidentForEvaluation;
 use App\Mail\IncidentEvaluated;
@@ -428,14 +430,12 @@ class DataBreachReportsController extends Controller
             $notification->notification_type_description = json_decode($notification->notification_type_description, true);
         }
 
-        $notification = DataBreachNotification::findOrFail($dbn_id);
-
         $region = $notification->pic;
         $team = DatabreachTeam::where('region', 'like', '%' . $region . '%')->first();
 
         $notification->team_email = $team ? $team->email : null;
 
-        return view('databreach.assess_databreach', compact('notification' , 'dpoDetails', 'loggedInUser' ,'representativeName'));
+        return view('databreach.assess_databreach', compact('notification', 'dpoDetails', 'loggedInUser', 'representativeName'));
     }
 
     public function assess_getDbrtEmail($region)
@@ -495,6 +495,21 @@ class DataBreachReportsController extends Controller
             $data['notification_type_description'] = json_encode($data['notification_type_description']);
         }
 
+        // --- NEW CALCULATION LOGIC ---
+        // Lock in the remaining time in seconds when the assessment happens
+        if ($notification->status === 'For Assessment') {
+            $deadline = Carbon::parse($notification->created_at)->addHours(24);
+            $now = now();
+            
+            if ($now->lessThan($deadline)) {
+                // Calculate remaining seconds and save it to the DB
+                $data['time_countdown'] = $now->diffInSeconds($deadline);
+            } else {
+                // The assessment was late
+                $data['time_countdown'] = 0;
+            }
+        }
+
         // Get DPO user
         $dpoRoleId = Role::where('name', 'DPO')->value('id');
         $dpo = User::where('role', $dpoRoleId)->first(); 
@@ -533,8 +548,6 @@ class DataBreachReportsController extends Controller
         if (is_string($notification->notification_type_description)) {
             $notification->notification_type_description = json_decode($notification->notification_type_description, true);
         }
-
-        $notification = DataBreachNotification::findOrFail($dbn_id);
 
         $region = $notification->pic;
         $team = DatabreachTeam::where('region', 'like', '%' . $region . '%')->first();
@@ -600,33 +613,57 @@ class DataBreachReportsController extends Controller
             'data_subjects'                     => 'required|string|max:255',
         ]);
 
-        if (isset($data['notification_type_description']) && is_array($data['notification_type_description'])) {
-            $data['notification_type_description'] = json_encode($data['notification_type_description']);
+        try {
+            DB::beginTransaction();
+
+            if (isset($data['notification_type_description']) && is_array($data['notification_type_description'])) {
+                $data['notification_type_description'] = json_encode($data['notification_type_description']);
+            }
+
+            // --- NEW 72-HOUR CALCULATION LOGIC ---
+            if ($notification->status === 'For Evaluation') {
+                $deadline = Carbon::parse($notification->updated_at)->addHours(72);
+                $now = now();
+                
+                if ($now->lessThan($deadline)) {
+                    $data['evaluation_time_countdown'] = $now->diffInSeconds($deadline);
+                } else {
+                    $data['evaluation_time_countdown'] = 0; // Time expired
+                }
+            }
+
+            $dpoRoleId = Role::where('name', 'DPO')->value('id');
+            $dpo = User::where('role', $dpoRoleId)->first(); 
+
+            $data['dpo'] = implode(' | ', array_filter([
+                $dpo->name ?? null,
+                $dpo->email ?? null,
+                $dpo->contact_number ?? null,
+            ]));
+        
+            $data['status'] = 'For Reporting to NPC';
+            
+            // Execute the update
+            $notification->update($data);
+
+            // Send emails
+            $teamEmails = DatabreachTeam::whereNotNull('email')->pluck('email');
+            foreach ($teamEmails as $email) {
+                Mail::to($email)->send(new IncidentEvaluated($data));
+            }
+
+            DB::commit();
+
+            return redirect()->route('databreach.index')
+                ->with('success', 'Incident report evaluated successfully. Status: For reporting to the NPC by the DPO.');
+
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Evaluation Error: ' . $e->getMessage());
+            
+            // This will redirect back and show you the actual database or email error!
+            return redirect()->back()->withInput()->with('error', 'An error occurred while saving: ' . $e->getMessage());
         }
-
-        // Get DPO user
-        $dpoRoleId = Role::where('name', 'DPO')->value('id');
-        $dpo = User::where('role', $dpoRoleId)->first(); 
-
-        // Prepare DPO display
-        $data['dpo'] = implode(' | ', array_filter([
-            $dpo->name ?? null,
-            $dpo->email ?? null,
-            $dpo->contact_number ?? null,
-        ]));
-    
-        $data['status'] = 'For Reporting to NPC';
-        $notification->update($data);
-
-        // Send email to ALL Databreach Team
-        $teamEmails = DataBreachTeam::whereNotNull('email')->pluck('email');
-
-        foreach ($teamEmails as $email) {
-            Mail::to($email)->send(new IncidentEvaluated($data));
-        }
-
-        return redirect()->route('databreach.index')
-            ->with('success', 'Incident report evaluated successfully. Status: For reporting to the NPC by the DPO.');
     }
 
     public function report_to_npc($dbn_id)
