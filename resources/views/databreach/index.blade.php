@@ -259,7 +259,8 @@
                             @endforeach
                         </select>
                     </div>
-                    
+
+                    @if (!auth()->user()->hasRole('DBRT'))
                     <div class="form-group">
                         <label for="picFilter" class="form-label">Filter by Region</label>
                         <select name="pic" id="picFilter" class="form-select">
@@ -271,7 +272,9 @@
                             @endforeach
                         </select>
                     </div>
-
+                    @endif
+                    
+                    @if (!auth()->user()->hasRole('DBRT'))
                     <div class="form-group">
                         <label for="statusFilter" class="form-label">Filter by Status</label>
                         <select name="status" id="statusFilter" class="form-select">
@@ -282,6 +285,7 @@
                             <option value="Reported" {{ request('status') == 'Reported' ? 'selected' : '' }}>Reported</option>
                         </select>
                     </div>
+                    @endif
 
                     <div class="filter-container">
                         <button type="submit" class="btn btn-indigo">
@@ -348,7 +352,7 @@
 
 
                                         {{-- ======================================================== --}}
-                                        {{-- PHASE 2: Frozen 24h Math + Active 72h Timer (For Eval)   --}}
+                                        {{-- PHASE 2: Frozen 24h Math + Active 48h Timer (For Eval)   --}}
                                         {{-- ======================================================== --}}
                                         @elseif($notification->status === 'For Evaluation')
                                             
@@ -377,10 +381,10 @@
                                                 @endif
                                             </div>
 
-                                            {{-- 2. Active 72-Hour Timer --}}
-                                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; font-weight: 700;">Evaluation (72h)</div>
+                                            {{-- 2. Active 48-Hour Timer --}}
+                                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; font-weight: 700;">Evaluation (48h)</div>
                                             @php
-                                                $deadline = \Carbon\Carbon::parse($notification->updated_at)->addHours(72);
+                                                $deadline = \Carbon\Carbon::parse($notification->updated_at)->addHours(48);
                                             @endphp
                                             <span class="incident-countdown font-semibold" data-deadline="{{ $deadline->toIso8601String() }}" style="color: var(--text-muted);">
                                                 <i class="fa-solid fa-spinner fa-spin"></i> Loading...
@@ -402,7 +406,7 @@
 
                                                 // Calculate Evaluation Elapsed (Using your new column name)
                                                 $remEval = $notification->evaluation_time_countdown ?? 0;
-                                                $elapEval = max(0, (72 * 3600) - $remEval);
+                                                $elapEval = max(0, (48 * 3600) - $remEval);
                                                 $eEvalH = str_pad(floor($elapEval / 3600), 2, '0', STR_PAD_LEFT);
                                                 $eEvalM = str_pad(floor(($elapEval % 3600) / 60), 2, '0', STR_PAD_LEFT);
                                                 $eEvalS = str_pad($elapEval % 60, 2, '0', STR_PAD_LEFT);
@@ -413,8 +417,8 @@
                                                 $totElapM = str_pad(floor(($totElap % 3600) / 60), 2, '0', STR_PAD_LEFT);
                                                 $totElapS = str_pad($totElap % 60, 2, '0', STR_PAD_LEFT);
 
-                                                // Calculate Discrepancy (72h - Total Elapsed)
-                                                $totalLimit = 72 * 3600;
+                                                // Calculate Discrepancy (48h - Total Elapsed)
+                                                $totalLimit = 48 * 3600;
                                                 $totRem = max(0, $totalLimit - $totElap);
                                                 $totRemH = str_pad(floor($totRem / 3600), 2, '0', STR_PAD_LEFT);
                                                 $totRemM = str_pad(floor(($totRem % 3600) / 60), 2, '0', STR_PAD_LEFT);
@@ -427,18 +431,18 @@
                                                 <span style="color: var(--text-dark); font-weight: 600; font-size: 0.85rem;">{{ $e24H }}h {{ $e24M }}m {{ $e24S }}s</span>
                                             </div>
 
-                                            {{-- Display Evaluation Elapsed and 72h Discrepancy Math --}}
+                                            {{-- Display Evaluation Elapsed and 48h Discrepancy Math --}}
                                             <div style="margin-bottom: 8px;">
                                                 <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; font-weight: 700;">Evaluation Elapsed</div>
                                                 <span style="color: var(--text-dark); font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 4px;">{{ $eEvalH }}h {{ $eEvalM }}m {{ $eEvalS }}s</span>
                                                 
                                                 @if($totElap >= $totalLimit)
                                                     <span style="color: #ef4444; font-weight: 600; font-size: 0.85rem; display: block;">
-                                                        <i class="fa-solid fa-circle-exclamation"></i> 72h Limit Exceeded
+                                                        <i class="fa-solid fa-circle-exclamation"></i> 48h Limit Exceeded
                                                     </span>
                                                 @else
                                                     <span style="color: #10b981; font-weight: 600; font-size: 0.85rem; display: block;">
-                                                        72h 00m 00s <br> - {{ $totElapH }}h {{ $totElapM }}m {{ $totElapS }}s <br> <b>= {{ $totRemH }}h {{ $totRemM }}m {{ $totRemS }}s</b>
+                                                        48h 00m 00s <br> - {{ $totElapH }}h {{ $totElapM }}m {{ $totElapS }}s <br> <b>= {{ $totRemH }}h {{ $totRemM }}m {{ $totRemS }}s</b>
                                                     </span>
                                                 @endif
                                             </div>
@@ -625,7 +629,7 @@
                 if (countdownDisplay) countdownDisplay.textContent = countdown;
             }
 
-            // === COUNTDOWN TIMERS (Handles both 24h and 72h) ===
+            // === COUNTDOWN TIMERS (Handles both 24h and 48h) ===
             const timers = document.querySelectorAll('.incident-countdown');
 
             function updateCountdowns() {
@@ -645,7 +649,7 @@
                         return;
                     }
 
-                    // Removed the modulo 24 limit so hours can count above 24 (up to 72)
+                    // Removed the modulo 24 limit so hours can count above 24 (up to 48)
                     const hours = Math.floor(distance / (1000 * 60 * 60));
                     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
@@ -672,54 +676,6 @@
                 setInterval(updateCountdowns, 1000);
             }
 
-            // === ASSESS BUTTON DEADLINE ALERTS ===
-            document.querySelectorAll('.assess-btn').forEach(button => {
-                button.addEventListener('click', function (e) {
-                    const deadlineStr = this.getAttribute('data-deadline');
-                    if (!deadlineStr) return;
-
-                    const deadline = new Date(deadlineStr).getTime();
-                    const now = new Date().getTime();
-
-                    if (deadline - now < 0) {
-                        e.preventDefault(); 
-                        Swal.fire({
-                            title: 'Time Expired',
-                            text: 'The initial reporting and preliminary assessment has overlapped. Please contact the CDA Data Privacy Officer.',
-                            icon: 'warning',
-                            confirmButtonColor: '#ef4444',
-                            confirmButtonText: 'Close',
-                            background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
-                            color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim()
-                        });
-                    }
-                });
-            });
-
-            // === EVALUATE BUTTON DEADLINE ALERTS ===
-            document.querySelectorAll('.evaluate-btn').forEach(button => {
-                button.addEventListener('click', function (e) {
-                    const deadlineStr = this.getAttribute('data-deadline');
-                    if (!deadlineStr) return;
-
-                    const deadline = new Date(deadlineStr).getTime();
-                    const now = new Date().getTime();
-
-                    if (deadline - now < 0) {
-                        e.preventDefault(); 
-                        Swal.fire({
-                            title: 'Time Expired',
-                            text: 'Evaluation Time has overlapped. Please contact the System Administrator.',
-                            icon: 'error',
-                            confirmButtonColor: '#ef4444',
-                            confirmButtonText: 'Close',
-                            background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
-                            color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim()
-                        });
-                    }
-                });
-            });
-
             // === DELETE CONFIRMATION ALERT ===
             document.querySelectorAll('.delete-btn').forEach(button => {
                 button.addEventListener('click', function (e) {
@@ -733,7 +689,7 @@
                         showCancelButton: true,
                         confirmButtonColor: '#ef4444',
                         cancelButtonColor: '#64748b',
-                        confirmButtonText: 'Confirm Delete',
+                        confirmButtonText: 'Confirm',
                         cancelButtonText: 'Cancel',
                         background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
                         color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim()

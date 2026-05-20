@@ -34,6 +34,7 @@ class CreateIncidentReportController extends Controller
             'pic'                   => 'required|string|max:255',
             'brief_summary'         => 'required|string',
             'time_countdown'        => 'nullable|integer',
+            'evaluation_time_countdown' => 'nullable|integer',
         ]);
 
         try {
@@ -46,6 +47,7 @@ class CreateIncidentReportController extends Controller
             
             // Ensure time_countdown always has a default value
             $data['time_countdown'] = $request->input('time_countdown', 24); 
+            $data['evaluation_time_countdown'] = $request->input('evaluation_time_countdown', 48);
 
             $year = now()->year;
             
@@ -82,6 +84,7 @@ class CreateIncidentReportController extends Controller
                 'brief_summary'         => $data['brief_summary'],
                 'status'                => $data['status'],
                 'time_countdown'        => $data['time_countdown'],
+                'evaluation_time_countdown' => $data['evaluation_time_countdown'],
             ]);
 
             // Save the data to the database and release the lock

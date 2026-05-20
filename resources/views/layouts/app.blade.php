@@ -119,6 +119,7 @@
         .dropdown-header { padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
         .dropdown-name { font-weight: bold; color: var(--text-main); font-size: 14px; }
         .dropdown-email { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dropdown-region { font-size: 12px; font-weight: 700; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .dropdown-role { display: inline-block; padding: 2px 8px; background: #e0f2fe; color: #133e5e; font-size: 10px; font-weight: bold; border-radius: 12px; margin-top: 6px; text-transform: uppercase; }
         .dropdown-item { display: flex; align-items: center; width: 100%; padding: 10px 16px; color: var(--text-main); font-size: 14px; text-decoration: none; transition: 0.2s; background: transparent; text-align: left; border: none; cursor: pointer; font-family: inherit; }
         .dropdown-item:hover { background-color: var(--dropdown-hover); }
@@ -253,6 +254,7 @@
                             <div class="dropdown-header">
                                 <div class="dropdown-name">{{ $user->name }}</div>
                                 <div class="dropdown-email">{{ $user->email }}</div>
+                                <div class="dropdown-region">{{ $user->region }}</div>
                                 
                                 @forelse($user->roles as $role)
                                     <span class="dropdown-role">{{ $role->name }}</span>

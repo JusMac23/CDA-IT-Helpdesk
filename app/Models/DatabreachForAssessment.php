@@ -25,6 +25,7 @@ class DatabreachForAssessment extends Model
         'pic',                  
         'brief_summary',     
         'time_countdown',    
+        'evaluation_time_countdown',
     ];
 
     protected $casts = [

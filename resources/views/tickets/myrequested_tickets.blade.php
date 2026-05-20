@@ -900,7 +900,7 @@
                         showCancelButton: true,
                         confirmButtonColor: '#ef4444',
                         cancelButtonColor: '#64748b',
-                        confirmButtonText: 'Yes, delete',
+                        confirmButtonText: 'Confirm',
                         cancelButtonText: 'Cancel',
                         background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
                         color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim()

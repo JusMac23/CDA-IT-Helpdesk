@@ -35,6 +35,26 @@ class DataBreachReportsController extends Controller
             ->select('databreach_notifications.*', 'databreach_dbrt_team.email as email')
             ->distinct(); 
 
+        // --- NEW FEATURE: DBRT Role-based Filtering ---
+        $user = auth()->user();
+
+        // If the user is specifically DBRT, lock their view to their assigned region AND 'For Assessment' status
+        if ($user->hasRole('DBRT')) {
+            $dbrtMember = DatabreachTeam::where('email', $user->email)->first();
+            
+            if ($dbrtMember && $dbrtMember->region) {
+                // Force the query to only pull records matching their region AND the specific status
+                $query->where('databreach_notifications.pic', $dbrtMember->region)
+                      ->where('databreach_notifications.status', 'For Assessment');
+            } else {
+                // Failsafe: If they are DBRT but somehow missing from the team table, return 0 results
+                $query->where('databreach_notifications.dbn_id', '<', 0);
+            }
+        }
+        // Super Admins and DPOs bypass the above block and see everything naturally.
+
+
+        // --- User-selected Form Filters ---
         $query->when(!empty($status), function ($q) use ($status) {
             $q->where('databreach_notifications.status', $status);
         });
@@ -325,6 +345,7 @@ class DataBreachReportsController extends Controller
             'pic'                   => 'required|string|max:255',
             'brief_summary'         => 'required|string',
             'time_countdown'        => 'nullable|integer',
+            'evaluation_time_countdown' => 'nullable|integer',
         ]);
 
         try {
@@ -337,6 +358,7 @@ class DataBreachReportsController extends Controller
             
             // Ensure time_countdown always has a default value
             $data['time_countdown'] = $request->input('time_countdown', 24); 
+            $data['evaluation_time_countdown'] = $request->input('evaluation_time_countdown', 48);
 
             $year = now()->year;
             
@@ -373,6 +395,7 @@ class DataBreachReportsController extends Controller
                 'brief_summary'         => $data['brief_summary'],
                 'status'                => $data['status'],
                 'time_countdown'        => $data['time_countdown'],
+                'evaluation_time_countdown' => $data['evaluation_time_countdown'],
             ]);
 
             // Save the data to the database and release the lock
@@ -620,9 +643,9 @@ class DataBreachReportsController extends Controller
                 $data['notification_type_description'] = json_encode($data['notification_type_description']);
             }
 
-            // --- NEW 72-HOUR CALCULATION LOGIC ---
+            // --- NEW 48-HOUR CALCULATION LOGIC ---
             if ($notification->status === 'For Evaluation') {
-                $deadline = Carbon::parse($notification->updated_at)->addHours(72);
+                $deadline = Carbon::parse($notification->updated_at)->addHours(48);
                 $now = now();
                 
                 if ($now->lessThan($deadline)) {

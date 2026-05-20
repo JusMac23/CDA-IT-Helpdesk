@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+@source "../**/*.blade.php";
+@source "../**/*.js";
+@source "../**/*.vue"; 
+@source "../../storage/framework/views/*.php";
