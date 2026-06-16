@@ -13,8 +13,7 @@
     <link rel="icon" href="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" type="image/png">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <script src="/assets/js/sweetalert2.min.js"></script>
 
@@ -34,6 +33,8 @@
             --error-bg: #fef2f2; 
             --error-text: #991b1b; 
             --error-border: #ef4444; 
+            --close-btn-hover: #f1f5f9;
+            --close-btn-text: #94a3b8;
         }
 
         /* Base Resets & Typography */
@@ -48,34 +49,41 @@
 
         /* Header Styles */
         .app-header { background-color: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--glass-border); }
-        .header-gradient { height: 4px; background: linear-gradient(90deg, var(--accent-blue), var(--alert-red)); width: 100%; }
-        .container { max-width: 1280px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .header-gradient { height: 3px; background: linear-gradient(90deg, var(--accent-blue), var(--alert-red)); }
+        .container { max-width: 1280px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
         
         /* Branding */
         .brand { font-size: 1.5rem; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 0.75rem; letter-spacing: -0.025em; }
         .brand img { width: 44px; height: 44px; object-fit: contain; transition: transform 0.3s ease; }
         .brand:hover img { transform: scale(1.1) rotate(-5deg); }
 
-        /* Navigation - Mobile First */
-        .nav-links { display: flex; gap: 0.5rem; align-items: center; font-weight: 600; font-size: 0.95rem; }
-        .nav-link { color: #e2e8f0; padding: 0.6rem; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s ease; border: 1px solid transparent; font-family: inherit; }
+        /* Navigation */
+        .nav-links { display: flex; gap: 1rem; align-items: center; font-weight: 600; font-size: 0.95rem; }
+        .nav-link { color: #e2e8f0; padding: 0.6rem 1.25rem; border-radius: 8px; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; border: 1px solid transparent; }
         .nav-link:hover { color: #ffffff; background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
-        
-        /* Icon & Text Display Logic */
-        .nav-link .material-icons-outlined { font-size: 1.5rem; display: inline-block; }
-        .nav-text { display: none; } /* Hidden on mobile */
 
         /* Logout Link Specifics */
-        .nav-link.nav-link-logout { color: #fca5a5; background: transparent; border: none; font: inherit; cursor: pointer; }
+        .nav-link.nav-link-logout { color: #fca5a5; background: none; cursor: pointer; font: inherit; }
         .nav-link.nav-link-logout:hover { color: #ffffff; background-color: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); }
+
+        /* Navigation Mobile Overrides */
+        @media (max-width: 768px) {
+            .nav-text { display: none !important; }
+            .nav-link { 
+                padding: 0.6rem 0.8rem; 
+                margin: 0 !important; 
+                justify-content: center;
+            }
+        }
 
         /* Form Container Section */
         .incident-section { padding: 1.5rem; width: calc(100% - 2rem); max-width: 1152px; margin: 2rem auto 4rem; background-color: #ffffff; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); border: 1px solid #f1f5f9; position: relative; }
         .section-title { font-size: 1.75rem; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 2rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem; letter-spacing: -0.025em; width: 100%; }
         .form-section-title { font-size: 1.15rem; font-weight: 700; color: #0f172a; margin: 1.5rem 0 1.25rem; padding-bottom: 0.5rem; width: 100%; }
         
-        .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; color: #94a3b8; font-size: 1.75rem; background: none; border: none; cursor: pointer; transition: all 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0.25rem 0.5rem; }
-        .close-btn:hover { color: #0f172a; background-color: #f1f5f9; }
+        /* Close Button */
+        .close-btn { position: absolute; top: 1.25rem; right: 1.25rem; color: var(--text-muted); font-size: 2.25rem; background: none; border: none; cursor: pointer; transition: color 0.2s, background-color 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0 0.5rem; }
+        .close-btn:hover { color: var(--text-dark); }
 
         /* Alerts */
         .alert-error { width: 100%; background-color: var(--error-bg); border-left: 4px solid var(--error-border); color: var(--error-text); padding: 1.25rem 1.5rem; margin-bottom: 2rem; border-radius: 0.5rem; display: flex; gap: 0.75rem; }
@@ -115,22 +123,14 @@
         .form-footer { display: flex; flex-direction: column; width: 100%; align-items: stretch; padding-top: 1.5rem; border-top: 1px solid #e2e8f0; }
         
         .btn-submit { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 2rem; background-color: var(--primary-indigo); color: white; font-size: 0.95rem; font-weight: 600; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s ease; width: 100%; font-family: inherit; box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
-        .btn-submit i { margin-right: 0.5rem; font-size: 1rem; }
         .btn-submit:hover:not(:disabled) { background-color: var(--indigo-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
         .btn-submit:active:not(:disabled) { transform: translateY(0); box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
         .btn-submit:disabled { background-color: #cbd5e1; color: #f8fafc; cursor: not-allowed; box-shadow: none; transform: none; }
         
-        /* --------------------------------------------------- */
-        /* Desktop & Tablet Overrides                          */
-        /* --------------------------------------------------- */
+        /* Desktop & Tablet Overrides */
         @media (min-width: 768px) {
             .incident-section { padding: 2.5rem; margin: 3rem auto 4rem; }
-            .close-btn { top: 2rem; right: 2.5rem; }
-            
-            /* Show Nav Text and adjust padding on Desktop */
-            .nav-text { display: inline-block; }
-            .nav-link { padding: 0.6rem 1.25rem; }
-            .nav-link .material-icons-outlined { font-size: 1.25rem; }
+            .close-btn { top: 1.5rem; right: 2rem; }
 
             /* Activate Grids */
             .grid-2-col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
@@ -152,7 +152,7 @@
     <div class="header-gradient"></div>
     <div class="container">
         <h1 class="brand">
-            <img src="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" alt="CDA Seal" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Cooperative_Development_Authority_%28CDA%29.svg/1200px-Cooperative_Development_Authority_%28CDA%29.svg.png'" />
+            <img src="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" alt="CDA Seal">
             <span>CDA-DBRS</span>
         </h1>
 
@@ -160,25 +160,22 @@
             <ul class="nav-links">
                 @auth
                     <li>
-                        <a href="{{ url('/dashboard') }}" class="nav-link" title="Dashboard">
-                            <span class="material-icons-outlined">dashboard</span> 
-                            <span class="nav-text">Dashboard</span>
+                        <a href="{{ url('/dashboard') }}" class="nav-link">
+                            <i class="fas fa-home"></i> <span class="nav-text">Dashboard</span>
                         </a>
                     </li>
                     <li>
-                        <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                        <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="nav-link nav-link-logout" title="Logout">
-                                <span class="material-icons-outlined">logout</span> 
-                                <span class="nav-text">Logout</span>
+                            <button type="submit" class="nav-link nav-link-logout">
+                            <i style="font-size: 1.15rem;" class="fas fa-sign-out"></i> <span class="nav-text">Logout</span>
                             </button>
                         </form>
                     </li>
                 @else
                     <li>
-                        <a href="{{ route('login') }}" class="nav-link" title="Login">
-                            <span class="material-icons-outlined">login</span> 
-                            <span class="nav-text">Login</span>
+                        <a href="{{ route('login') }}" class="nav-link">
+                            <i style="font-size: 1.15rem;" class="fas fa-sign-in"></i> <span class="nav-text">Login</span>
                         </a>
                     </li>
                 @endauth
@@ -188,13 +185,14 @@
 </header>
 
 <section class="incident-section animate-fade-in-down">
-    <button id="close" onclick="window.location.href='{{ url('/') }}'" class="close-btn" aria-label="Close" title="Close Form">
-        <i class="fas fa-times"></i>
+
+    <button id="close" onclick="window.location.href='{{ url('/') }}'" class="close-btn" aria-label="Close form" title="Close">
+        &times;
     </button>
 
     @if ($errors->any())
         <div class="alert-error">
-            <i class="fas fa-exclamation-circle" style="margin-top: 0.125rem;"></i>
+            <span class="icon-container-alert" style="margin-top: 0.125rem;"><i class="fa-solid fa-circle-exclamation"></i></span>
             <div>
                 <h4>Please fix the following errors:</h4>
                 <ul>
@@ -284,7 +282,7 @@
 
         <div class="form-footer">
             <button type="submit" id="submitReportBtn" class="btn-submit" disabled>
-                <i class="fas fa-paper-plane"></i> <span>Submit Report</span>
+                <span>Submit Report</span>
             </button>
         </div>
     </form>
@@ -313,7 +311,6 @@
     @endif
 
     document.addEventListener('DOMContentLoaded', function () {
-        
         // Fix: Sync exact device/laptop time to prevent 4-minute server delay
         const dateNotificationInput = document.getElementById('date_notification');
         if (dateNotificationInput) {

@@ -179,7 +179,7 @@
         .modal-overlay.hidden .modal-box { transform: scale(0.95); }
         
         .close-btn { position: absolute; top: 1.25rem; right: 1.25rem; color: var(--text-muted); font-size: 2rem; background: none; border: none; cursor: pointer; transition: all 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0 0.5rem; }
-        .close-btn:hover { color: var(--text-dark); background-color: var(--bg-alt); }
+        .close-btn:hover { color: var(--text-dark); }
         
         .modal-title { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin-top: 0; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem; padding-right: 2.5rem; letter-spacing: -0.025em; transition: color 0.3s ease, border-color 0.3s ease; }
         

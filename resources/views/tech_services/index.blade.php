@@ -166,8 +166,8 @@
         .modal-overlay.hidden .modal-box { transform: scale(0.95); }
         
         /* Fixed Modal Close Button */
-        .close-btn { position: absolute; top: 1.25rem; right: 1.25rem; color: var(--text-muted); font-size: 2rem; background: none; border: none; cursor: pointer; transition: color 0.2s, background-color 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0 0.5rem; }
-        .close-btn:hover { color: var(--text-dark); background-color: var(--bg-alt); }
+        .close-btn { position: absolute; top: 1.25rem; right: 1.25rem; color: var(--text-muted); font-size: 2.25rem; background: none; border: none; cursor: pointer; transition: color 0.2s, background-color 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0 0.5rem; }
+        .close-btn:hover { color: var(--text-dark); }
         
         .modal-title { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin-top: 0; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem; padding-right: 2.5rem; transition: color 0.3s ease, border-color 0.3s ease; }
         
@@ -349,9 +349,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-gray" id="cancelAddModal">Cancel</button>
-                    <button type="submit" class="btn btn-indigo">
-                        <i class="fas fa-paper-plane"></i> Submit Service
-                    </button>
+                    <button type="submit" class="btn btn-indigo"></i> Submit Service</button>
                 </div>
             </form>
         </div>
@@ -393,9 +391,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-gray" id="cancelEditModal">Cancel</button>
-                    <button type="submit" class="btn btn-indigo">
-                        <i class="fas fa-save"></i> Save Changes
-                    </button>
+                    <button type="submit" class="btn btn-indigo">Save Changes</button>
                 </div>
             </form>
         </div>

@@ -12,9 +12,8 @@
     <title>CDA-DBRS</title>
     <link rel="icon" href="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" type="image/png">
 
-    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -38,7 +37,7 @@
 
         /* Body Typography & Animated Gradient Background */
         body { 
-            background: linear-gradient(-45deg, #020617, #0f172a, #082f49, #172554, #1e293b); background-size: 400% 400%; animation: gradientBG 15s ease infinite; color: var(--text-main); font-family: 'Figtree', ui-sans-serif, system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.6; overflow-x: hidden; min-height: 100vh; }
+            background: linear-gradient(-45deg, #020617, #0f172a, #082f49, #172554, #1e293b); background-size: 400% 400%; animation: gradientBG 15s ease infinite; color: var(--text-main); font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.6; overflow-x: hidden; min-height: 100vh; }
         a { text-decoration: none; }
         ul { list-style: none; }
         .hidden { display: none !important; }
@@ -70,8 +69,10 @@
         .nav-links { display: flex; gap: 1rem; align-items: center; font-weight: 600; font-size: 0.95rem; }
         .nav-link { color: #e2e8f0; padding: 0.6rem 1.25rem; border-radius: 8px; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; border: 1px solid transparent; }
         .nav-link:hover { color: #ffffff; background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
-        .nav-link-logout { color: #fca5a5; background: none; cursor: pointer; font: inherit; }
-        .nav-link-logout:hover { color: #ffffff; background-color: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); }
+
+        /* Logout Link Specifics */
+        .nav-link.nav-link-logout { color: #fca5a5; background: none; cursor: pointer; font: inherit; }
+        .nav-link.nav-link-logout:hover { color: #ffffff; background-color: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); }
 
         /* Hero Section */
         .hero { position: relative; width: 100%; min-height: 80vh; display: flex; align-items: center; justify-content: center; background-image: url("{{ asset('images/cda-dbrs-banner.svg') }}"); background-size: cover; background-position: center; background-repeat: no-repeat; overflow: hidden; }
@@ -79,7 +80,7 @@
         /* NEW: Hero Overlay */
         .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.75; background: linear-gradient(135deg, rgba(2, 6, 23, 0.85) 0%, rgba(15, 23, 42, 0.75) 100%); z-index: 1;}
 
-        .hero-content { position: relative; z-index: 10; text-align: center; padding: 4rem 1.5rem; max-width: 900px; }
+        .hero-content { position: relative; z-index: 10; text-align: center; padding: 4rem 1.5rem; max-width: 800px; }
         .hero-content p { font-weight: bold; color: white; }
         .status-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; padding: 0.5rem 1rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 0.05em; }
         .hero-title { font-size: 3.5rem; font-weight: 800; margin-bottom: 1.5rem; line-height: 1.1; letter-spacing: -0.02em; }
@@ -118,17 +119,22 @@
         .scroll-top-btn { position: fixed; bottom: 2rem; right: 2rem; z-index: 40; background-color: var(--secondary-dark); color: #ffffff; padding: 1rem; border-radius: 50%; border: 1px solid var(--glass-border); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; }
         .scroll-top-btn:hover { background-color: var(--accent-blue); transform: translateY(-5px); border-color: var(--accent-blue); }
 
-        /* Responsive Media Queries */
+        /* Responsive Media  */
         @media (max-width: 768px) {
+            /* Navigation Mobile Overrides */
+            .nav-text { display: none !important; }
+            .nav-link { 
+                padding: 0.6rem 0.8rem; 
+                margin: 0 !important; 
+                justify-content: center;
+            }
+
             .hero-title { font-size: 2.25rem; }
+            .section-title { font-size: 2.25rem; }
+            .hero-content { padding: 2.5rem 1rem; }
             .hero-subtitle { font-size: 1.1rem; }
-            /* Hide the text label on mobile, leaving only the icon */
-            .nav-text { display: none; }
-            /* Adjust padding so the icon button looks balanced */
-            .nav-link { padding: 0.6rem 0.8rem; }
-        }
-        @media (max-width: 400px) {
-            .service-grid { margin-bottom: 0.5rem; }
+            .service-grid { gap: 1.5rem; margin: 0 auto; padding: 0 .5rem; }
+            .service-card { padding: 1.5rem 1rem; }
             .services { padding: 1.5rem 0; }
         }
     </style>
@@ -148,21 +154,21 @@
                 @auth
                     <li>
                         <a href="{{ url('/dashboard') }}" class="nav-link">
-                            <span class="material-icons-outlined text-lg">dashboard</span> <span class="nav-text">Dashboard</span>
+                            <i class="fas fa-home"></i> <span class="nav-text">Dashboard</span>
                         </a>
                     </li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="nav-link nav-link-logout">
-                                <span class="material-icons-outlined text-lg">logout</span> <span class="nav-text">Logout</span>
+                            <i style="font-size: 1.15rem;" class="fas fa-sign-out"></i> <span class="nav-text">Logout</span>
                             </button>
                         </form>
                     </li>
                 @else
                     <li>
                         <a href="{{ route('login') }}" class="nav-link">
-                            <span class="material-icons-outlined text-lg">login</span> <span class="nav-text">Login</span>
+                            <i style="font-size: 1.15rem;" class="fas fa-sign-in"></i> <span class="nav-text">Login</span>
                         </a>
                     </li>
                 @endauth
@@ -174,7 +180,7 @@
 <section class="hero">
     <div class="hero-content">
         <div class="status-badge animate-fade-in-up">
-            <span class="material-icons-outlined" style="font-size: 1rem;">verified_user</span>
+            <i class="fas fa-shield-alt"></i>
             Secure Reporting Portal
         </div>
         
@@ -189,7 +195,7 @@
         
         <div class="animate-fade-in-up delay-200" style="display: flex; justify-content: center; gap: 1rem; margin-top: 2rem;">
             <a href="{{ url('create_incident') }}" class="btn-danger">
-                <i class="fa-solid fa-shield-halved"></i> Report an Incident Now
+                Report an Incident Now
             </a>
         </div>
     </div>
@@ -202,7 +208,7 @@
         <div class="service-grid">
             <div class="service-card">
                 <div class="icon-wrapper icon-red">
-                    <span class="material-icons-outlined text-4xl">gpp_bad</span>
+                    <i class="fas fa-shield-alt text-4xl"></i>
                 </div>
                 <h4>Incident Management</h4>
                 <p>Log, track, and manage potential data breaches instantly. Receive essential guidance on data containment, immediate incident handling, and strict access control.</p>
@@ -210,7 +216,7 @@
 
             <div class="service-card">
                 <div class="icon-wrapper icon-blue">
-                    <span class="material-icons-outlined text-4xl">dns</span>
+                    <i class="fas fa-server text-4xl"></i>
                 </div>
                 <h4>ICT Infrastructure Support</h4>
                 <p>Get priority assistance with database integrity, system backups, Google Workspace security, and other critical ICT services tied to incident resolution.</p>
@@ -226,7 +232,7 @@
 </footer>
 
 <button id="scrollToTopBtn" class="scroll-top-btn hidden" title="Back to top">
-    <span class="material-icons-outlined">arrow_upward</span>
+    <i class="fas fa-arrow-up"></i>
 </button>
 
 <script>

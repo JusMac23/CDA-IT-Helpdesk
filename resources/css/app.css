@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
-@source "../**/*.blade.php";
-@source "../**/*.js";
-@source "../**/*.vue"; 
+/* Crucial: Point explicitly to the views folder */
+@source "../views/**/*.blade.php";
+
+/* Other standard Laravel paths */
+@source "../js/**/*.js";
+@source "../js/**/*.vue"; 
 @source "../../storage/framework/views/*.php";

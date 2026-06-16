@@ -63,8 +63,9 @@
         .section-title { font-size: 1.75rem; font-weight: 800; color: var(--text-dark); margin-top: 0; margin-bottom: 2rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1.5rem; letter-spacing: -0.025em; width: 100%; transition: color 0.3s ease, border-color 0.3s ease; }
         .form-section-title { font-size: 1.15rem; font-weight: 700; color: var(--text-dark); margin: 1.5rem 0 1.25rem; padding-bottom: 0.5rem; width: 100%; transition: color 0.3s ease; }
         
-        .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; color: var(--close-btn-text); font-size: 1.75rem; background: none; border: none; cursor: pointer; transition: all 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0.25rem 0.5rem; }
-        .close-btn:hover { color: var(--text-dark); background-color: var(--close-btn-hover); }
+        /* Close Button */
+        .close-btn { position: absolute; top: 1.25rem; right: 1.25rem; color: var(--text-muted); font-size: 2.25rem; background: none; border: none; cursor: pointer; transition: color 0.2s, background-color 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0 0.5rem; }
+        .close-btn:hover { color: var(--text-dark); }
 
         /* Error Box */
         .error-box { background-color: var(--error-bg); border: 1px solid var(--error-border); color: var(--error-text); padding: 1.25rem 1.5rem; border-radius: 0.75rem; margin-bottom: 2rem; display: flex; gap: 0.75rem; align-items: flex-start; width: 100%; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
@@ -117,7 +118,7 @@
             
             .submit-wrapper { flex-direction: row; justify-content: flex-end; }
             .btn-submit { width: auto; }
-            .close-btn { top: 2rem; right: 2rem; }
+            .close-btn { top: 1.5rem; right: 2rem; }
         }
     </style>
 
@@ -127,7 +128,7 @@
             <div class="form-card">
 
                 <button id="close" onclick="window.location.href='{{ route('databreach.index') }}'" class="close-btn" aria-label="Close form" title="Close">
-                    <i class="fas fa-times"></i>
+                    &times;
                 </button>
 
                 <h2 class="section-title">Incident Report Form</h2>
@@ -236,7 +237,6 @@
 
                     <div class="submit-wrapper">
                         <button type="submit" id="submitReportBtn" class="btn-submit" disabled>
-                            <i class="fas fa-paper-plane"></i>
                             <span>Submit Report</span>
                         </button>
                     </div>

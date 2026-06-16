@@ -56,8 +56,8 @@
         .view-wrapper { position: relative; max-width: 56rem; margin: 0 auto; background-color: var(--card-bg); border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); padding: 2rem; border: 1px solid var(--border-light); transition: background-color 0.3s ease, border-color 0.3s ease; }
 
         /* Close Button */
-        .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; color: var(--close-btn-text); font-size: 1.75rem; background: none; border: none; cursor: pointer; transition: all 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0.25rem 0.5rem; }
-        .close-btn:hover { color: var(--text-dark); background-color: var(--close-btn-hover); }
+        .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; color: var(--close-btn-text); font-size: 2.25rem; background: none; border: none; cursor: pointer; transition: all 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0.25rem 0.5rem; }
+        .close-btn:hover { color: var(--text-dark); }
 
         /* --- Unified Buttons --- */
         .btn { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 1.5rem; border-radius: 0.5rem; font-size: 0.95rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s ease; text-decoration: none; font-family: inherit; }
@@ -101,7 +101,7 @@
         @media(min-width: 640px) {
             .report-title { font-size: 2rem; }
             .view-wrapper { padding: 3rem; }
-            .close-btn { top: 2rem; right: 2rem; }
+            .close-btn { top: 1.5rem; right: 2rem; }
         }
     </style>
 
@@ -118,7 +118,7 @@
         <div class="view-wrapper">
             
             <button id="close" onclick="window.location.href='{{ route('databreach.index') }}'" class="close-btn" aria-label="Close form" title="Close">
-                <i class="fas fa-times"></i>
+                &times;
             </button>
 
             <h1 class="report-title">DATA BREACH INCIDENT REPORT</h1>
