@@ -52,7 +52,7 @@
 
         /* Main Layout */
         .container { max-width: 80rem; width: 100%; margin: 0 auto; padding: 0 2rem; }
-        @media (max-width: 640px) { .container { padding: 0.5rem; } }
+        @media (max-width: 640px) { .container { padding: 0.01rem; } }
 
         /* Form Card */
         .form-card { background-color: var(--card-bg); border-radius: 1rem; border: 1px solid var(--border-light); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); padding: 2.5rem; position: relative; width: 100%; transition: background-color 0.3s ease, border-color 0.3s ease; }

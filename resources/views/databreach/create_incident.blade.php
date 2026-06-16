@@ -78,6 +78,9 @@
 
         /* Form Container Section */
         .incident-section { padding: 1.5rem; width: calc(100% - 2rem); max-width: 1152px; margin: 2rem auto 4rem; background-color: #ffffff; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.025); border: 1px solid #f1f5f9; position: relative; }
+        @media (max-width: 640px) { 
+            .incident-section { padding: 1.5rem; margin: 2.0rem auto 1rem; width: calc(100% - 2.5rem); } 
+        }
         .section-title { font-size: 1.75rem; font-weight: 800; color: #0f172a; margin-top: 0; margin-bottom: 2rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem; letter-spacing: -0.025em; width: 100%; }
         .form-section-title { font-size: 1.15rem; font-weight: 700; color: #0f172a; margin: 1.5rem 0 1.25rem; padding-bottom: 0.5rem; width: 100%; }
         
