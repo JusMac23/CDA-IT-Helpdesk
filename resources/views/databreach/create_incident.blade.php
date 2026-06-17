@@ -164,7 +164,7 @@
                 @auth
                     <li>
                         <a href="{{ url('/dashboard') }}" class="nav-link">
-                            <span class="material-symbols-outlined" style="font-size: 1.15rem;">home</span> 
+                            <span class="material-symbols-outlined" style="font-size: 1.25rem;">home</span> 
                             <span class="nav-text">Dashboard</span>
                         </a>
                     </li>
@@ -172,7 +172,7 @@
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="nav-link nav-link-logout">
-                            <span class="material-symbols-outlined" style="font-size: 1.15rem;">logout</span> 
+                            <span class="material-symbols-outlined" style="font-size: 1.25rem;">logout</span> 
                             <span class="nav-text">Logout</span>
                             </button>
                         </form>
@@ -180,7 +180,7 @@
                 @else
                     <li>
                         <a href="{{ route('login') }}" class="nav-link">
-                            <span class="material-symbols-outlined" style="font-size: 1.15rem;">login</span> 
+                            <span class="material-symbols-outlined" style="font-size: 1.25rem;">login</span> 
                             <span class="nav-text">Login</span>
                         </a>
                     </li>
@@ -198,7 +198,7 @@
 
     @if ($errors->any())
         <div class="alert-error">
-            <span class="icon-container-alert" style="margin-top: 0.125rem;"><i class="fa-solid fa-circle-exclamation"></i></span>
+            <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">error</span>
             <div>
                 <h4>Please fix the following errors:</h4>
                 <ul>

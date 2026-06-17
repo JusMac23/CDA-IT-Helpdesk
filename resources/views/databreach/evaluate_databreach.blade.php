@@ -1,6 +1,6 @@
 <x-app-layout>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     
     <style>
         /* --- Theme Variables --- */
@@ -293,7 +293,7 @@
 
                         <div class="page-footer right">
                             <button type="button" id="next-page" class="btn btn-indigo">
-                                Continue <i class="fas fa-arrow-right" style="margin-left: 0.5rem; margin-right: 0;"></i>
+                                Continue <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">arrow_forward</span>
                             </button>
                         </div>
                     </div>
@@ -479,11 +479,11 @@
 
                         <div class="page-footer between">
                             <button type="button" id="prev-page" class="btn btn-red">
-                                <i class="fas fa-arrow-left"></i> Back
+                                <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">arrow_back</span> Back
                             </button>
 
                             <button type="submit" class="btn btn-indigo">
-                                <i class="fas fa-save"></i> Save Evaluation
+                                <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">save</span> Save Evaluation
                             </button>
                         </div>
                     </div>

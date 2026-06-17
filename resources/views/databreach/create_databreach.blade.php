@@ -1,6 +1,6 @@
 <x-app-layout>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     
     <style>
         /* --- Theme Variables --- */
@@ -135,7 +135,7 @@
 
                 @if ($errors->any())
                 <div class="error-box">
-                    <i class="fas fa-exclamation-circle error-icon"></i>
+                    <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">error</span>
                     <div>
                         <h4 class="error-title">Please fix the following errors:</h4>
                         <ul class="error-list">

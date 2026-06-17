@@ -1,6 +1,6 @@
 <x-app-layout>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     
     <style>
         /* --- Theme Variables --- */
@@ -262,14 +262,14 @@
             <div class="action-container">
                 @can('create_tech_users')
                     <button id="openModal" class="btn btn-green">
-                        <i class="fas fa-plus"></i> Add User
+                        <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">add</span> Add User
                     </button>
                 @endcan
 
                 <form action="{{ route('users.index') }}" method="GET" class="search-form">
                     <input type="text" name="search_query" value="{{ request('search_query') }}" placeholder="Search users..." class="search-input" autocomplete="off">
                     <button type="submit" class="search-btn">
-                        <i class="fas fa-search"></i>
+                        <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">search</span>
                     </button>
                 </form>
             </div>
@@ -321,7 +321,7 @@
                                                 data-region="{{ $user->region }}"
                                                 data-contact-number="{{ $user->contact_number }}"
                                                 data-role-id="{{ optional($user->roles->first())->id }}">
-                                                <i class="fas fa-edit"></i> Edit
+                                                <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">edit</span> Edit
                                             </button>
                                         @endcan
 
@@ -331,7 +331,7 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="action-link link-red delete-btn" data-id="{{ $user->id }}">
-                                                    <i class="fas fa-trash-alt"></i> Delete
+                                                    <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">delete</span> Delete
                                                 </button>
                                             </form>
                                         @endcan
@@ -364,7 +364,7 @@
 
             @if ($errors->any())
                 <div class="error-box">
-                    <h4 class="error-title"><i class="fas fa-exclamation-circle"></i> Please fix the following error(s):</h4>
+                    <h4 class="error-title"><span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">error</span> Please fix the following error(s):</h4>
                     <ul class="error-list">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -450,8 +450,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-gray" id="cancelAddModal">Cancel</button>
                     <button type="submit" class="btn btn-indigo">Register User</button>
+                    <button type="button" class="btn btn-gray" id="cancelAddModal">Cancel</button>
                 </div>
             </form>
         </div>
@@ -464,7 +464,7 @@
 
             @if ($errors->any())
                 <div class="error-box">
-                    <h4 class="error-title"><i class="fas fa-exclamation-circle"></i> Please fix the following error(s):</h4>
+                    <h4 class="error-title"><span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">error</span> Please fix the following error(s):</h4>
                     <ul class="error-list">
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -541,8 +541,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-gray" id="cancelEditModal">Cancel</button>
                     <button type="submit" class="btn btn-indigo">Save Changes</button>
+                    <button type="button" class="btn btn-gray" id="cancelEditModal">Cancel</button>
                 </div>
             </form>
         </div>

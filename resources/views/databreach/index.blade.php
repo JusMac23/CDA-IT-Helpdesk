@@ -1,6 +1,6 @@
 <x-app-layout>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     
     <style>
         /* --- Theme Variables --- */
@@ -117,13 +117,14 @@
         .status-npc { background-color: var(--badge-npc-bg); color: var(--badge-npc-text); }
         .status-reported { background-color: var(--badge-rep-bg); color: var(--badge-rep-text); }
         .status-default { background-color: var(--badge-def-bg); color: var(--badge-def-text); }
+        .status-time-expired { background-color: rgba(239, 68, 68, 0.1); padding: 0.4rem 1rem; color: #ef4444; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-align: center; white-space: nowrap; letter-spacing: 0.025em; transition: background-color 0.3s ease, color 0.3s ease; }
 
         /* Action Links inside Table */
         .action-group { display: flex; flex-direction: column; gap: 0.5rem; }
         .action-link { display: flex; align-items: center; font-size: 0.85rem; font-weight: 600; font-family: inherit; cursor: pointer; padding: 0.4rem 0.75rem; border-radius: 0.375rem; transition: all 0.2s; text-decoration: none; background: transparent; white-space: nowrap; width: 100%; text-align: left; box-sizing: border-box; }
         .action-link i { margin-right: 0.4rem; width: 16px; text-align: center; font-size: 0.9rem; }
         
-        .link-blue { color: #3b82f6; border: 1px solid #bfdbfe; } 
+        .link-blue { color: #3b82f6; border: 1px solid #bfdbfe; }
         .link-blue:hover { background-color: #eff6ff; color: #1d4ed8; border-color: #93c5fd; }
         
         .link-yellow { color: #d97706; border: 1px solid #fde68a; } 
@@ -236,7 +237,8 @@
                 <div class="action-container">
                     @can('create_databreach')
                         <a href="{{ route('databreach.create') }}" class="btn btn-green">
-                            <i class="fa-solid fa-plus"></i> Add Incident Report
+                            <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">add</span> 
+                            Add Incident Report
                         </a>
                     @endcan
 
@@ -289,7 +291,8 @@
 
                     <div class="filter-container">
                         <button type="submit" class="btn btn-indigo">
-                            <i class="fa-solid fa-filter"></i> Apply Filter
+                            <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">filter_list</span> 
+                            Apply Filter
                         </button>
                     </div>
 
@@ -347,7 +350,8 @@
                                                 $deadline = \Carbon\Carbon::parse($notification->created_at)->addHours(24);
                                             @endphp
                                             <span class="incident-countdown font-semibold" data-deadline="{{ $deadline->toIso8601String() }}" style="color: var(--text-muted);">
-                                                <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+                                                
+                                                Loading...
                                             </span>
 
 
@@ -373,7 +377,7 @@
                                             <div style="margin-bottom: 12px; border-bottom: 1px dashed var(--border-light); padding-bottom: 8px;">
                                                 <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; font-weight: 700;">Assessment Elapsed</div>
                                                 @if($rem24 == 0)
-                                                    <span style="color: #ef4444; font-weight: 600; font-size: 0.85rem;"><i class="fa-solid fa-circle-exclamation"></i> Time Expired</span>
+                                                    <span class="badge status-time-expired"><i class="fa-solid fa-circle-exclamation"></i> Time Expired</span>
                                                 @else
                                                     <span style="color: #10b981; font-weight: 600; font-size: 0.85rem; display: block;">
                                                         24h 00m 00s <br> - {{ $r24H }}h {{ $r24M }}m {{ $r24S }}s <br> <b>= {{ $e24H }}h {{ $e24M }}m {{ $e24S }}s</b>
@@ -387,7 +391,8 @@
                                                 $deadline = \Carbon\Carbon::parse($notification->updated_at)->addHours(48);
                                             @endphp
                                             <span class="incident-countdown font-semibold" data-deadline="{{ $deadline->toIso8601String() }}" style="color: var(--text-muted);">
-                                                <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+                                                <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">loading</span> 
+                                                Loading...
                                             </span>
 
 
@@ -438,7 +443,7 @@
                                                 
                                                 @if($totElap >= $totalLimit)
                                                     <span style="color: #ef4444; font-weight: 600; font-size: 0.85rem; display: block;">
-                                                        <i class="fa-solid fa-circle-exclamation"></i> 48h Limit Exceeded
+                                                        48h Limit Exceeded
                                                     </span>
                                                 @else
                                                     <span style="color: #10b981; font-weight: 600; font-size: 0.85rem; display: block;">
@@ -449,10 +454,9 @@
 
                                             {{-- Display Action Taken (Restored per your request) --}}
                                             <span class="badge status-reported" style="margin-top: 4px;">
-                                                <i class="fa-solid fa-check"></i> Action Taken
+                                                Action Taken
                                             </span>
-
-
+                                                
                                         {{-- ======================================================== --}}
                                         {{-- PHASE 4: Completely Reported (Show Date and Action Taken)--}}
                                         {{-- ======================================================== --}}
@@ -464,7 +468,7 @@
                                             </div>
                                             
                                             <span class="badge status-reported" style="margin-top: 4px;">
-                                                <i class="fa-solid fa-check"></i> Action Taken
+                                                Action Taken
                                             </span>
 
                                         @endif
@@ -475,7 +479,8 @@
                                             
                                             @can('view_databreach')
                                                 <a href="{{ route('databreach.show', $notification->dbn_id) }}" class="action-link link-blue">
-                                                    <i class="fa-solid fa-eye"></i> View
+                                                    <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">visibility</span> 
+                                                    View
                                                 </a>
                                             @endcan
 
@@ -490,7 +495,8 @@
                                                     <a href="{{ route('databreach.assess', $notification->dbn_id) }}" 
                                                        class="action-link link-yellow assess-btn"
                                                        data-deadline="{{ $deadline->toIso8601String() }}">
-                                                        <i class="fa-solid fa-magnifying-glass-plus"></i> Assess
+                                                        <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">content_paste_search</span> 
+                                                        Assess
                                                     </a>
                                                 @endif
                                             @endcan
@@ -498,7 +504,8 @@
                                             @can('evaluate_databreach')
                                                 @if (!in_array($notification->status, ['Reported', 'For Assessment' , 'For Reporting to NPC']))
                                                     <a href="{{ route('databreach.evaluate', $notification->dbn_id) }}" class="action-link link-green">
-                                                        <i class="fa-solid fa-check"></i> Evaluate
+                                                        <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">content_paste_go</span> 
+                                                        Evaluate
                                                     </a>
                                                 @endif
                                             @endcan
@@ -507,7 +514,7 @@
                                                 @if ($notification->status === 'For Reporting to NPC')
                                                 <div x-data="{ open: false }">
                                                     <button @click="open = true" type="button" class="action-link link-red">
-                                                        <i class="fa-solid fa-paper-plane"></i> Report
+                                                        <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">send</span> Report
                                                     </button>
                                                     
                                                     <div x-show="open" x-transition.opacity class="modal-overlay" x-cloak>
@@ -540,7 +547,8 @@
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="button" class="action-link link-red delete-btn">
-                                                            <i class="fa-solid fa-trash-can"></i> Delete
+                                                            <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">delete</span>
+                                                            Delete
                                                         </button>
                                                     </form>
                                                 @endif
@@ -644,7 +652,8 @@
 
                     // If the time has completely run out
                     if (distance < 0) {
-                        timer.innerHTML = "<i class='fa-solid fa-circle-exclamation'></i> Time Expired";
+                        timer.innerHTML = "Time Expired";
+                        timer.classList.add("status-time-expired");
                         timer.style.color = "#ef4444"; 
                         return;
                     }
@@ -658,7 +667,7 @@
                     const m = String(minutes).padStart(2, '0');
                     const s = String(seconds).padStart(2, '0');
 
-                    timer.innerHTML = `<i class="fa-regular fa-clock"></i> ${h}h ${m}m ${s}s`;
+                    timer.innerHTML = `${h}h ${m}m ${s}s`;
                     
                     // Visual warnings based on time left
                     if (hours < 2) {

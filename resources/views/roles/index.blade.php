@@ -1,6 +1,6 @@
 <x-app-layout>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     
     <style>
         /* --- Theme Variables --- */
@@ -265,7 +265,7 @@
             <div class="action-container">
                 @can('create_roles')
                     <button id="openModal" class="btn btn-green">
-                        <i class="fas fa-plus"></i> Add Role
+                        <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.5rem;">add</span> Add Role
                     </button>
                 @endcan
             </div>
@@ -310,7 +310,7 @@
                                                 data-id="{{ $role->id }}"
                                                 data-name="{{ $role->name }}"
                                                 data-permissions='@json($role->permissions->pluck("id"))'>
-                                                <i class="fas fa-edit"></i> Edit
+                                                <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.5rem;">edit</span> Edit
                                             </button>
                                         @endcan
 
@@ -320,7 +320,7 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="action-link link-red delete-btn" data-id="{{ $role->id }}">
-                                                    <i class="fas fa-trash-alt"></i> Delete
+                                                    <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.5rem;">delete</span> Delete
                                                 </button>
                                             </form>
                                         @endcan
@@ -378,8 +378,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-gray" id="cancelAddModal">Cancel</button>
                     <button type="submit" class="btn btn-indigo">Save Role</button>
+                    <button type="button" class="btn btn-gray" id="cancelAddModal">Cancel</button>
                 </div>
             </form>
         </div>
@@ -418,8 +418,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-gray" id="cancelEditModal">Cancel</button>
                     <button type="submit" class="btn btn-indigo">Save Changes</button>
+                    <button type="button" class="btn btn-gray" id="cancelEditModal">Cancel</button>
                 </div>
             </form>
         </div>

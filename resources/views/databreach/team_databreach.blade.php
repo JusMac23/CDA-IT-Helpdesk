@@ -1,6 +1,6 @@
 <x-app-layout>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     
     <style>
         /* --- Theme Variables --- */
@@ -225,7 +225,8 @@
                     <div class="action-container">
                         @can('create_dbrt')
                         <button id="openAddModal" class="btn btn-green">
-                            <i class="fas fa-plus"></i> Add DBRT Member
+                            <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">add</span>
+                            Add DBRT Member
                         </button>
                         @endcan
                     </div>
@@ -263,7 +264,8 @@
                                                     data-lastname="{{ $team->lastname }}"
                                                     data-email="{{ $team->email }}"
                                                     data-region="{{ $team->region }}">
-                                                    <i class="fas fa-edit"></i> Edit
+                                                    <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">edit</span>
+                                                    Edit
                                                 </button>
                                                 @endcan
 
@@ -272,7 +274,8 @@
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="button" class="action-link link-red delete-btn" title="Delete">
-                                                        <i class="fas fa-trash-alt"></i> Delete
+                                                        <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">delete</span>
+                                                        Delete
                                                     </button>
                                                 </form> 
                                                 @endcan 
@@ -305,7 +308,7 @@
                     
                     @if ($errors->any())
                         <div class="error-box">
-                            <h4 class="error-title"><i class="fas fa-exclamation-circle"></i> Please fix the following error(s):</h4>
+                            <h4 class="error-title"><span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">error</span> Please fix the following error(s):</h4>
                             <ul class="error-list">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
@@ -361,8 +364,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-gray" id="cancelAddModalBtn">Cancel</button>
                             <button type="submit" class="btn btn-indigo"> Submit Member</button>
+                            <button type="button" class="btn btn-gray" id="cancelAddModalBtn">Cancel</button>
                         </div>
                     </form>
                 </div>
@@ -375,7 +378,7 @@
                     
                     @if ($errors->any())
                         <div class="error-box">
-                            <h4 class="error-title"><i class="fas fa-exclamation-circle"></i> Please fix the following error(s):</h4>
+                            <h4 class="error-title"><span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">error</span> Please fix the following error(s):</h4>
                             <ul class="error-list">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
@@ -432,8 +435,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-gray" id="cancelEditModalBtn">Cancel</button>
                             <button type="submit" class="btn btn-indigo">Save Changes</button>
+                            <button type="button" class="btn btn-gray" id="cancelEditModalBtn">Cancel</button>
                         </div>
                     </form>
                 </div>

@@ -1,7 +1,7 @@
 <x-app-layout>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+
     <style>
         /* --- Theme Variables --- */
         :root {
@@ -241,7 +241,7 @@
             <div class="action-container">
                 @can('create_technical_personnel')
                     <button id="openModal" class="btn btn-green">
-                        <i class="fas fa-plus"></i> Add Personnel
+                        <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">add</span> Add Personnel
                     </button>
                 @endcan
 
@@ -249,7 +249,7 @@
                 <form action="{{ route('tech_personnel.index') }}" method="GET" class="search-form">
                     <input type="text" name="search_query" value="{{ request('search_query') }}" placeholder="Search personnel..." class="search-input" autocomplete="off">
                     <button type="submit" class="search-btn">
-                        <i class="fas fa-search"></i>
+                        <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">search</span>
                     </button>
                 </form>
                 @endcan
@@ -287,7 +287,7 @@
                                                 data-lastname="{{ $tech_personnel->lastname }}"
                                                 data-it_email="{{ $tech_personnel->it_email }}"
                                                 data-it_area="{{ $tech_personnel->it_area }}">
-                                                <i class="fas fa-edit"></i> Edit
+                                                <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">edit</span> Edit
                                             </button>
                                         @endcan
 
@@ -297,7 +297,7 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="action-link link-red delete-btn" data-id="{{ $tech_personnel->id }}">
-                                                    <i class="fas fa-trash-alt"></i> Delete
+                                                    <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">delete</span> Delete
                                                 </button>
                                             </form>
                                         @endcan
@@ -382,8 +382,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-gray" id="cancelAddModal">Cancel</button>
                     <button type="submit" class="btn btn-indigo">Submit Personnel</button>
+                    <button type="button" class="btn btn-gray" id="cancelAddModal">Cancel</button>
                 </div>
             </form>
         </div>
@@ -449,8 +449,8 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-gray" id="cancelEditModal">Cancel</button>
                     <button type="submit" class="btn btn-indigo">Save Changes</button>
+                    <button type="button" class="btn btn-gray" id="cancelEditModal">Cancel</button>
                 </div>
             </form>
         </div>

@@ -154,7 +154,7 @@
                 @auth
                     <li>
                         <a href="{{ url('/dashboard') }}" class="nav-link">
-                            <span class="material-symbols-outlined" style="font-size: 1.15rem;">home</span> 
+                            <span class="material-symbols-outlined" style="font-size: 1.25rem;">home</span> 
                             <span class="nav-text">Dashboard</span>
                         </a>
                     </li>
@@ -162,7 +162,7 @@
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="nav-link nav-link-logout">
-                            <span class="material-symbols-outlined" style="font-size: 1.15rem;">logout</span> 
+                            <span class="material-symbols-outlined" style="font-size: 1.25rem;">logout</span> 
                             <span class="nav-text">Logout</span>
                             </button>
                         </form>
@@ -170,7 +170,7 @@
                 @else
                     <li>
                         <a href="{{ route('login') }}" class="nav-link">
-                            <span class="material-symbols-outlined" style="font-size: 1.15rem;">login</span> 
+                            <span class="material-symbols-outlined" style="font-size: 1.25rem;">login</span> 
                             <span class="nav-text">Login</span>
                         </a>
                     </li>

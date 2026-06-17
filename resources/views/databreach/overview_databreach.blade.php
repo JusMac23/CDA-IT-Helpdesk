@@ -1,6 +1,6 @@
 <x-app-layout>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     
     <style>
         /* --- Theme Variables --- */
@@ -211,12 +211,14 @@
 
                     <div class="form-btn-group">
                         <button type="submit" class="btn btn-green">
-                            <i class="fa-solid fa-filter"></i> Apply Filter
+                            <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">filter_list</span> 
+                            Apply Filter
                         </button>
                         
                         @can('generate_databreach')
                         <button type="submit" name="action" value="generate" class="btn btn-indigo">
-                            <i class="fa-solid fa-download"></i> Generate Report
+                            <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">download</span> 
+                            Generate Report
                         </button>
                         @endcan
                     </div>
@@ -233,7 +235,7 @@
                                 <p>{{ $totalNotifications ?? 0 }}</p>
                             </div>
                             <div class="stat-icon">
-                                <i class="fa-solid fa-shield-halved text-blue"></i>
+                                <span class="material-symbols-outlined text-blue" style="font-size: 2.5rem;">security</span>
                             </div>
                         </div>
 
@@ -243,7 +245,7 @@
                                 <p>{{ $totalMandatory ?? 0 }}</p>
                             </div>
                             <div class="stat-icon">
-                                <i class="fa-solid fa-triangle-exclamation text-red"></i>
+                                <span class="material-symbols-outlined text-red" style="font-size: 2.5rem;">data_alert</span>
                             </div>
                         </div>
 
@@ -253,7 +255,7 @@
                                 <p>{{ $totalVoluntary ?? 0 }}</p>
                             </div>
                             <div class="stat-icon">
-                                <i class="fa-solid fa-clipboard-list text-yellow"></i>
+                                <span class="material-symbols-outlined text-yellow" style="font-size: 2.5rem;">list_alt</span>
                             </div>
                         </div>
 
@@ -263,7 +265,7 @@
                                 <p>{{ $totalOthers ?? 0 }}</p>
                             </div>
                             <div class="stat-icon">
-                                <i class="fa-solid fa-circle-question text-gray"></i>
+                                <span class="material-symbols-outlined text-gray" style="font-size: 2.5rem;">filter_none</span>
                             </div>
                         </div>
 
@@ -273,7 +275,7 @@
                                 <p>{{ $totalReported ?? 0 }}</p>
                             </div>
                             <div class="stat-icon">
-                                <i class="fa-solid fa-circle-check text-green"></i>
+                                <span class="material-symbols-outlined text-green" style="font-size: 2.5rem;">check_circle</span>
                             </div>
                         </div>
 
