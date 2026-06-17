@@ -8,7 +8,7 @@
             </div>
         </a>
         <button @click="mobileSidebarOpen = false" class="icon-btn mobile-only" style="margin-left: auto; color: white; padding: 4px;">
-            <span class="material-icons-outlined">close</span>
+            <i data-lucide="x" width="20" height="20"></i>
         </button>
     </div>
 
@@ -18,7 +18,7 @@
         <a href="{{ route('dashboard') }}" 
            title="Tickets Overview"
            class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-            <span class="material-icons-outlined">dashboard</span>
+            <i data-lucide="folder-kanban" width="22" height="22" style="margin-right: 12px; flex-shrink: 0;"></i>
             <span class="nav-text">Tickets Overview</span>
         </a>
         @endif
@@ -32,7 +32,7 @@
             }
         }">
             <button @click="toggleMenu()" title="Ticket Management" class="nav-link w-100 {{ request()->routeIs('*tickets.index') ? 'active' : '' }}" style="width: 100%;">
-                <span class="material-icons-outlined">confirmation_number</span>
+                <i data-lucide="ticket" width="22" height="22" style="margin-right: 12px; flex-shrink: 0;"></i>
                 <span class="nav-text">Ticket Management</span>
                 <svg class="chevron" :class="open ? 'open' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -76,7 +76,7 @@
         <a href="{{ url('overview_databreach') }}" 
            title="Overview"
            class="nav-link {{ request()->is('overview_databreach') ? 'active' : '' }}">
-            <span class="material-icons-outlined">analytics</span>
+            <i data-lucide="file-chart-pie" width="22" height="22" style="margin-right: 12px; flex-shrink: 0;"></i>
             <span class="nav-text">Overview</span>
         </a>
         @endif
@@ -85,7 +85,7 @@
         <a href="{{ route('databreach.index') }}" 
            title="All Reports"
            class="nav-link {{ request()->routeIs('databreach.index') ? 'active' : '' }}">
-            <span class="material-icons-outlined">article</span>
+            <i data-lucide="file-text" width="22" height="22" style="margin-right: 12px; flex-shrink: 0;"></i>
             <span class="nav-text">All Reports</span>
         </a>
         @endif
@@ -94,7 +94,7 @@
         <a href="{{ route('databreach.team_databreach') }}" 
            title="DBRT"
            class="nav-link {{ request()->routeIs('databreach.team_databreach') ? 'active' : '' }}">
-            <span class="material-icons-outlined">group</span>
+            <i data-lucide="users" width="22" height="22" style="margin-right: 12px; flex-shrink: 0;"></i>
             <span class="nav-text">DBRT</span>
         </a>
         @endif
@@ -108,7 +108,7 @@
         <a href="{{ route('tech_personnel.index') }}" 
            title="Technical Personnel"
            class="nav-link {{ request()->routeIs('tech_personnel.index') ? 'active' : '' }}">
-            <span class="material-icons-outlined">engineering</span>
+            <i data-lucide="wrench" width="22" height="22" style="margin-right: 12px; flex-shrink: 0;"></i>
             <span class="nav-text">Technical Personnel</span>
         </a>
         @endif
@@ -117,7 +117,7 @@
         <a href="{{ route('tech_services.index') }}" 
            title="Technical Services"
            class="nav-link {{ request()->routeIs('tech_services.index') ? 'active' : '' }}">
-            <span class="material-icons-outlined">checklist</span>
+            <i data-lucide="list-checks" width="22" height="22" style="margin-right: 12px; flex-shrink: 0;"></i>
             <span class="nav-text">Technical Services</span>
         </a>
         @endif
@@ -126,7 +126,7 @@
         <a href="{{ route('users.index') }}" 
            title="Users"
            class="nav-link {{ request()->routeIs('users.index') ? 'active' : '' }}">
-            <span class="material-icons-outlined">manage_accounts</span>
+            <i data-lucide="user-cog" width="22" height="22" style="margin-right: 12px; flex-shrink: 0;"></i>
             <span class="nav-text">Users</span>
         </a>
         @endif
@@ -135,21 +135,10 @@
         <a href="{{ route('roles.index') }}" 
            title="Roles"
            class="nav-link {{ request()->routeIs('roles.index') ? 'active' : '' }}">
-            <span class="material-icons-outlined">add_moderator</span>
+            <i data-lucide="shield-check" width="22" height="22" style="margin-right: 12px; flex-shrink: 0;"></i>
             <span class="nav-text">Roles</span>
         </a>
         @endif
 
     </nav>
-    <!--
-    <div class="sidebar-footer">
-        <form method="POST" action="{{ route('logout') }}" style="margin: 0; width: 100%;">
-            @csrf
-            <button type="submit" class="nav-link logout" title="Log Out" style="width: 100%; border-radius: 8px; margin-bottom: 0;">
-                <span class="material-icons-outlined">logout</span>
-                <span class="nav-text">Log Out</span>
-            </button>
-        </form>
-    </div>
-    -->
-</aside>
+    </aside>

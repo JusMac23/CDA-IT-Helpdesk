@@ -13,7 +13,8 @@
     <link rel="icon" href="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" type="image/png">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script src="{{ asset('assets/js/lucide.min.js') }}"></script>
 
     <script src="/assets/js/sweetalert2.min.js"></script>
 
@@ -164,21 +165,21 @@
                 @auth
                     <li>
                         <a href="{{ url('/dashboard') }}" class="nav-link">
-                            <i class="fas fa-home"></i> <span class="nav-text">Dashboard</span>
+                            <i data-lucide="home" width="20" height="20"></i> <span class="nav-text">Dashboard</span>
                         </a>
                     </li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="nav-link nav-link-logout">
-                            <i style="font-size: 1.15rem;" class="fas fa-sign-out"></i> <span class="nav-text">Logout</span>
+                            <i data-lucide="log-out" width="20" height="20"></i> <span class="nav-text">Logout</span>
                             </button>
                         </form>
                     </li>
                 @else
                     <li>
                         <a href="{{ route('login') }}" class="nav-link">
-                            <i style="font-size: 1.15rem;" class="fas fa-sign-in"></i> <span class="nav-text">Login</span>
+                            <i data-lucide="log-in" width="20" height="20"></i> <span class="nav-text">Login</span>
                         </a>
                     </li>
                 @endauth
@@ -314,6 +315,14 @@
     @endif
 
     document.addEventListener('DOMContentLoaded', function () {
+
+        // This checks if the library loaded successfully before trying to use it
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        } else {
+            console.error("Lucide library failed to load. Check the file path.");
+        }
+
         // Fix: Sync exact device/laptop time to prevent 4-minute server delay
         const dateNotificationInput = document.getElementById('date_notification');
         if (dateNotificationInput) {

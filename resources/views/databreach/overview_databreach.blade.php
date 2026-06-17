@@ -1,6 +1,6 @@
 <x-app-layout>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="{{ asset('assets/js/lucide.min.js') }}"></script>
     
     <style>
         /* --- Theme Variables --- */
@@ -92,6 +92,15 @@
         .stat-info p { margin: 0.25rem 0 0 0; font-size: 1.75rem; font-weight: 800; color: var(--text-dark); line-height: 1; word-wrap: break-word; transition: color 0.3s ease; }
         
         .stat-icon { font-size: 2rem; opacity: 0.85; flex-shrink: 0; transition: transform 0.2s; }
+
+        .stat-icon svg { stroke: currentColor; display: block; }
+
+        .text-blue { color: #2563eb; }
+        .text-red { color: #dc2626; }
+        .text-yellow { color: #ca8a04; }
+        .text-gray { color: #6b7280; }
+        .text-green { color: #16a34a; }
+
         .stat-card:hover .stat-icon { transform: scale(1.1); opacity: 1; }
 
         .border-blue { border-left-color: #3b82f6; } .text-blue { color: #3b82f6; }
@@ -210,13 +219,19 @@
                     </div>
 
                     <div class="form-btn-group">
-                        <button type="submit" class="btn btn-green">
-                            <i class="fa-solid fa-filter"></i> Apply Filter
+                        <button type="submit" class="btn btn-green" style="display: inline-flex; align-items: center;">
+                            <span style="display: inline-flex; margin-right: 0.2rem;">
+                                <i style="stroke-width: 2;" data-lucide="filter" width="18" height="18"></i>
+                            </span>
+                            Apply Filter
                         </button>
                         
                         @can('generate_databreach')
-                        <button type="submit" name="action" value="generate" class="btn btn-indigo">
-                            <i class="fa-solid fa-download"></i> Generate Report
+                        <button type="submit" name="action" value="generate" class="btn btn-indigo" style="display: inline-flex; align-items: center;">
+                            <span style="display: inline-flex; margin-right: 0.2rem;">
+                                <i style="stroke-width: 2;" data-lucide="download" width="18" height="18"></i>
+                            </span>
+                            Generate Report
                         </button>
                         @endcan
                     </div>
@@ -226,14 +241,13 @@
                 <div class="overview-grid">
                     
                     <div class="stat-list">
-                        
                         <div class="stat-card border-blue">
                             <div class="stat-info">
                                 <h4>Total Security Incidents</h4>
                                 <p>{{ $totalNotifications ?? 0 }}</p>
                             </div>
-                            <div class="stat-icon">
-                                <i class="fa-solid fa-shield-halved text-blue"></i>
+                            <div class="stat-icon text-blue">
+                                <i data-lucide="shield-half" width="32" height="32" stroke-width="1.5"></i>
                             </div>
                         </div>
 
@@ -242,8 +256,8 @@
                                 <h4>Mandatory Incidents</h4>
                                 <p>{{ $totalMandatory ?? 0 }}</p>
                             </div>
-                            <div class="stat-icon">
-                                <i class="fa-solid fa-triangle-exclamation text-red"></i>
+                            <div class="stat-icon text-red">
+                                <i data-lucide="triangle-alert" width="32" height="32" stroke-width="1.5"></i>
                             </div>
                         </div>
 
@@ -252,8 +266,8 @@
                                 <h4>Voluntary Incidents</h4>
                                 <p>{{ $totalVoluntary ?? 0 }}</p>
                             </div>
-                            <div class="stat-icon">
-                                <i class="fa-solid fa-clipboard-list text-yellow"></i>
+                            <div class="stat-icon text-yellow">
+                                <i data-lucide="clipboard-list" width="32" height="32" stroke-width="1.5"></i>
                             </div>
                         </div>
 
@@ -262,8 +276,8 @@
                                 <h4>Others</h4>
                                 <p>{{ $totalOthers ?? 0 }}</p>
                             </div>
-                            <div class="stat-icon">
-                                <i class="fa-solid fa-circle-question text-gray"></i>
+                            <div class="stat-icon text-gray">
+                                <i data-lucide="help-circle" width="32" height="32" stroke-width="1.5"></i>
                             </div>
                         </div>
 
@@ -272,11 +286,10 @@
                                 <h4>Total Reported</h4>
                                 <p>{{ $totalReported ?? 0 }}</p>
                             </div>
-                            <div class="stat-icon">
-                                <i class="fa-solid fa-circle-check text-green"></i>
+                            <div class="stat-icon text-green">
+                                <i data-lucide="check-circle" width="32" height="32" stroke-width="1.5"></i>
                             </div>
                         </div>
-
                     </div>
 
                     <div class="chart-box">
@@ -365,189 +378,196 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        
-        // === AUTO-RELOAD & COUNTDOWN ===
-        const checkbox = document.getElementById('autoReloadCheckbox');
-        const countdownDisplay = document.getElementById('countdown');
-        let intervalId = null;
-        let countdown = 60;
+        document.addEventListener("DOMContentLoaded", function () {
 
-        const isChecked = localStorage.getItem('autoReload') === 'true';
-        if (checkbox) checkbox.checked = isChecked;
-
-        if (isChecked) startAutoReload();
-
-        if (checkbox) {
-            checkbox.addEventListener('change', function () {
-                localStorage.setItem('autoReload', checkbox.checked);
-                if (checkbox.checked) {
-                    startAutoReload();
-                } else {
-                    stopAutoReload();
-                }
-            });
-        }
-
-        function startAutoReload() {
-            countdown = 60;
-            updateCountdown();
-            intervalId = setInterval(() => {
-                countdown--;
-                updateCountdown();
-                if (countdown <= 0) {
-                    location.reload();
-                }
-            }, 1000);
-        }
-
-        function stopAutoReload() {
-            clearInterval(intervalId);
-            countdown = 60;
-            updateCountdown();
-        }
-
-        function updateCountdown() {
-            if (countdownDisplay) countdownDisplay.textContent = countdown;
-        }
-
-        // === CHART LOGIC ===
-        const ctxEl = document.getElementById('causePieChart');
-        if(!ctxEl) return;
-
-        const ctx = ctxEl.getContext('2d');
-        const labels = @json($labels); 
-        const values = @json($values); 
-        const hasData = values.length && values.some(v => v > 0);
-
-        // Helper to get CSS variable color
-        function getComputedColor(cssVar) {
-            return getComputedStyle(document.body).getPropertyValue(cssVar).trim() || '#64748b';
-        }
-
-        const chartData = {
-            labels: labels,
-            datasets: [{
-                data: hasData ? values : new Array(values.length || 1).fill(1),
-                backgroundColor: hasData ? [
-                    '#4f46e5','#ef4444','#10b981','#eab308','#8b5cf6','#f97316','#06b6d4',
-                    '#be185d','#64748b','#1d4ed8','#b91c1c','#15803d',
-                    '#92400e','#6d28d9','#4338ca','#cbd5e1'
-                ] : ['#f1f5f9'], 
-                borderColor: 'transparent',
-                borderWidth: 2,
-                hoverOffset: 4
-            }]
-        };
-
-        const noDataPlugin = {
-            id: 'noDataPlugin',
-            afterDraw: (chart) => {
-                if (!hasData) {
-                    const { ctx, chartArea: { width, height, top, left } } = chart;
-                    ctx.save();
-                    ctx.font = 'bold 16px Inter, sans-serif';
-                    ctx.fillStyle = getComputedColor('--text-muted');
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText('No Data Available', left + width / 2, top + height / 2);
-                    ctx.restore();
-                }
+            // This checks if the library loaded successfully before trying to use it
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            } else {
+                console.error("Lucide library failed to load. Check the file path.");
             }
-        };
+    
+            // === AUTO-RELOAD & COUNTDOWN ===
+            const checkbox = document.getElementById('autoReloadCheckbox');
+            const countdownDisplay = document.getElementById('countdown');
+            let intervalId = null;
+            let countdown = 60;
 
-        // Custom HTML Legend Plugin for Scrollable Specific Causes
-        const htmlLegendPlugin = {
-            id: 'htmlLegend',
-            afterUpdate(chart, args, options) {
-                const ul = document.getElementById(options.containerID);
-                if (!ul) return;
+            const isChecked = localStorage.getItem('autoReload') === 'true';
+            if (checkbox) checkbox.checked = isChecked;
 
-                // Remove old legend items
-                while (ul.firstChild) { ul.firstChild.remove(); }
+            if (isChecked) startAutoReload();
 
-                if (!hasData) return; // Do not show legend if no data
-
-                // Get native legend items
-                const items = chart.options.plugins.legend.labels.generateLabels(chart);
-
-                items.forEach(item => {
-                    const li = document.createElement('li');
-                    li.style.display = 'flex';
-                    li.style.alignItems = 'flex-start';
-                    li.style.cursor = 'pointer';
-                    li.style.marginBottom = '12px';
-                    li.style.transition = 'opacity 0.2s ease';
-                    li.style.opacity = item.hidden ? '0.4' : '1';
-
-                    // Toggle visibility on click
-                    li.onclick = () => {
-                        chart.toggleDataVisibility(item.index);
-                        chart.update();
-                    };
-
-                    // Legend Color Box
-                    const boxSpan = document.createElement('span');
-                    boxSpan.style.background = item.fillStyle;
-                    boxSpan.style.display = 'inline-block';
-                    boxSpan.style.width = '14px';
-                    boxSpan.style.height = '14px';
-                    boxSpan.style.borderRadius = '50%';
-                    boxSpan.style.marginRight = '10px';
-                    boxSpan.style.marginTop = '2px';
-                    boxSpan.style.flexShrink = '0';
-
-                    // Legend Text
-                    const textContainer = document.createElement('span');
-                    textContainer.style.color = getComputedColor('--text-muted');
-                    textContainer.style.fontFamily = "'Inter', sans-serif";
-                    textContainer.style.fontSize = '12px';
-                    textContainer.style.fontWeight = '500';
-                    textContainer.style.lineHeight = '1.4';
-                    textContainer.style.textDecoration = item.hidden ? 'line-through' : 'none';
-                    textContainer.textContent = item.text;
-
-                    li.appendChild(boxSpan);
-                    li.appendChild(textContainer);
-                    ul.appendChild(li);
+            if (checkbox) {
+                checkbox.addEventListener('change', function () {
+                    localStorage.setItem('autoReload', checkbox.checked);
+                    if (checkbox.checked) {
+                        startAutoReload();
+                    } else {
+                        stopAutoReload();
+                    }
                 });
             }
-        };
 
-        const chartOptions = {
-            responsive: true,
-            maintainAspectRatio: false, 
-            plugins: {
-                legend: {
-                    display: false // We disable the native legend to use our HTML scrollable one
-                },
-                htmlLegend: {
-                    containerID: 'customLegend' // Connect to our new HTML list
-                },
-                tooltip: {
-                    enabled: hasData,
-                    backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                    titleFont: { family: "'Inter', sans-serif", size: 13 },
-                    bodyFont: { family: "'Inter', sans-serif", size: 14, weight: 'bold' },
-                    padding: 12,
-                    cornerRadius: 8
-                }
+            function startAutoReload() {
+                countdown = 60;
+                updateCountdown();
+                intervalId = setInterval(() => {
+                    countdown--;
+                    updateCountdown();
+                    if (countdown <= 0) {
+                        location.reload();
+                    }
+                }, 1000);
             }
-        };
 
-        const myPieChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: chartData,
-            options: chartOptions,
-            plugins: [noDataPlugin, htmlLegendPlugin] // Load the custom plugin
+            function stopAutoReload() {
+                clearInterval(intervalId);
+                countdown = 60;
+                updateCountdown();
+            }
+
+            function updateCountdown() {
+                if (countdownDisplay) countdownDisplay.textContent = countdown;
+            }
+
+            // === CHART LOGIC ===
+            const ctxEl = document.getElementById('causePieChart');
+            if(!ctxEl) return;
+
+            const ctx = ctxEl.getContext('2d');
+            const labels = @json($labels); 
+            const values = @json($values); 
+            const hasData = values.length && values.some(v => v > 0);
+
+            // Helper to get CSS variable color
+            function getComputedColor(cssVar) {
+                return getComputedStyle(document.body).getPropertyValue(cssVar).trim() || '#64748b';
+            }
+
+            const chartData = {
+                labels: labels,
+                datasets: [{
+                    data: hasData ? values : new Array(values.length || 1).fill(1),
+                    backgroundColor: hasData ? [
+                        '#4f46e5','#ef4444','#10b981','#eab308','#8b5cf6','#f97316','#06b6d4',
+                        '#be185d','#64748b','#1d4ed8','#b91c1c','#15803d',
+                        '#92400e','#6d28d9','#4338ca','#cbd5e1'
+                    ] : ['#f1f5f9'], 
+                    borderColor: 'transparent',
+                    borderWidth: 2,
+                    hoverOffset: 4
+                }]
+            };
+
+            const noDataPlugin = {
+                id: 'noDataPlugin',
+                afterDraw: (chart) => {
+                    if (!hasData) {
+                        const { ctx, chartArea: { width, height, top, left } } = chart;
+                        ctx.save();
+                        ctx.font = 'bold 16px Inter, sans-serif';
+                        ctx.fillStyle = getComputedColor('--text-muted');
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText('No Data Available', left + width / 2, top + height / 2);
+                        ctx.restore();
+                    }
+                }
+            };
+
+            // Custom HTML Legend Plugin for Scrollable Specific Causes
+            const htmlLegendPlugin = {
+                id: 'htmlLegend',
+                afterUpdate(chart, args, options) {
+                    const ul = document.getElementById(options.containerID);
+                    if (!ul) return;
+
+                    // Remove old legend items
+                    while (ul.firstChild) { ul.firstChild.remove(); }
+
+                    if (!hasData) return; // Do not show legend if no data
+
+                    // Get native legend items
+                    const items = chart.options.plugins.legend.labels.generateLabels(chart);
+
+                    items.forEach(item => {
+                        const li = document.createElement('li');
+                        li.style.display = 'flex';
+                        li.style.alignItems = 'flex-start';
+                        li.style.cursor = 'pointer';
+                        li.style.marginBottom = '12px';
+                        li.style.transition = 'opacity 0.2s ease';
+                        li.style.opacity = item.hidden ? '0.4' : '1';
+
+                        // Toggle visibility on click
+                        li.onclick = () => {
+                            chart.toggleDataVisibility(item.index);
+                            chart.update();
+                        };
+
+                        // Legend Color Box
+                        const boxSpan = document.createElement('span');
+                        boxSpan.style.background = item.fillStyle;
+                        boxSpan.style.display = 'inline-block';
+                        boxSpan.style.width = '14px';
+                        boxSpan.style.height = '14px';
+                        boxSpan.style.borderRadius = '50%';
+                        boxSpan.style.marginRight = '10px';
+                        boxSpan.style.marginTop = '2px';
+                        boxSpan.style.flexShrink = '0';
+
+                        // Legend Text
+                        const textContainer = document.createElement('span');
+                        textContainer.style.color = getComputedColor('--text-muted');
+                        textContainer.style.fontFamily = "'Inter', sans-serif";
+                        textContainer.style.fontSize = '12px';
+                        textContainer.style.fontWeight = '500';
+                        textContainer.style.lineHeight = '1.4';
+                        textContainer.style.textDecoration = item.hidden ? 'line-through' : 'none';
+                        textContainer.textContent = item.text;
+
+                        li.appendChild(boxSpan);
+                        li.appendChild(textContainer);
+                        ul.appendChild(li);
+                    });
+                }
+            };
+
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false, 
+                plugins: {
+                    legend: {
+                        display: false // We disable the native legend to use our HTML scrollable one
+                    },
+                    htmlLegend: {
+                        containerID: 'customLegend' // Connect to our new HTML list
+                    },
+                    tooltip: {
+                        enabled: hasData,
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleFont: { family: "'Inter', sans-serif", size: 13 },
+                        bodyFont: { family: "'Inter', sans-serif", size: 14, weight: 'bold' },
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                }
+            };
+
+            const myPieChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: chartData,
+                options: chartOptions,
+                plugins: [noDataPlugin, htmlLegendPlugin] // Load the custom plugin
+            });
+
+            // MutationObserver to detect dark mode toggle and update Chart colors
+            const observer = new MutationObserver(() => {
+                myPieChart.update(); // Calling update will re-render the custom HTML legend with the correct dark mode text colors
+            });
+
+            observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
         });
-
-        // MutationObserver to detect dark mode toggle and update Chart colors
-        const observer = new MutationObserver(() => {
-            myPieChart.update(); // Calling update will re-render the custom HTML legend with the correct dark mode text colors
-        });
-
-        observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-    });
     </script>
 </x-app-layout>

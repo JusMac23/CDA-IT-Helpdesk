@@ -8,12 +8,13 @@
     <title>{{ config('app.name', 'CDA-DBRS') }}</title>
     <link rel="icon" href="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" type="image/png">
 
-    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
     
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <script src="{{ asset('assets/js/lucide.min.js') }}"></script>
     <script src="/assets/js/sweetalert2.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
@@ -201,11 +202,17 @@
             <header class="top-header">
                 <div class="header-left">
                     <button @click="mobileSidebarOpen = true" class="icon-btn mobile-only">
-                        <span class="material-icons-outlined">menu</span>
+                        <i data-lucide="circle-chevron-right" width="20" height="20"></i>
                     </button>
 
                     <button @click="toggleSidebar()" class="icon-btn desktop-only" :title="sidebarOpen ? 'Collapse Sidebar' : 'Expand Sidebar'">
-                        <span class="material-icons-outlined" x-text="sidebarOpen ? 'menu_open' : 'menu'"></span>
+                        <span x-show="sidebarOpen">
+                            <i data-lucide="panel-left-close" width="20" height="20"></i>
+                        </span>
+                        
+                        <span x-show="!sidebarOpen" x-cloak>
+                            <i data-lucide="panel-left" width="20" height="20"></i>
+                        </span>
                     </button>
                 </div>
 
@@ -223,12 +230,13 @@
                                 this.time = new Date().toLocaleString('en-US', options);
                             }
                         }">
-                        <span class="material-icons-outlined">schedule</span>
+                        <i data-lucide="calendar-clock" width="20" height="20" style="margin-right: 8px;"></i>
                         <span x-text="time"></span>
                     </div>
 
                     <button @click="toggleTheme()" class="icon-btn theme-toggle" :title="darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
-                        <span class="material-icons-outlined" x-text="darkMode ? 'light_mode' : 'dark_mode'"></span>
+                        <span x-show="darkMode" x-cloak><i data-lucide="sun" width="20" height="20"></i></span>
+                        <span x-show="!darkMode"><i data-lucide="moon" width="20" height="20"></i></span>
                     </button>
 
                     <div class="profile-dropdown" x-data="{ open: false }" @click.away="open = false">
@@ -288,5 +296,15 @@
 
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // This checks if the library loaded successfully before trying to use it
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            } else {
+                console.error("Lucide library failed to load. Check the file path.");
+            }
+        })
+    </script>
 </body>
 </html>
