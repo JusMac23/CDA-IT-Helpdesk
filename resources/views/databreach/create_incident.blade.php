@@ -163,9 +163,9 @@
             <ul class="nav-links">
                 @auth
                     <li>
-                        <a href="{{ url('/dashboard') }}" class="nav-link">
-                            <span class="material-symbols-outlined" style="font-size: 1.25rem;">home</span> 
-                            <span class="nav-text">Dashboard</span>
+                        <a href="{{ url('/tickets/overview_tickets') }}" class="nav-link">
+                            <span class="material-symbols-outlined" style="font-size: 1.25rem;">table_chart_view</span> 
+                            <span class="nav-text">Tickets Overview</span>
                         </a>
                     </li>
                     <li>

@@ -1,7 +1,7 @@
 <aside class="sidebar" :class="{ 'collapsed': !sidebarOpen, 'mobile-open': mobileSidebarOpen }">
     
     <div class="sidebar-header">
-        <a href="{{ route('dashboard') }}" style="display: flex; align-items: center; color: white;">
+        <a href="{{ route('overview_tickets.index') }}" style="display: flex; align-items: center; color: white;">
             <img src="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" alt="CDA Logo" class="sidebar-logo" style="background-color: transparent !important; background: none !important; border: none !important; box-shadow: none !important;">
             <div class="sidebar-brand">
                 <span class="sidebar-brand-title">CDA-DBRS</span>
@@ -15,9 +15,9 @@
     <nav class="sidebar-nav">
 
         @if(auth()->user()->can('view_dashboard'))
-        <a href="{{ route('dashboard') }}" 
+        <a href="{{ route('overview_tickets.index') }}" 
            title="Tickets Overview"
-           class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+           class="nav-link {{ request()->routeIs('overview_tickets.index') ? 'active' : '' }}">
             <span class="material-symbols-outlined">table_chart_view</span>
             <span class="nav-text">Tickets Overview</span>
         </a>
@@ -85,7 +85,7 @@
         <a href="{{ route('databreach.index') }}" 
            title="All Reports"
            class="nav-link {{ request()->routeIs('databreach.index') ? 'active' : '' }}">
-            <span class="material-symbols-outlined">assignment_turned_in</span>
+            <span class="material-symbols-outlined">article</span>
             <span class="nav-text">All Reports</span>
         </a>
         @endif

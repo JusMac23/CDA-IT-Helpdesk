@@ -1,6 +1,6 @@
 <x-app-layout>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     
     @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin']))
     <style>
@@ -136,12 +136,16 @@
 
                 {{-- Dashboard Cards --}}
                 <div class="stat-cards">
+                    <span class="material-symbols-outlined" style="display: none;">confirmation_number</span> <!-- IGNORE: For preloading icons -->
+                    <span class="material-symbols-outlined" style="display: none;">hourglass_top</span> <!-- IGNORE: For preloading icons -->
+                    <span class="material-symbols-outlined" style="display: none;">check_circle</span> <!-- IGNORE: For preloading icons -->
+                    <span class="material-symbols-outlined" style="display: none;">error</span> <!-- IGNORE: For preloading icons -->
                     @php
                         $cards = [
-                            ['label' => 'Total Tickets', 'icon' => 'fa-ticket', 'theme' => 'indigo', 'value' => $total ?? 0],
-                            ['label' => 'Pending Tickets', 'icon' => 'fa-hourglass-half', 'theme' => 'green', 'value' => $pending ?? 0],
-                            ['label' => 'Resolved Tickets', 'icon' => 'fa-check-circle', 'theme' => 'blue', 'value' => $resolved ?? 0],
-                            ['label' => 'Overdue Tickets', 'icon' => 'fa-exclamation-circle', 'theme' => 'red', 'value' => $overdue ?? 0],
+                            ['label' => 'Total Tickets', 'icon' => 'confirmation_number', 'theme' => 'indigo', 'value' => $total ?? 0],
+                            ['label' => 'Pending Tickets', 'icon' => 'hourglass_top', 'theme' => 'green', 'value' => $pending ?? 0],
+                            ['label' => 'Resolved Tickets', 'icon' => 'check_circle', 'theme' => 'blue', 'value' => $resolved ?? 0],
+                            ['label' => 'Overdue Tickets', 'icon' => 'error', 'theme' => 'red', 'value' => $overdue ?? 0],
                         ];
                     @endphp
 
@@ -149,7 +153,7 @@
                         <div class="stat-card card-{{ $card['theme'] }}">
                             <div class="stat-left">
                                 <div class="stat-icon">
-                                    <i class="fa-solid {{ $card['icon'] }}"></i>
+                                    <span class="material-symbols-outlined">{{ $card['icon'] }}</span>
                                 </div>
                                 <div>
                                     <h4 class="stat-label">{{ $card['label'] }}</h4>
@@ -166,7 +170,7 @@
                     {{-- Tickets by Region --}}
                     <div class="table-card tc-indigo">
                         <h4 class="table-card-title" style="color: var(--icon-indigo-text);">
-                            <i class="fa-solid fa-network-wired"></i> Tickets by Region
+                            Tickets by Region
                         </h4>
                         <div class="table-responsive">
                             <table class="data-table">
@@ -195,7 +199,7 @@
                     {{-- Tickets by Technical Personnel --}}
                     <div class="table-card tc-green">
                         <h4 class="table-card-title" style="color: var(--icon-green-text);">
-                            <i class="fa-solid fa-user-gear"></i> By Personnel
+                            Tickets by Technical Personnel
                         </h4>
                         <div class="table-responsive">
                             <table class="data-table">
@@ -224,7 +228,7 @@
                     {{-- Tickets by Service --}}
                     <div class="table-card tc-yellow">
                         <h4 class="table-card-title" style="color: #eab308;">
-                            <i class="fa-solid fa-tools"></i> By Service
+                            Tickets by Technical Service
                         </h4>
                         <div class="table-responsive">
                             <table class="data-table">
@@ -253,7 +257,7 @@
                     {{-- Overdue Tickets --}}
                     <div class="table-card tc-red">
                         <h4 class="table-card-title" style="color: var(--icon-red-text);">
-                            <i class="fa-solid fa-clock"></i> Overdue Tickets
+                            Overdue Tickets
                         </h4>
                         <div class="table-responsive">
                             <table class="data-table">
@@ -285,7 +289,7 @@
                 {{-- Recently Resolved Tickets --}}
                 <div style="margin-top: 1rem;">
                     <h4 class="table-card-title" style="color: var(--text-dark);">
-                        <i class="fa-solid fa-clock-rotate-left" style="color: var(--icon-blue-text);"></i> Recently Resolved Tickets
+                        <span class="material-symbols-outlined" style="color: var(--icon-blue-text);">history</span> Recently Resolved Tickets
                     </h4>
 
                     <div class="full-table-container">

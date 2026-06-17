@@ -91,7 +91,7 @@ class OAuthAuthentikController extends Controller
             // ROLE-BASED REDIRECTION
             // ----------------------------------------------------
             if ($user->hasRole('Super Admin')) {
-                return redirect()->route('dashboard');
+                return redirect()->route('overview_tickets.index');
             }
 
             if ($user->hasRole('User')) {

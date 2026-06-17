@@ -8,7 +8,7 @@ use Carbon\Carbon;
 
 use App\Models\Tickets;
 
-class DashboardController extends Controller
+class TicketsOverviewController extends Controller
 {
     public function index()
     {
@@ -53,7 +53,7 @@ class DashboardController extends Controller
             ->get()
             ->groupBy('it_personnel');
 
-        return view('dashboard', compact(
+        return view('tickets.overview_tickets', compact(
             'total',
             'pending',
             'resolved',

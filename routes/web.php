@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TicketsOverviewController;
 use App\Http\Controllers\TicketsController;
 use App\Http\Controllers\AssignedToMeController;
 use App\Http\Controllers\ReassignedTicketsController;
@@ -60,7 +60,7 @@ Route::post('/tickets/{ticket_id}/personnel-signature', [UploadPersonnelSignatur
 Route::middleware(['auth', 'verified'])->group(function () {
     
     // Dashboard 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('permission:view_dashboard');
+    Route::get('/tickets/overview_tickets', [TicketsOverviewController::class, 'index'])->name('overview_tickets.index')->middleware('permission:view_dashboard');
 
     // Profile Management
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->middleware('permission:view_profile');
