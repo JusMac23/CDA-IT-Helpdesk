@@ -8,19 +8,18 @@
     <title>{{ config('app.name', 'CDA-DBRS') }}</title>
     <link rel="icon" href="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" type="image/png">
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     
     <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
-    <script src="{{ asset('assets/js/lucide.min.js') }}"></script>
     <script src="/assets/js/sweetalert2.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
     <style>
+        /* Note: Applied .material-symbols-outlined throughout the styles */
         :root {
-            /* Light Mode Variables */
             --sidebar-bg: #133e5e;
             --sidebar-hover: rgba(255, 255, 255, 0.1);
             --sidebar-active: rgba(255, 255, 255, 0.15);
@@ -40,7 +39,6 @@
             --avatar-outline: transparent;
         }
 
-        /* Dark Mode Variables - Unified Backgrounds */
         body.dark {
             --sidebar-bg: #0f172a; 
             --sidebar-border: #334155; 
@@ -60,13 +58,14 @@
         a { text-decoration: none; }
         button { background: none; border: none; cursor: pointer; font-family: inherit; }
         [x-cloak] { display: none !important; }
+        
+        /* Updated Icon Base Class */
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
 
-        /* Layout */
         .app-wrapper { display: flex; height: 100vh; height: 100dvh; width: 100%; overflow: hidden; }
         .main-content { display: flex; flex-direction: column; flex: 1; min-width: 0; overflow: hidden; transition: margin 0.3s ease; }
         .content-area { flex: 1; padding: 24px; overflow-y: auto; }
 
-        /* Sidebar Base */
         .sidebar { background-color: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); color: white; display: flex; flex-direction: column; transition: width 0.3s ease, transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease; z-index: 50; flex-shrink: 0; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
         .sidebar-header { height: 64px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; overflow: hidden; }
         .sidebar-logo { height: 32px; width: auto; background: rgba(255,255,255,0.1); padding: 4px; border-radius: 4px; }
@@ -74,21 +73,17 @@
         .sidebar-brand-title { font-size: 18px; font-weight: bold; line-height: 1; }
         .sidebar-brand-sub { font-size: 10px; font-weight: 600; color: #7dd3fc; text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px; }
         .sidebar-nav { flex: 1; overflow-y: auto; padding: 24px 12px; }
-        
         .sidebar-footer { height: 64px; display: flex; align-items: center; justify-content: center; padding: 0 16px; border-top: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
-        
         .nav-label { font-size: 10px; font-weight: bold; color: #7dd3fc; text-transform: uppercase; letter-spacing: 1px; padding: 16px 12px 4px; margin-top: 8px; }
 
-        /* Navigation Links */
         .nav-link { display: flex; align-items: center; padding: 10px 12px; color: var(--sidebar-text); border-radius: 8px; font-weight: 500; transition: all 0.2s ease; margin-bottom: 4px; white-space: nowrap; }
         .nav-link:hover { background-color: var(--sidebar-hover); color: white; }
         .nav-link.active { background-color: var(--sidebar-active); color: white; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
-        .nav-link .material-icons-outlined { font-size: 22px; margin-right: 12px; flex-shrink: 0; }
+        .nav-link .material-symbols-outlined { font-size: 22px; margin-right: 12px; flex-shrink: 0; }
         
         .nav-link.logout { color: #fb7185; }
         .nav-link.logout:hover { background-color: rgba(244, 63, 94, 0.1); color: #fda4af; }
 
-        /* Submenu */
         .submenu { list-style: none; padding-left: 0; margin-top: 4px; margin-bottom: 8px; }
         .submenu-link { display: flex; align-items: center; padding: 8px 12px 8px 44px; color: #94a3b8; font-size: 14px; border-radius: 8px; transition: 0.2s; }
         .submenu-link:hover { background-color: rgba(255,255,255,0.05); color: white; }
@@ -98,19 +93,15 @@
         .chevron { margin-left: auto; transition: transform 0.2s; width: 16px; height: 16px; }
         .chevron.open { transform: rotate(90deg); }
 
-        /* Header */
         .top-header { height: 64px; background-color: var(--header-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 24px; z-index: 30; flex-shrink: 0; transition: background-color 0.3s ease, border-color 0.3s ease; }
         .header-left, .header-right { display: flex; align-items: center; height: 100%; gap: 12px; }
         .icon-btn { padding: 8px; color: var(--text-muted); border-radius: 8px; transition: background 0.2s; display: flex; align-items: center; justify-content: center; }
         .icon-btn:hover { background-color: var(--dropdown-hover); color: var(--text-main); }
         
         .clock-widget { display: flex; align-items: center; color: var(--text-muted); font-size: 14px; font-weight: 500; white-space: nowrap; }
-        .clock-widget .material-icons-outlined { font-size: 18px; margin-right: 8px; }
+        .clock-widget .material-symbols-outlined { font-size: 18px; margin-right: 8px; }
         
-        /* Theme Toggle Button */
         .theme-toggle { margin-right: 12px; }
-
-        /* Profile Dropdown & Avatar */
         .profile-dropdown { position: relative; margin-left: 8px; }
         
         .avatar-btn { width: 40px; height: 40px; border-radius: 50%; background-color: var(--sidebar-bg); color: white; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 14px; letter-spacing: 1px; transition: all 0.2s; flex-shrink: 0; border: 2px solid var(--avatar-outline); }
@@ -124,20 +115,17 @@
         .dropdown-role { display: inline-block; padding: 2px 8px; background: #e0f2fe; color: #133e5e; font-size: 10px; font-weight: bold; border-radius: 12px; margin-top: 6px; text-transform: uppercase; }
         .dropdown-item { display: flex; align-items: center; width: 100%; padding: 10px 16px; color: var(--text-main); font-size: 14px; text-decoration: none; transition: 0.2s; background: transparent; text-align: left; border: none; cursor: pointer; font-family: inherit; }
         .dropdown-item:hover { background-color: var(--dropdown-hover); }
-        .dropdown-item .material-icons-outlined { font-size: 18px; margin-right: 10px; color: var(--text-muted); }
+        .dropdown-item .material-symbols-outlined { font-size: 18px; margin-right: 10px; color: var(--text-muted); }
         .dropdown-item.logout { color: var(--danger); }
         .dropdown-item.logout:hover { background-color: var(--danger-hover); color: #b91c1c; }
-        .dropdown-item.logout .material-icons-outlined { color: inherit; }
+        .dropdown-item.logout .material-symbols-outlined { color: inherit; }
 
-        /* App Footer Desktop */
         .app-footer { height: 64px; background: var(--header-bg); border-top: 1px solid var(--border-color); padding: 0 24px; display: flex; justify-content: center; align-items: center; gap: 24px; font-size: 14px; color: var(--text-muted); flex-shrink: 0; transition: background-color 0.3s ease, border-color 0.3s ease; }
         .app-footer a { color: var(--text-muted); transition: color 0.2s; }
         .app-footer a:hover { color: var(--sidebar-bg); }
 
-        /* Mobile Overlay */
         .mobile-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(2px); z-index: 40; display: none; }
 
-        /* --- Media Queries --- */
         @media (min-width: 768px) {
             .mobile-only { display: none !important; }
             .sidebar { width: var(--sidebar-width); position: relative; }
@@ -147,7 +135,7 @@
             .sidebar.collapsed .nav-text { display: none; }
             .sidebar.collapsed .nav-label { display: none; }
             .sidebar.collapsed .nav-link { justify-content: center; padding-left: 0; padding-right: 0; }
-            .sidebar.collapsed .nav-link .material-icons-outlined { margin-right: 0; }
+            .sidebar.collapsed .nav-link .material-symbols-outlined { margin-right: 0; }
             .sidebar.collapsed .chevron { display: none; }
             .sidebar.collapsed hr { display: block !important; margin: 16px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.1); }
         }
@@ -161,7 +149,7 @@
             .top-header { padding: 0 16px; } 
             
             .clock-widget { font-size: 12px; margin-right: 4px;}
-            .clock-widget .material-icons-outlined { font-size: 16px; margin-right: 4px; }
+            .clock-widget .material-symbols-outlined { font-size: 16px; margin-right: 4px; }
             .theme-toggle { margin-right: 4px; }
             
             .app-footer { height: auto; min-height: 64px; padding: 16px 12px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); flex-direction: column; gap: 8px; text-align: center; }
@@ -202,17 +190,11 @@
             <header class="top-header">
                 <div class="header-left">
                     <button @click="mobileSidebarOpen = true" class="icon-btn mobile-only">
-                        <i data-lucide="circle-chevron-right" width="20" height="20"></i>
+                        <span class="material-symbols-outlined">menu</span>
                     </button>
 
                     <button @click="toggleSidebar()" class="icon-btn desktop-only" :title="sidebarOpen ? 'Collapse Sidebar' : 'Expand Sidebar'">
-                        <span x-show="sidebarOpen">
-                            <i data-lucide="panel-left-close" width="20" height="20"></i>
-                        </span>
-                        
-                        <span x-show="!sidebarOpen" x-cloak>
-                            <i data-lucide="panel-left" width="20" height="20"></i>
-                        </span>
+                        <span class="material-symbols-outlined" x-text="sidebarOpen ? 'menu_open' : 'menu'"></span>
                     </button>
                 </div>
 
@@ -230,24 +212,21 @@
                                 this.time = new Date().toLocaleString('en-US', options);
                             }
                         }">
-                        <i data-lucide="calendar-clock" width="20" height="20" style="margin-right: 8px;"></i>
+                        <span class="material-symbols-outlined">schedule</span>
                         <span x-text="time"></span>
                     </div>
 
                     <button @click="toggleTheme()" class="icon-btn theme-toggle" :title="darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
-                        <span x-show="darkMode" x-cloak><i data-lucide="sun" width="20" height="20"></i></span>
-                        <span x-show="!darkMode"><i data-lucide="moon" width="20" height="20"></i></span>
+                        <span class="material-symbols-outlined" x-text="darkMode ? 'light_mode' : 'dark_mode'"></span>
                     </button>
 
                     <div class="profile-dropdown" x-data="{ open: false }" @click.away="open = false">
                         <button @click="open = !open" class="avatar-btn" title="{{ $user->name ?? 'User' }}">
                             @php
                                 $initials = '';
-                                // Check if firstname and lastname exist in your database
                                 if (!empty($user->firstname) && !empty($user->lastname)) {
                                     $initials = strtoupper(substr($user->firstname, 0, 1) . substr($user->lastname, 0, 1));
                                 } else {
-                                    // Fallback: Split the 'name' column and grab the first and last word's letters
                                     $nameParts = explode(' ', trim($user->name ?? 'User'));
                                     $initials = strtoupper(substr($nameParts[0], 0, 1));
                                     if (count($nameParts) > 1) {
@@ -272,13 +251,13 @@
                             </div>
 
                             <a href="{{ route('profile.edit') }}" class="dropdown-item">
-                                <span class="material-icons-outlined">person</span> Profile
+                                <span class="material-symbols-outlined">account_circle</span> Profile
                             </a>
 
                             <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
                                 @csrf
                                 <button type="submit" class="dropdown-item logout" style="width: 100%; text-align: left;">
-                                    <span class="material-icons-outlined">logout</span> Log out
+                                    <span class="material-symbols-outlined">logout</span> Log out
                                 </button>
                             </form>
                         </div>
@@ -296,15 +275,5 @@
 
         </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // This checks if the library loaded successfully before trying to use it
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            } else {
-                console.error("Lucide library failed to load. Check the file path.");
-            }
-        })
-    </script>
 </body>
 </html>

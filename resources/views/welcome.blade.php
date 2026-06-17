@@ -13,8 +13,7 @@
     <link rel="icon" href="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" type="image/png">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-    <script src="{{ asset('assets/js/lucide.min.js') }}"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -155,21 +154,24 @@
                 @auth
                     <li>
                         <a href="{{ url('/dashboard') }}" class="nav-link">
-                            <i data-lucide="home" width="20" height="20"></i> <span class="nav-text">Dashboard</span>
+                            <span class="material-symbols-outlined" style="font-size: 1.15rem;">home</span> 
+                            <span class="nav-text">Dashboard</span>
                         </a>
                     </li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="nav-link nav-link-logout">
-                            <i data-lucide="log-out" width="20" height="20"></i> <span class="nav-text">Logout</span>
+                            <span class="material-symbols-outlined" style="font-size: 1.15rem;">logout</span> 
+                            <span class="nav-text">Logout</span>
                             </button>
                         </form>
                     </li>
                 @else
                     <li>
                         <a href="{{ route('login') }}" class="nav-link">
-                            <i data-lucide="log-in" width="20" height="20"></i> <span class="nav-text">Login</span>
+                            <span class="material-symbols-outlined" style="font-size: 1.15rem;">login</span> 
+                            <span class="nav-text">Login</span>
                         </a>
                     </li>
                 @endauth
@@ -181,7 +183,7 @@
 <section class="hero">
     <div class="hero-content">
         <div class="status-badge animate-fade-in-up">
-            <i data-lucide="shield-check" width="18" height="18"></i>
+            <span class="material-symbols-outlined" style="font-size: 1.25rem;">security</span>
             Secure Reporting Portal
         </div>
         
@@ -209,7 +211,7 @@
         <div class="service-grid">
             <div class="service-card">
                 <div class="icon-wrapper icon-red">
-                    <i data-lucide="shield-alert" width="36" height="36"></i>
+                    <span class="material-symbols-outlined text-4xl" style="font-size: 2.5rem;">security</span>
                 </div>
                 <h4>Incident Management</h4>
                 <p>Log, track, and manage potential data breaches instantly. Receive essential guidance on data containment, immediate incident handling, and strict access control.</p>
@@ -217,7 +219,7 @@
 
             <div class="service-card">
                 <div class="icon-wrapper icon-blue">
-                    <i data-lucide="server" width="36" height="36"></i>
+                    <span class="material-symbols-outlined text-4xl" style="font-size: 2.5rem;">dns</span>
                 </div>
                 <h4>ICT Infrastructure Support</h4>
                 <p>Get priority assistance with database integrity, system backups, Google Workspace security, and other critical ICT services tied to incident resolution.</p>
@@ -233,18 +235,11 @@
 </footer>
 
 <button id="scrollToTopBtn" class="scroll-top-btn hidden" title="Back to top">
-    <i data-lucide="arrow-up" width="24" height="24"></i>
+    <span class="material-symbols-outlined">arrow_upward</span>
 </button>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // This checks if the library loaded successfully before trying to use it
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        } else {
-            console.error("Lucide library failed to load. Check the file path.");
-        }
-
         const scrollToTopBtn = document.getElementById('scrollToTopBtn');
         const heroSection = document.querySelector('.hero');
         

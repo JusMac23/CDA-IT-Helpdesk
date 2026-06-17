@@ -1,6 +1,6 @@
 <x-app-layout>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="{{ asset('assets/js/lucide.min.js') }}"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
         /* --- Theme Variables --- */
@@ -236,7 +236,7 @@
                 <div class="action-container">
                     @can('create_databreach')
                         <a href="{{ route('databreach.create') }}" class="btn btn-green">
-                            <i style="stroke-width: 2; margin-right: 0.2rem;" data-lucide="plus" height="18" width="18"></i> Add Incident Report
+                            <i class="fa-solid fa-plus"></i> Add Incident Report
                         </a>
                     @endcan
 
@@ -289,7 +289,7 @@
 
                     <div class="filter-container">
                         <button type="submit" class="btn btn-indigo">
-                            <i style="stroke-width: 2; margin-right: 0.2rem;" data-lucide="filter" height="18" width="18"></i> Apply Filter
+                            <i class="fa-solid fa-filter"></i> Apply Filter
                         </button>
                     </div>
 
@@ -449,7 +449,7 @@
 
                                             {{-- Display Action Taken (Restored per your request) --}}
                                             <span class="badge status-reported" style="margin-top: 4px;">
-                                                <i style="stroke-width: 2; margin-right: 0.2rem;" data-lucide="check" height="18" width="18"></i> Action Taken
+                                                <i class="fa-solid fa-check"></i> Action Taken
                                             </span>
 
 
@@ -464,7 +464,7 @@
                                             </div>
                                             
                                             <span class="badge status-reported" style="margin-top: 4px;">
-                                                <i style="stroke-width: 2; margin-right: 0.2rem;" data-lucide="check" height="18" width="18"></i> Action Taken
+                                                <i class="fa-solid fa-check"></i> Action Taken
                                             </span>
 
                                         @endif
@@ -573,13 +573,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
-            // This checks if the library loaded successfully before trying to use it
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            } else {
-                console.error("Lucide library failed to load. Check the file path.");
-            }
-
             @if(session('success'))
                 Swal.fire({
                     icon: 'success',
@@ -649,23 +642,31 @@
                     const deadline = new Date(deadlineStr).getTime();
                     const distance = deadline - now;
 
+                    // If the time has completely run out
                     if (distance < 0) {
-                        timer.innerHTML = `<i data-lucide="alert-circle" width="16" height="16"></i> Time Expired`;
-                        timer.style.color = "#ef4444";
-                    } else {
-                        const h = String(Math.floor(distance / (1000 * 60 * 60))).padStart(2, '0');
-                        const m = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-                        const s = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
-
-                        timer.innerHTML = `<i data-lucide="clock" width="16" height="16"></i> ${h}h ${m}m ${s}s`;
-                        
-                        // Visual warnings
-                        timer.style.color = (h < 2) ? "#ef4444" : (h < 12) ? "#f59e0b" : "#10b981";
+                        timer.innerHTML = "<i class='fa-solid fa-circle-exclamation'></i> Time Expired";
+                        timer.style.color = "#ef4444"; 
+                        return;
                     }
+
+                    // Removed the modulo 24 limit so hours can count above 24 (up to 48)
+                    const hours = Math.floor(distance / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                    const h = String(hours).padStart(2, '0');
+                    const m = String(minutes).padStart(2, '0');
+                    const s = String(seconds).padStart(2, '0');
+
+                    timer.innerHTML = `<i class="fa-regular fa-clock"></i> ${h}h ${m}m ${s}s`;
                     
-                    // CRITICAL: Re-initialize Lucide icons in this element
-                    if (typeof lucide !== 'undefined') {
-                        lucide.createIcons();
+                    // Visual warnings based on time left
+                    if (hours < 2) {
+                        timer.style.color = "#ef4444"; // Red for < 2 hours
+                    } else if (hours < 12) {
+                        timer.style.color = "#f59e0b"; // Orange for < 12 hours
+                    } else {
+                        timer.style.color = "#10b981"; // Green otherwise
                     }
                 });
             }

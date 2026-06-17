@@ -13,8 +13,7 @@
     <link rel="icon" href="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" type="image/png">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-    <script src="{{ asset('assets/js/lucide.min.js') }}"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
 
     <script src="/assets/js/sweetalert2.min.js"></script>
 
@@ -64,7 +63,7 @@
         .nav-link:hover { color: #ffffff; background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
 
         /* Logout Link Specifics */
-        .nav-link.nav-link-logout { color: #fca5a5; background: none; cursor: pointer; font: inherit; }
+        .nav-link.nav-link-logout { color: #fca5a5; background: none; cursor: pointer; font: inherit; border: none; }
         .nav-link.nav-link-logout:hover { color: #ffffff; background-color: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); }
 
         /* Navigation Mobile Overrides */
@@ -87,7 +86,7 @@
         
         /* Close Button */
         .close-btn { position: absolute; top: 1.25rem; right: 1.25rem; color: var(--text-muted); font-size: 2.25rem; background: none; border: none; cursor: pointer; transition: color 0.2s, background-color 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0 0.5rem; }
-        .close-btn:hover { color: var(--text-dark); }
+        .close-btn:hover { color: var(--text-body); }
 
         /* Alerts */
         .alert-error { width: 100%; background-color: var(--error-bg); border-left: 4px solid var(--error-border); color: var(--error-text); padding: 1.25rem 1.5rem; margin-bottom: 2rem; border-radius: 0.5rem; display: flex; gap: 0.75rem; }
@@ -165,21 +164,24 @@
                 @auth
                     <li>
                         <a href="{{ url('/dashboard') }}" class="nav-link">
-                            <i data-lucide="home" width="20" height="20"></i> <span class="nav-text">Dashboard</span>
+                            <span class="material-symbols-outlined" style="font-size: 1.15rem;">home</span> 
+                            <span class="nav-text">Dashboard</span>
                         </a>
                     </li>
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="nav-link nav-link-logout">
-                            <i data-lucide="log-out" width="20" height="20"></i> <span class="nav-text">Logout</span>
+                            <span class="material-symbols-outlined" style="font-size: 1.15rem;">logout</span> 
+                            <span class="nav-text">Logout</span>
                             </button>
                         </form>
                     </li>
                 @else
                     <li>
                         <a href="{{ route('login') }}" class="nav-link">
-                            <i data-lucide="log-in" width="20" height="20"></i> <span class="nav-text">Login</span>
+                            <span class="material-symbols-outlined" style="font-size: 1.15rem;">login</span> 
+                            <span class="nav-text">Login</span>
                         </a>
                     </li>
                 @endauth
@@ -247,7 +249,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" style="margin-top: 1.5rem;">
             <label for="pic">Personal Information Controller <span class="text-required">*</span></label>
             <select id="pic" name="pic" required class="form-control">
                 <option value="">-- Select Region --</option>
@@ -274,7 +276,7 @@
 
         <div class="form-group">
             <label for="brief_summary">Brief Summary of the Incident <span class="text-required">*</span></label>
-            <textarea id="brief_summary" name="brief_summary" required rows="4" placeholder="Provide a clear and concise description of the incident..." class="form-control"></textarea>
+            <textarea id="brief_summary" name="brief_summary" required placeholder="Provide a clear and concise description of the incident..." class="form-control"></textarea>
         </div>
 
         <div class="terms-wrapper">
@@ -315,14 +317,6 @@
     @endif
 
     document.addEventListener('DOMContentLoaded', function () {
-
-        // This checks if the library loaded successfully before trying to use it
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        } else {
-            console.error("Lucide library failed to load. Check the file path.");
-        }
-
         // Fix: Sync exact device/laptop time to prevent 4-minute server delay
         const dateNotificationInput = document.getElementById('date_notification');
         if (dateNotificationInput) {
