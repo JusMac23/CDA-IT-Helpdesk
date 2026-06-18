@@ -265,7 +265,7 @@
             <div class="action-container">
                 @can('create_roles')
                     <button id="openModal" class="btn btn-green">
-                        <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.5rem;">add</span> Add Role
+                        <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">add</span> Add Role
                     </button>
                 @endcan
             </div>
@@ -310,7 +310,7 @@
                                                 data-id="{{ $role->id }}"
                                                 data-name="{{ $role->name }}"
                                                 data-permissions='@json($role->permissions->pluck("id"))'>
-                                                <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.5rem;">edit</span> Edit
+                                                <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">edit</span> Edit
                                             </button>
                                         @endcan
 
@@ -320,7 +320,7 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="action-link link-red delete-btn" data-id="{{ $role->id }}">
-                                                    <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.5rem;">delete</span> Delete
+                                                    <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">delete</span> Delete
                                                 </button>
                                             </form>
                                         @endcan

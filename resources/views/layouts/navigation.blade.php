@@ -85,7 +85,7 @@
         <a href="{{ route('databreach.index') }}" 
            title="All Reports"
            class="nav-link {{ request()->routeIs('databreach.index') ? 'active' : '' }}">
-            <span class="material-symbols-outlined">article</span>
+            <span class="material-symbols-outlined">assignment_turned_in</span>
             <span class="nav-text">All Reports</span>
         </a>
         @endif

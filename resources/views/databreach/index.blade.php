@@ -117,7 +117,7 @@
         .status-npc { background-color: var(--badge-npc-bg); color: var(--badge-npc-text); }
         .status-reported { background-color: var(--badge-rep-bg); color: var(--badge-rep-text); }
         .status-default { background-color: var(--badge-def-bg); color: var(--badge-def-text); }
-        .status-time-expired { background-color: rgba(239, 68, 68, 0.1); padding: 0.4rem 1rem; color: #ef4444; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-align: center; white-space: nowrap; letter-spacing: 0.025em; transition: background-color 0.3s ease, color 0.3s ease; }
+        .status-time-expired { background-color: rgba(239, 68, 68, 0.1); padding: 0.4rem 1rem; margin-top: 4px; color: #ef4444; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-align: center; white-space: nowrap; letter-spacing: 0.025em; transition: background-color 0.3s ease, color 0.3s ease; }
 
         /* Action Links inside Table */
         .action-group { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -350,7 +350,6 @@
                                                 $deadline = \Carbon\Carbon::parse($notification->created_at)->addHours(24);
                                             @endphp
                                             <span class="incident-countdown font-semibold" data-deadline="{{ $deadline->toIso8601String() }}" style="color: var(--text-muted);">
-                                                
                                                 Loading...
                                             </span>
 
@@ -375,9 +374,9 @@
                                             @endphp
                                             
                                             <div style="margin-bottom: 12px; border-bottom: 1px dashed var(--border-light); padding-bottom: 8px;">
-                                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; text-transform: uppercase; font-weight: 700;">Assessment Elapsed</div>
+                                                <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 700;">Assessment Elapsed</div>
                                                 @if($rem24 == 0)
-                                                    <span class="badge status-time-expired"><i class="fa-solid fa-circle-exclamation"></i> Time Expired</span>
+                                                    <span class="badge status-time-expired">Time Expired</span>
                                                 @else
                                                     <span style="color: #10b981; font-weight: 600; font-size: 0.85rem; display: block;">
                                                         24h 00m 00s <br> - {{ $r24H }}h {{ $r24M }}m {{ $r24S }}s <br> <b>= {{ $e24H }}h {{ $e24M }}m {{ $e24S }}s</b>
@@ -453,7 +452,7 @@
                                             </div>
 
                                             {{-- Display Action Taken (Restored per your request) --}}
-                                            <span class="badge status-reported" style="margin-top: 4px;">
+                                            <span class="badge status-reported">
                                                 Action Taken
                                             </span>
                                                 
@@ -467,7 +466,7 @@
                                                 {{ \Carbon\Carbon::parse($notification->updated_at)->format('M d, Y h:i A') }}
                                             </div>
                                             
-                                            <span class="badge status-reported" style="margin-top: 4px;">
+                                            <span class="badge status-reported">
                                                 Action Taken
                                             </span>
 
@@ -654,7 +653,7 @@
                     if (distance < 0) {
                         timer.innerHTML = "Time Expired";
                         timer.classList.add("status-time-expired");
-                        timer.style.color = "#ef4444"; 
+                        timer.style.color = "#ef4444";
                         return;
                     }
 

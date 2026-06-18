@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'CDA-DBRS') }}</title>
+    <title>CDA-DBRS</title>
     <link rel="icon" href="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" type="image/png">
 
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
@@ -18,7 +18,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
     <style>
-        /* Note: Applied .material-symbols-outlined throughout the styles */
+        /* CSS Variables for Light and Dark Themes */
         :root {
             --sidebar-bg: #133e5e;
             --sidebar-hover: rgba(255, 255, 255, 0.1);
