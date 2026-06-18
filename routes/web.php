@@ -20,7 +20,6 @@ use App\Http\Controllers\DataBreachReportsController;
 use App\Http\Controllers\DatabreachPerRegionController;
 use App\Http\Controllers\GenerateDocsController;
 use App\Http\Controllers\DatabreachTeamController;
-use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Auth\OAuthGoogleController;
 use App\Http\Controllers\Auth\OAuthAuthentikController;
 
@@ -59,8 +58,8 @@ Route::post('/tickets/{ticket_id}/personnel-signature', [UploadPersonnelSignatur
 // Authenticated routes
 Route::middleware(['auth', 'verified'])->group(function () {
     
-    // Dashboard 
-    Route::get('/tickets/overview_tickets', [TicketsOverviewController::class, 'index'])->name('overview_tickets.index')->middleware('permission:view_dashboard');
+    // Tickets Overview
+    Route::get('/tickets/overview_tickets', [TicketsOverviewController::class, 'index'])->name('overview_tickets.index')->middleware('permission:view_overview_tickets');
 
     // Profile Management
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->middleware('permission:view_profile');
@@ -88,7 +87,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('permission:view_myrequested_tickets|create_myrequested_tickets|reassign_myrequested_tickets|update_status_myrequested_tickets|delete_myrequested_tickets|search_myrequested_tickets');
     Route::post('/tickets/save', [MyRequestedTicketsController::class, 'save'])->name('tickets.save')->middleware('permission:create_myrequested_tickets');
 
-     // Create Data Breach Notification
+     //  Data Breach Notification
     Route::get('/databreach', [DataBreachReportsController::class, 'index'])->name('databreach.index')
         ->middleware('permission:view_all_databreach|view_overview_databreach|create_databreach|view_databreach|assess_databreach|evaluate_databreach|report_databreach|delete_databreach|search_databreach');
     Route::get('/overview_databreach', [DataBreachReportsController::class, 'overview'])->name('databreach.overview')->middleware('permission:view_overview_databreach');
@@ -143,10 +142,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/roles/{id}', [RolesController::class, 'update'])->name('roles.update')->middleware('permission:edit_roles');
     Route::delete('/roles/{id}', [RolesController::class, 'destroy'])->name('roles.destroy')->middleware('permission:delete_roles');
 
-    // Notifications
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
-    Route::delete('/notifications/delete-all', [NotificationController::class, 'destroyAll'])->name('notifications.destroyAll');
 });
 
 // Auth routes (Laravel Breeze/Fortify/etc.)

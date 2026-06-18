@@ -14,7 +14,7 @@
 
     <nav class="sidebar-nav">
 
-        @if(auth()->user()->can('view_dashboard'))
+        @if(auth()->user()->can('view_overview_tickets'))
         <a href="{{ route('overview_tickets.index') }}" 
            title="Tickets Overview"
            class="nav-link {{ request()->routeIs('overview_tickets.index') ? 'active' : '' }}">

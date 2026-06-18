@@ -16,7 +16,6 @@ class PermissionSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         $permissions = [
-            'view_dashboard',
 
             'view_profile',
             'edit_profile',
@@ -32,6 +31,7 @@ class PermissionSeeder extends Seeder
             'generate_tsar',
             'generate_report',
 
+            'view_overview_tickets',
             'view_myrequested_tickets',
             'create_myrequested_tickets',
             'reassign_myrequested_tickets',
