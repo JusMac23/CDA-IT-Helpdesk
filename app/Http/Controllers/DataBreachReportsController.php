@@ -29,37 +29,32 @@ class DataBreachReportsController extends Controller
         $status = $request->input('status');
         $region = $request->input('pic');
         $year   = $request->input('year'); 
+        $search = $request->input('search'); 
 
         $query = DataBreachNotification::query()
             ->leftJoin('databreach_dbrt_team', 'databreach_dbrt_team.region', '=', 'databreach_notifications.pic')
             ->select('databreach_notifications.*', 'databreach_dbrt_team.email as email')
             ->distinct(); 
 
-        // --- NEW FEATURE: DBRT Role-based Filtering ---
+        // --- DBRT Role-based Filtering ---
         $user = auth()->user();
 
-        // If the user is specifically DBRT, lock their view to their assigned region AND 'For Assessment' status
         if ($user->hasRole('DBRT')) {
             $dbrtMember = DatabreachTeam::where('email', $user->email)->first();
             
             if ($dbrtMember && $dbrtMember->region) {
-                // Force the query to only pull records matching their region AND the specific status
                 $query->where('databreach_notifications.pic', $dbrtMember->region)
-                      ->where('databreach_notifications.status', 'For Assessment');
+                    ->where('databreach_notifications.status', 'For Assessment');
             } else {
-                // Failsafe: If they are DBRT but somehow missing from the team table, return 0 results
                 $query->where('databreach_notifications.dbn_id', '<', 0);
             }
         }
-        // Super Admins and DPOs bypass the above block and see everything naturally.
-
 
         // --- User-selected Form Filters ---
         $query->when(!empty($status), function ($q) use ($status) {
             $q->where('databreach_notifications.status', $status);
         });
 
-        // Filter by the base table's column ('pic')
         $query->when(!empty($region), function ($q) use ($region) {
             $q->where('databreach_notifications.pic', $region);
         });
@@ -68,19 +63,62 @@ class DataBreachReportsController extends Controller
             $q->whereYear('databreach_notifications.created_at', $year);
         });
 
+        // --- Explicit Search Filter Chain ---
+        $query->when(!empty($search), function ($q) use ($search) {
+            $q->where(function($subQuery) use ($search) {
+                $subQuery->where('databreach_notifications.sender_fullname', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.sender_email', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.dbn_number', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.pic', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.email', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.representative', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.representative_email_address', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.date_occurrence', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.date_discovery', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.date_notification', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.brief_summary', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.notification_type_description', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.sector_name', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.subsector_name', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.notification_type', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.timeliness', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.general_cause', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.specific_cause', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.general_incident', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.with_request', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.how_breach_occured', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.chronology', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.num_records', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.hundred_plus', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.num_records_provide_details', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.description_nature', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.likely_consequences', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.dpo', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.spi', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.other_info', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.measures_to_address', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.measures_to_secure', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.actions_to_mitigate', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.actions_to_inform', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.actions_to_prevent', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.record_type', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.data_subjects', 'like', '%' . $search . '%')
+                    ->orWhere('databreach_notifications.status', 'like', '%' . $search . '%');
+            });
+        });
+
         $notifications = $query->orderBy('databreach_notifications.created_at', 'desc')
             ->paginate(10)
             ->appends([
                 'status' => $status,
                 'pic'    => $region,
                 'year'   => $year, 
+                'search' => $search, 
             ]);
 
-        // Gather distinct regions from BOTH tables so no region is left behind.
         $teamRegions = DatabreachTeam::select('region')->distinct()->pluck('region');
         $notificationRegions = DataBreachNotification::select('pic')->distinct()->pluck('pic');
         
-        // Merge them together, remove nulls/empties, ensure they are unique, and sort alphabetically
         $pic = $teamRegions->concat($notificationRegions)
             ->filter()
             ->unique()
@@ -94,7 +132,7 @@ class DataBreachReportsController extends Controller
             ->filter()
             ->values();
 
-        return view('databreach.index', compact('notifications', 'pic', 'year', 'formYears'));
+        return view('databreach.index', compact('notifications', 'pic', 'year', 'formYears', 'search'));
     }
 
     // Handle Overview

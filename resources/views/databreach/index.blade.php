@@ -93,11 +93,16 @@
         .filter-section { display: flex; flex-direction: column; align-items: stretch; width: 100%; gap: 1rem; margin-bottom: 2rem; background: var(--bg-alt); padding: 1.25rem; border-radius: 0.75rem; border: 1px solid var(--border-light); transition: background-color 0.3s ease, border-color 0.3s ease; }
         .form-group { display: flex; flex-direction: column; width: 100%; }
         .form-label { font-weight: 600; margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--text-muted); transition: color 0.3s ease; }
+
+        /* Search Section - Mobile First */
+        .search-section { margin-bottom: 1rem; }
         
         /* Unified Input Heights */
         .form-select { height: 44px; padding: 0 1rem; border: 1px solid var(--input-border); border-radius: 0.5rem; font-size: 0.95rem; color: var(--input-text); width: 100%; outline: none; transition: all 0.2s; background-color: var(--input-bg); font-family: inherit; }
         .form-select:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
         .filter-container { display: flex; flex-direction: column; width: 100%; margin-top: 0.25rem; }
+        .search-container { display: flex; border: 1px solid var(--input-border); border-radius: 0.5rem; margin-left: auto; }
+
 
         /* Data Table */
         .table-container { overflow-x: auto; background-color: var(--card-bg); border-radius: 0.75rem; border: 1px solid var(--border-light); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-top: 1.5rem; width: 100%; -webkit-overflow-scrolling: touch; transition: background-color 0.3s ease, border-color 0.3s ease; }
@@ -211,9 +216,12 @@
             .btn { width: auto; }
             
             /* Filter Row */
-            .filter-section { flex-direction: row; align-items: flex-end; width: auto; background: transparent; padding: 0; border: none; }
+            .filter-section  { flex-direction: row; align-items: flex-end; width: auto; background: transparent; padding: 0; border: none; }
             .form-group { width: 250px; }
             .filter-container { width: auto; margin-top: 0; }
+
+            /* Search Row */
+            .search-section { margin-bottom: 0; }
             
             /* Pagination Layout */
             .pagination-wrapper nav { flex-direction: row; justify-content: space-between; }
@@ -247,15 +255,37 @@
                         <span>(<span id="countdown">60</span>s) Auto-Reload</span>
                     </label>
                 </div>
+
+                <form method="GET" action="{{ route('databreach.index') }}" class="search-section"> 
+                    
+                    @if(request()->filled('year'))
+                        <input type="hidden" name="year" value="{{ request('year') }}">
+                    @endif
+                    @if(request()->filled('pic'))
+                        <input type="hidden" name="pic" value="{{ request('pic') }}">
+                    @endif
+                    @if(request()->filled('status'))
+                        <input type="hidden" name="status" value="{{ request('status') }}">
+                    @endif
+
+                    <div class="search-container form-group">
+                        <input type="search" name="search" class="btn btn-info" placeholder="Search all..." value="{{ request('search') }}">
+                    </div>
+                </form>
                 
                 @can('filter_databreach')
                 <form method="GET" action="{{ route('databreach.index') }}" class="filter-section">
+                    
+                    @if(request()->filled('search'))
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+                    @endif
+
                     <div class="form-group">
                         <label for="year" class="form-label">Filter by Year</label>
                         <select name="year" id="year" class="form-select">
                             <option value="">All Years</option>
                             @foreach($formYears as $y)
-                                <option value="{{ $y }}" @if(isset($year) && $year == $y) selected @endif>
+                                <option value="{{ $y }}" @if(request('year') == $y) selected @endif>
                                     {{ $y }}
                                 </option>
                             @endforeach
@@ -274,9 +304,7 @@
                             @endforeach
                         </select>
                     </div>
-                    @endif
                     
-                    @if (!auth()->user()->hasRole('DBRT'))
                     <div class="form-group">
                         <label for="statusFilter" class="form-label">Filter by Status</label>
                         <select name="status" id="statusFilter" class="form-select">
@@ -295,10 +323,9 @@
                             Apply Filter
                         </button>
                     </div>
-
                 </form>
                 @endcan
-
+                
                 <div class="table-container">
                     <table class="data-table">
                         <thead>
