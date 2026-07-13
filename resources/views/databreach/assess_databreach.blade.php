@@ -3,141 +3,148 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     
     <style>
-        /* --- Theme Variables --- */
-        :root {
-            --card-bg: #ffffff;
-            --text-dark: #0f172a;
-            --text-muted: #475569;
-            --border-light: #e2e8f0;
-            --input-bg: #ffffff;
-            --input-border: #cbd5e1;
-            --input-text: #334155;
-            --error-bg: #fef2f2;
-            --error-border: #fecaca;
-            --error-text: #991b1b;
-            --error-title: #7f1d1d;
-            --close-btn-hover: #f1f5f9;
-            --close-btn-text: #94a3b8;
-            --readonly-bg: #f8fafc;
-        }
+    /* --- Theme Variables --- */
+    :root {
+        --card-bg: #ffffff;
+        --text-dark: #0f172a;
+        --text-muted: #475569;
+        --border-light: #e2e8f0;
+        --input-bg: #ffffff;
+        --input-border: #cbd5e1;
+        --input-text: #334155;
+        --error-bg: #fef2f2;
+        --error-border: #fecaca;
+        --error-text: #991b1b;
+        --error-title: #7f1d1d;
+        --close-btn-hover: #f1f5f9;
+        --close-btn-text: #94a3b8;
+        --readonly-bg: #f8fafc;
+    }
 
-        body.dark {
-            --card-bg: #0f172a; 
-            --text-dark: #f8fafc;
-            --text-muted: #9ca3af;
-            --border-light: #334155; 
-            --input-bg: #0f172a;
-            --input-border: #4b5563;
-            --input-text: #f1f5f9;
-            --error-bg: rgba(153, 27, 27, 0.2);
-            --error-border: rgba(248, 113, 113, 0.4);
-            --error-text: #fca5a5;
-            --error-title: #f87171;
-            --close-btn-hover: #1e293b;
-            --close-btn-text: #64748b;
-            --readonly-bg: #1e293b;
-        }
+    body.dark {
+        --card-bg: #0f172a; 
+        --text-dark: #f8fafc;
+        --text-muted: #9ca3af;
+        --border-light: #334155; 
+        --input-bg: #0f172a;
+        --input-border: #4b5563;
+        --input-text: #f1f5f9;
+        --error-bg: rgba(153, 27, 27, 0.2);
+        --error-border: rgba(248, 113, 113, 0.4);
+        --error-text: #fca5a5;
+        --error-title: #f87171;
+        --close-btn-hover: #1e293b;
+        --close-btn-text: #64748b;
+        --readonly-bg: #1e293b;
+    }
 
-        /* Global Box Sizing & Font Fix */
-        *, *::before, *::after { box-sizing: border-box; }
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
+    /* Global Box Sizing & Font Fix */
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
 
-        /* Main Layout */
-        .container { max-width: 80rem; margin: 0 auto; padding: 0 2rem; }
-        @media (max-width: 640px) { .container { padding: 0.01rem; } }
+    /* Main Layout */
+    .container { max-width: 80rem; margin: 0 auto; padding: 0 2rem; }
+    @media (max-width: 640px) { .container { padding: 0.01rem; } }
 
-        /* Form Card - Added outline matching dark mode specs */
-        .form-card { background-color: var(--card-bg); border-radius: 1rem; border: 1px solid var(--border-light); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); padding: 2.5rem; position: relative; width: 100%; transition: background-color 0.3s ease, border-color 0.3s ease; }
-        @media (max-width: 640px) { .form-card { padding: 1.5rem; border-radius: 0.75rem; } }
+    /* Form Card - Added outline matching dark mode specs */
+    .form-card { background-color: var(--card-bg); border-radius: 1rem; border: 1px solid var(--border-light); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); padding: 2.5rem; position: relative; width: 100%; transition: background-color 0.3s ease, border-color 0.3s ease; }
+    @media (max-width: 640px) { .form-card { padding: 1.5rem; border-radius: 0.75rem; } }
 
-        /* Header */
-        .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        .form-title { font-size: 1.75rem; font-weight: 800; color: var(--text-dark); margin-top: 0; margin-bottom: 2rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1.5rem; letter-spacing: -0.025em; width: 100%; transition: color 0.3s ease, border-color 0.3s ease; }
-        .form-section-title { font-size: 1.15rem; font-weight: 700; color: var(--text-dark); margin: 1.5rem 0 1.25rem; padding-bottom: 0.5rem; width: 100%; transition: color 0.3s ease; }
-        
-        /* Close Button */
-        .close-btn { position: absolute; top: 1.25rem; right: 1.25rem; color: var(--text-muted); font-size: 2.25rem; background: none; border: none; cursor: pointer; transition: color 0.2s, background-color 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0 0.5rem; }
-        .close-btn:hover { color: var(--text-dark); }
+    /* Header */
+    .header-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .form-title { font-size: 1.75rem; font-weight: 800; color: var(--text-dark); margin-top: 0; margin-bottom: 2rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1.5rem; letter-spacing: -0.025em; width: 100%; transition: color 0.3s ease, border-color 0.3s ease; }
+    .form-section-title { font-size: 1.15rem; font-weight: 700; color: var(--text-dark); margin: 1.5rem 0 1.25rem; padding-bottom: 0.5rem; width: 100%; transition: color 0.3s ease; }
+    
+    /* Close Button */
+    .close-btn { position: absolute; top: 1.25rem; right: 1.25rem; color: var(--text-muted); font-size: 2.25rem; background: none; border: none; cursor: pointer; transition: color 0.2s, background-color 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0 0.5rem; }
+    .close-btn:hover { color: var(--text-dark); }
 
-        /* Error Box */
-        .error-box { background-color: var(--error-bg); border: 1px solid var(--error-border); color: var(--error-text); padding: 1.25rem 1.5rem; border-radius: 0.75rem; margin-bottom: 2rem; display: flex; gap: 0.75rem; align-items: flex-start; width: 100%; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
-        .error-icon { font-size: 1.5rem; margin-top: 0.125rem; color: #ef4444; }
-        .error-title { font-weight: 700; font-size: 0.95rem; margin: 0 0 0.5rem 0; color: var(--error-title); transition: color 0.3s ease; }
-        .error-list { list-style-type: disc; padding-left: 1.5rem; margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--error-text); font-weight: 500; transition: color 0.3s ease; }
+    /* Error Box */
+    .error-box { background-color: var(--error-bg); border: 1px solid var(--error-border); color: var(--error-text); padding: 1.25rem 1.5rem; border-radius: 0.75rem; margin-bottom: 2rem; display: flex; gap: 0.75rem; align-items: flex-start; width: 100%; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
+    .error-icon { font-size: 1.5rem; margin-top: 0.125rem; color: #ef4444; }
+    .error-title { font-weight: 700; font-size: 0.95rem; margin: 0 0 0.5rem 0; color: var(--error-title); transition: color 0.3s ease; }
+    .error-list { list-style-type: disc; padding-left: 1.5rem; margin: 0; font-size: 0.9rem; line-height: 1.6; color: var(--error-text); font-weight: 500; transition: color 0.3s ease; }
 
-        /* Grid Layouts */
-        .grid-2 { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 1.5rem; }
-        @media (min-width: 768px) { .grid-2 { grid-template-columns: repeat(2, 1fr); } }
+    /* Grid Layouts */
+    .grid-2 { display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+    @media (min-width: 768px) { .grid-2 { grid-template-columns: repeat(2, 1fr); } }
 
-        /* Form Controls - Unified Heights */
-        .form-group { display: flex; flex-direction: column; margin-top: 1.5rem; }
-        .grid-2 .form-group { margin-top: 0; }
-        .form-label { font-size: 0.875rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; transition: color 0.3s ease; }
-        .form-label-lg { font-size: 1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.75rem; display: block; transition: color 0.3s ease; }
-        .required-mark { color: #ef4444; margin-left: 0.125rem; }
-        
-        .form-input, .form-select { height: 44px; padding: 0 1rem; border: 1px solid var(--input-border); border-radius: 0.5rem; font-size: 0.95rem; color: var(--input-text); width: 100%; background-color: var(--input-bg); transition: all 0.2s; font-family: inherit; }
-        .form-textarea { padding: 0.75rem 1rem; border: 1px solid var(--input-border); border-radius: 0.5rem; font-size: 0.95rem; color: var(--input-text); width: 100%; background-color: var(--input-bg); transition: all 0.2s; font-family: inherit; resize: vertical; min-height: 120px; }
-        
-        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
-        .form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); opacity: 0.7; }
-        
-        /* Readonly States */
-        .form-input[readonly] { background-color: var(--readonly-bg); color: var(--text-muted); cursor: not-allowed; border-color: var(--border-light); }
-        .form-input[readonly]:focus { border-color: var(--border-light); box-shadow: none; }
-        
-        .readonly-box { background-color: var(--readonly-bg); border: 1px solid var(--border-light); border-radius: 0.5rem; padding: 0.85rem 1rem; width: 100%; box-sizing: border-box; color: var(--text-muted); font-size: 0.95rem; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
-        .readonly-box p { margin: 0 0 0.35rem 0; }
-        .readonly-box p:last-child { margin: 0; }
-        .readonly-box strong { color: var(--text-dark); transition: color 0.3s ease; }
+    /* Form Controls - Unified Heights */
+    .form-group { display: flex; flex-direction: column; margin-top: 1.5rem; }
+    .grid-2 .form-group { margin-top: 0; }
+    .form-label { font-size: 0.875rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; transition: color 0.3s ease; }
+    .form-label-lg { font-size: 1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.75rem; display: block; transition: color 0.3s ease; }
+    .required-mark { color: #ef4444; margin-left: 0.125rem; }
+    
+    .form-input, .form-select { height: 44px; padding: 0 1rem; border: 1px solid var(--input-border); border-radius: 0.5rem; font-size: 0.95rem; color: var(--input-text); width: 100%; background-color: var(--input-bg); transition: all 0.2s; font-family: inherit; }
+    .form-textarea { padding: 0.75rem 1rem; border: 1px solid var(--input-border); border-radius: 0.5rem; font-size: 0.95rem; color: var(--input-text); width: 100%; background-color: var(--input-bg); transition: all 0.2s; font-family: inherit; resize: vertical; min-height: 120px; }
+    
+    .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); opacity: 0.7; }
+    
+    /* Readonly States */
+    .form-input[readonly] { background-color: var(--readonly-bg); color: var(--text-muted); cursor: not-allowed; border-color: var(--border-light); }
+    .form-input[readonly]:focus { border-color: var(--border-light); box-shadow: none; }
+    
+    .readonly-box { background-color: var(--readonly-bg); border: 1px solid var(--border-light); border-radius: 0.5rem; padding: 0.85rem 1rem; width: 100%; box-sizing: border-box; color: var(--text-muted); font-size: 0.95rem; transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
+    .readonly-box p { margin: 0 0 0.35rem 0; }
+    .readonly-box p:last-child { margin: 0; }
+    .readonly-box strong { color: var(--text-dark); transition: color 0.3s ease; }
 
-        /* Validation Error State */
-        .input-error { border-color: #ef4444 !important; }
-        .input-error:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important; }
+    /* Validation Error State */
+    .input-error { border-color: #ef4444 !important; }
+    .input-error:focus { box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important; }
 
-        /* Checkboxes and Radios */
-        .checkbox-group { display: flex; flex-direction: column; gap: 0.85rem; margin-top: 0.5rem; }
-        .checkbox-label { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.95rem; font-weight: 500; color: var(--input-text); cursor: pointer; line-height: 1.4; transition: color 0.3s ease; }
-        .checkbox-input { margin-top: 0.15rem; width: 1.15rem; height: 1.15rem; accent-color: #4f46e5; cursor: pointer; border-radius: 0.25rem; flex-shrink: 0; }
-        
-        .radio-group { display: flex; align-items: center; gap: 2rem; margin-top: 0.25rem; }
-        .radio-label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; font-weight: 500; color: var(--input-text); cursor: pointer; transition: color 0.3s ease; }
-        .radio-input { width: 1.15rem; height: 1.15rem; accent-color: #4f46e5; cursor: pointer; margin: 0; }
+    /* Checkboxes and Radios */
+    .checkbox-group { display: flex; flex-direction: column; gap: 0.85rem; margin-top: 0.5rem; }
+    .checkbox-label { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.95rem; font-weight: 500; color: var(--input-text); cursor: pointer; line-height: 1.4; transition: color 0.3s ease; }
+    .checkbox-input { margin-top: 0.15rem; width: 1.15rem; height: 1.15rem; accent-color: #4f46e5; cursor: pointer; border-radius: 0.25rem; flex-shrink: 0; }
+    
+    .radio-group { display: flex; align-items: center; gap: 2rem; margin-top: 0.25rem; }
+    .radio-label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.95rem; font-weight: 500; color: var(--input-text); cursor: pointer; transition: color 0.3s ease; }
+    .radio-input { width: 1.15rem; height: 1.15rem; accent-color: #4f46e5; cursor: pointer; margin: 0; }
 
-        /* Buttons & Footer */
-        .page-footer { display: flex; border-top: 1px solid var(--border-light); margin-top: 2.5rem; padding-top: 1.5rem; transition: border-color 0.3s ease; }
-        .page-footer.right { justify-content: flex-end; }
-        .page-footer.between { justify-content: space-between; align-items: center; gap: 1rem; }
-        
-        /* Unified Button Styling */
-        .btn { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 2rem; font-size: 0.95rem; font-weight: 600; border-radius: 0.5rem; cursor: pointer; border: none; color: white; transition: all 0.2s ease; font-family: inherit; }
-        .btn i { margin-right: 0.5rem; font-size: 1rem; }
-        .btn:hover { transform: translateY(-1px); }
-        .btn:active { transform: translateY(0); }
-        
-        /* Modern Indigo */
-        .btn-indigo { background-color: #4f46e5; box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
-        .btn-indigo:hover { background-color: #4338ca; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
-        .btn-indigo:active { box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
-        
-        /* Modern Red */
-        .btn-red { background-color: #ef4444; box-shadow: 0 1px 2px rgba(239, 68, 68, 0.2); }
-        .btn-red:hover { background-color: #dc2626; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
-        .btn-red:active { box-shadow: 0 1px 2px rgba(239, 68, 68, 0.2); }
-        
-        /* Utility */
-        .hidden-page { display: none !important; }
-        
-        /* Smooth Page Transition */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        #page1:not(.hidden-page), #page2:not(.hidden-page) { animation: fadeIn 0.3s ease forwards; }
+    /* Buttons & Footer */
+    .page-footer { display: flex; border-top: 1px solid var(--border-light); margin-top: 2.5rem; padding-top: 1.5rem; transition: border-color 0.3s ease; }
+    .page-footer.right { justify-content: flex-end; }
+    .page-footer.between { justify-content: space-between; align-items: center; gap: 1rem; }
+    .footer-actions { display: flex; gap: 1rem; align-items: center; } /* Added layout wrapper for grouping save buttons */
+    
+    /* Unified Button Styling */
+    .btn { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 2rem; font-size: 0.95rem; font-weight: 600; border-radius: 0.5rem; cursor: pointer; border: none; color: white; transition: all 0.2s ease; font-family: inherit; }
+    .btn i { margin-right: 0.5rem; font-size: 1rem; }
+    .btn:hover { transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    
+    /* Modern Indigo (Primary) */
+    .btn-indigo { background-color: #4f46e5; box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
+    .btn-indigo:hover { background-color: #4338ca; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
+    .btn-indigo:active { box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
+    
+    /* Modern Red (Destructive / Back) */
+    .btn-red { background-color: #ef4444; box-shadow: 0 1px 2px rgba(239, 68, 68, 0.2); }
+    .btn-red:hover { background-color: #dc2626; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+    .btn-red:active { box-shadow: 0 1px 2px rgba(239, 68, 68, 0.2); }
 
-        @media (max-width: 640px) {
-            .btn { width: 100%; justify-content: center; }
-            .page-footer.between { flex-direction: column-reverse; gap: 1rem; } 
-            .close-btn { top: 1.5rem; right: 2rem; }
-        }
-    </style>
+    /* Modern Draft (Secondary/Outline) - NEW */
+    .btn-draft { background-color: var(--readonly-bg); color: var(--text-dark); border: 1px solid var(--input-border); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
+    .btn-draft:hover { background-color: var(--border-light); border-color: var(--text-muted); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
+    .btn-draft:active { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
+    
+    /* Utility */
+    .hidden-page { display: none !important; }
+    
+    /* Smooth Page Transition */
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    #page1:not(.hidden-page), #page2:not(.hidden-page) { animation: fadeIn 0.3s ease forwards; }
+
+    @media (max-width: 640px) {
+        .btn { width: 100%; justify-content: center; }
+        .page-footer.between { flex-direction: column-reverse; gap: 1rem; }
+        .footer-actions { flex-direction: column-reverse; width: 100%; } /* Stack save actions on mobile */
+        .close-btn { top: 1.5rem; right: 2rem; }
+    }
+</style>
 
     @can('assess_databreach')
     <div id="main-content" class="page-wrapper">
@@ -418,7 +425,7 @@
                                         <p><strong>Contact:</strong> {{ $dpoDetails->contact_number }}</p>
                                     </div>
                                 @else
-                                    <textarea id="{{ $name }}" name="{{ $name }}" class="form-textarea" placeholder="Provide details...">{{ old($name, $dpoDetails->$name) }}</textarea>
+                                    <textarea id="{{ $name }}" name="{{ $name }}" class="form-textarea" placeholder="Provide details...">{{ old($name, $notification->$name ?? '') }}</textarea>
                                 @endif
                             </div>
 
@@ -484,9 +491,15 @@
                                 <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">arrow_back</span> Back
                             </button>
 
-                            <button type="submit" class="btn btn-indigo">
-                                <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">save</span> Save & Update
-                            </button>
+                            <div class="footer-actions">
+                                <button type="submit" class="btn btn-draft" formnovalidate formaction="{{ route('databreach.save_draft', $notification->dbn_id) }}">
+                                    <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">save</span> Save as Draft
+                                </button>
+
+                                <button type="submit" class="btn btn-indigo">
+                                    <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">save</span> Save & Update
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </form>

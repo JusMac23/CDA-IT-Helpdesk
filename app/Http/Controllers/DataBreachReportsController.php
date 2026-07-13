@@ -24,6 +24,7 @@ use App\Mail\IncidentEvaluated;
 
 class DataBreachReportsController extends Controller
 {
+    // Handle View of Data Breach Notifications with Filters and Search
     public function index(Request $request)
     {
         $status = $request->input('status');
@@ -36,18 +37,23 @@ class DataBreachReportsController extends Controller
             ->select('databreach_notifications.*', 'databreach_dbrt_team.email as email')
             ->distinct(); 
 
-        // --- DBRT Role-based Filtering ---
+        // --- Role-based Filtering ---
         $user = auth()->user();
 
-        if ($user->hasRole('DBRT')) {
+        if ($user->hasRole('Super Admin')) {
+            // Super Admin can view all records, no additional filtering needed
+        } elseif ($user->hasRole('DBRT')) {
             $dbrtMember = DatabreachTeam::where('email', $user->email)->first();
             
             if ($dbrtMember && $dbrtMember->region) {
                 $query->where('databreach_notifications.pic', $dbrtMember->region)
-                    ->where('databreach_notifications.status', 'For Assessment');
+                    ->whereIn('databreach_notifications.status', ['Draft', 'For Assessment']);
             } else {
                 $query->where('databreach_notifications.dbn_id', '<', 0);
             }
+        } else {
+            // All other roles cannot view records that are still in 'Draft' status
+            $query->where('databreach_notifications.status', '!=', 'Draft');
         }
 
         // --- User-selected Form Filters ---
@@ -363,6 +369,76 @@ class DataBreachReportsController extends Controller
         ));
     }
 
+    // Handle Save as Draft (Enhanced to allow partial saving)
+    public function save_as_draft(Request $request, $dbn_id)
+    {
+        $notification = DataBreachNotification::findOrFail($dbn_id);
+
+        // 1. CHANGED: All 'required' rules are now 'nullable' so incomplete forms can actually be saved as drafts.
+        $data = $request->validate([
+            'dbn_number'                    => 'nullable|string|max:100',
+            'pic'                           => 'nullable|string|max:255',
+            'email'                         => 'nullable|email|max:255',
+            'representative'                => 'nullable|string|max:255',
+            'representative_email_address'  => 'nullable|email|max:255',
+            'date_occurrence'               => 'nullable|date',
+            'date_discovery'                => 'nullable|date',
+            'date_notification'             => 'nullable|date',
+            'brief_summary'                 => 'nullable|string',
+            'notification_type'             => 'nullable|string|max:255',
+            'notification_type_description'   => 'nullable|array',
+            'notification_type_description.*' => 'string|max:255',
+            'sector_name'                   => 'nullable|string|max:255',
+            'subsector_name'                => 'nullable|string|max:255',
+            'timeliness'                    => 'nullable|string|max:255',
+            'general_cause'                 => 'nullable|string|max:255',
+            'specific_cause'                => 'nullable|string|max:255',
+            'general_incident'              => 'nullable|string|max:255',
+            'with_request'                  => 'nullable|in:Yes,No',
+            'how_breach_occured'            => 'nullable|string',
+            'chronology'                    => 'nullable|string',
+            'num_records'                   => 'nullable|integer',
+            'hundred_plus'                  => 'nullable|boolean',
+            'num_records_provide_details'   => 'nullable|string',
+            'description_nature'            => 'nullable|string',
+            'likely_consequences'           => 'nullable|string',
+            'spi'                           => 'nullable|string|max:255',
+            'other_info'                    => 'nullable|string',
+            'measures_to_address'           => 'nullable|string',
+            'measures_to_secure'            => 'nullable|string',
+            'actions_to_mitigate'           => 'nullable|string',
+            'actions_to_inform'             => 'nullable|string',
+            'actions_to_prevent'            => 'nullable|string',
+            'record_type'                   => 'nullable|string|max:255',
+            'data_subjects'                 => 'nullable|string|max:255',
+        ]);
+
+        $dpoRoleId = Role::where('name', 'DPO')->value('id');
+        $dpo = User::where('role', $dpoRoleId)->first(); 
+
+        // Prepare DPO display
+        $data['dpo'] = implode(' | ', array_filter([
+            $dpo->name ?? null,
+            $dpo->email ?? null,
+            $dpo->contact_number ?? null,
+        ]));
+
+        // If 'notification_type_description' is an array, ensure your DataBreachNotification model 
+        // has it casted to 'array' or 'json', otherwise encode it here:
+        if (isset($data['notification_type_description'])) {
+            $data['notification_type_description'] = json_encode($data['notification_type_description']);
+        }
+
+        // Override/ensure the status remains or is set to 'Draft'
+        $data['status'] = 'Draft';
+
+        // Update the notification with the partially filled data
+        $notification->update($data);
+
+        return redirect()
+            ->route('databreach.index')
+            ->with('success', 'Incident report saved as draft successfully.');
+    }
 
     // Handle Create
     public function create()

@@ -198,7 +198,7 @@
         
         <div class="animate-fade-in-up delay-200" style="display: flex; justify-content: center; gap: 1rem; margin-top: 2rem;">
             <a href="{{ url('create_incident') }}" class="btn-danger">
-                Report an Incident Now
+                Report Incident
             </a>
         </div>
     </div>

@@ -23,6 +23,7 @@
             --btn-gray-hover-text: #0f172a;
             
             /* Status Badges - Light */
+            --badge-draft-bg: #dcfce7; --badge-draft-text: #166534;
             --badge-eval-bg: #dcfce7; --badge-eval-text: #166534;
             --badge-npc-bg: #fef2f2; --badge-npc-text: #991b1b;
             --badge-rep-bg: #eff6ff; --badge-rep-text: #1e40af;
@@ -48,6 +49,7 @@
             --btn-gray-hover-text: #f8fafc;
 
             /* Status Badges - Dark */
+            --badge-draft-bg: rgba(22, 101, 52, 0.4); --badge-draft-text: #4ade80;
             --badge-eval-bg: rgba(22, 101, 52, 0.4); --badge-eval-text: #4ade80;
             --badge-npc-bg: rgba(153, 27, 27, 0.4); --badge-npc-text: #f87171;
             --badge-rep-bg: rgba(30, 58, 138, 0.4); --badge-rep-text: #60a5fa;
@@ -119,6 +121,7 @@
         /* Status Badges */
         .badge { display: inline-block; padding: 0.4rem 1rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-align: center; white-space: nowrap; letter-spacing: 0.025em; transition: background-color 0.3s ease, color 0.3s ease; }
         .status-eval { background-color: var(--badge-eval-bg); color: var(--badge-eval-text); } 
+        .status-draft { background-color: var(--badge-draft-bg); color: var(--badge-draft-text); }
         .status-npc { background-color: var(--badge-npc-bg); color: var(--badge-npc-text); }
         .status-reported { background-color: var(--badge-rep-bg); color: var(--badge-rep-text); }
         .status-default { background-color: var(--badge-def-bg); color: var(--badge-def-text); }
@@ -359,6 +362,7 @@
                                         @php
                                             $badgeClass = 'status-default';
                                             if ($notification->status === 'For Evaluation') $badgeClass = 'status-eval';
+                                            elseif ($notification->status === 'Draft') $badgeClass = 'status-draft';
                                             elseif ($notification->status === 'For Reporting to NPC') $badgeClass = 'status-npc';
                                             elseif ($notification->status === 'Reported') $badgeClass = 'status-reported';
                                         @endphp
@@ -528,7 +532,7 @@
                                             @endcan
 
                                             @can('evaluate_databreach')
-                                                @if (!in_array($notification->status, ['Reported', 'For Assessment' , 'For Reporting to NPC']))
+                                                @if (!in_array($notification->status, ['Draft', 'Reported', 'For Assessment' , 'For Reporting to NPC']))
                                                     <a href="{{ route('databreach.evaluate', $notification->dbn_id) }}" class="action-link link-green">
                                                         <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">content_paste_go</span> 
                                                         Evaluate

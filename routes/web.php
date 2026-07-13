@@ -94,6 +94,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/create_databreach', [DataBreachReportsController::class, 'create'])->name('databreach.create')->middleware('permission:create_databreach');
     Route::post('/create_databreach', [DataBreachReportsController::class, 'store'])->name('databreach.store')->middleware('permission:create_databreach');
     Route::get('/databreach/{dbn_id}', [DataBreachReportsController::class, 'show'])->name('databreach.show')->middleware('permission:view_databreach');
+    Route::put('/databreach/{dbn_id}/draft', [DataBreachReportsController::class, 'save_as_draft'])->name('databreach.save_draft');
+    Route::put('/databreach/{dbn_id}', [DataBreachReportsController::class, 'update'])->name('databreach.update');
     Route::get('/assess_databreach/{dbn_id}/assess', [DataBreachReportsController::class, 'assess'])->name('databreach.assess')->middleware('permission:assess_databreach');
     Route::get('/evaluate_databreach/{dbn_id}/evaluate', [DataBreachReportsController::class, 'evaluate'])->name('databreach.evaluate')->middleware('permission:evaluate_databreach');
     Route::patch('/databreach/{dbn_id}/report', [DataBreachReportsController::class, 'report_to_npc'])->name('databreach.report_to_npc')->middleware('permission:report_databreach');

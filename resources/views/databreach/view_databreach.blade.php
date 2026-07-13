@@ -170,9 +170,21 @@
 
                 @if(!empty($notification->notification_type_description))
                     @php
-                        $types = json_decode($notification->notification_type_description, true);
-                        if (is_null($types)) {
-                            $types = explode(',', $notification->notification_type_description);
+                        $rawDescription = $notification->notification_type_description;
+
+                        if (is_array($rawDescription)) {
+                            // It's already cast to an array by Eloquent
+                            $types = $rawDescription;
+                        } elseif (is_string($rawDescription)) {
+                            // It's a string, try decoding it as JSON
+                            $types = json_decode($rawDescription, true);
+                            
+                            // If it wasn't valid JSON, fall back to a comma-separated string
+                            if (!is_array($types)) {
+                                $types = explode(',', $rawDescription);
+                            }
+                        } else {
+                            $types = [];
                         }
                     @endphp
 
