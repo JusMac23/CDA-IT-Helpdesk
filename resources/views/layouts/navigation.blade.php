@@ -1,10 +1,10 @@
 <aside class="sidebar" :class="{ 'collapsed': !sidebarOpen, 'mobile-open': mobileSidebarOpen }">
     
     <div class="sidebar-header">
-        <a href="{{ route('overview_tickets.index') }}" style="display: flex; align-items: center; color: white;">
-            <img src="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" alt="CDA Logo" class="sidebar-logo" style="background-color: transparent !important; background: none !important; border: none !important; box-shadow: none !important;">
+        <a href="{{ route('overview_tickets.index') }}" style="display: flex; align-items: center; color: white; width: 100%;">
+            <img src="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" alt="CDA Logo" class="sidebar-logo">
             <div class="sidebar-brand">
-                <span class="sidebar-brand-title">CDA-DBRS</span>
+                <span class="sidebar-brand-title">CDA-ICT Helpdesk</span>
             </div>
         </a>
         <button @click="mobileSidebarOpen = false" class="icon-btn mobile-only" style="margin-left: auto; color: white; padding: 4px;">
@@ -14,15 +14,6 @@
 
     <nav class="sidebar-nav">
 
-        @if(auth()->user()->can('view_overview_tickets'))
-        <a href="{{ route('overview_tickets.index') }}" 
-           title="Tickets Overview"
-           class="nav-link {{ request()->routeIs('overview_tickets.index') ? 'active' : '' }}">
-            <span class="material-symbols-outlined">table_chart_view</span>
-            <span class="nav-text">Tickets Overview</span>
-        </a>
-        @endif
-
         @if(auth()->user()->canAny(['view_all_tickets', 'view_myrequested_tickets', 'view_assignedtome_tickets', 'view_reassigned_tickets']))
         <div x-data="{ 
             open: {{ request()->routeIs('*tickets.index') ? 'true' : 'false' }},
@@ -31,7 +22,7 @@
                 this.open = !this.open;
             }
         }">
-            <button @click="toggleMenu()" title="Ticket Management" class="nav-link w-100 {{ request()->routeIs('*tickets.index') ? 'active' : '' }}" style="width: 100%;">
+            <button @click="toggleMenu()" title="Ticket Management" class="nav-link {{ request()->routeIs('*tickets.index') ? 'active' : '' }}">
                 <span class="material-symbols-outlined">confirmation_number</span>
                 <span class="nav-text">Ticket Management</span>
                 <svg class="chevron" :class="open ? 'open' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,31 +31,42 @@
             </button>
 
             <ul x-show="open && (sidebarOpen || mobileSidebarOpen)" x-collapse class="submenu" style="display: none;">
+                @if(auth()->user()->can('view_overview_tickets'))
+                <li>
+                    <a href="{{ route('overview_tickets.index') }}" class="submenu-link {{ request()->routeIs('overview_tickets.index') ? 'active' : '' }}">
+                        <span class="submenu-dot"></span> <span class="submenu-text">Tickets Overview</span>
+                    </a>
+                </li>
+                @endif
+
                 @if(auth()->user()->can('view_all_tickets'))
                 <li>
                     <a href="{{ route('tickets.index') }}" class="submenu-link {{ request()->routeIs('tickets.index') ? 'active' : '' }}">
-                        <span class="submenu-dot"></span> All Tickets
+                        <span class="submenu-dot"></span> <span class="submenu-text">All Tickets Reports</span>
                     </a>
                 </li>
                 @endif
+
                 @if(auth()->user()->can('view_myrequested_tickets'))
                 <li> 
                     <a href="{{ route('myrequested_tickets.index') }}" class="submenu-link {{ request()->routeIs('myrequested_tickets.index') ? 'active' : '' }}">
-                        <span class="submenu-dot"></span> My Requested Tickets
+                        <span class="submenu-dot"></span> <span class="submenu-text">My Requested Tickets</span>
                     </a>
                 </li>
                 @endif
+
                 @if(auth()->user()->can('view_assignedtome_tickets'))
                 <li> 
                     <a href="{{ route('assignedtome_tickets.index') }}" class="submenu-link {{ request()->routeIs('assignedtome_tickets.index') ? 'active' : '' }}">
-                        <span class="submenu-dot"></span> Tickets Assigned to Me
+                        <span class="submenu-dot"></span> <span class="submenu-text">Tickets Assigned to Me</span>
                     </a>
                 </li>
                 @endif
+
                 @if(auth()->user()->can('view_reassigned_tickets'))
                 <li>
                     <a href="{{ route('reassigned_tickets.index') }}" class="submenu-link {{ request()->routeIs('reassigned_tickets.index') ? 'active' : '' }}">
-                        <span class="submenu-dot"></span> Re-Assigned Tickets
+                        <span class="submenu-dot"></span> <span class="submenu-text">Re-Assigned Tickets</span>
                     </a>
                 </li>
                 @endif
@@ -72,32 +74,47 @@
         </div>
         @endif
 
-        @if(auth()->user()->can('view_overview_databreach'))
-        <a href="{{ url('overview_databreach') }}" 
-           title="Overview"
-           class="nav-link {{ request()->is('overview_databreach') ? 'active' : '' }}">
-            <span class="material-symbols-outlined">overview</span>
-            <span class="nav-text">Overview</span>
-        </a>
-        @endif
+        <div x-data="{ 
+            open: {{ (request()->routeIs('databreach.*') || request()->is('overview_databreach*')) ? 'true' : 'false' }},
+            toggleMenu() {
+                if (!sidebarOpen && !mobileSidebarOpen) toggleSidebar(); 
+                this.open = !this.open;
+            }
+        }">
+            <button @click="toggleMenu()" title="Incident Management" class="nav-link {{ (request()->routeIs('databreach.*') || request()->is('overview_databreach*')) ? 'active' : '' }}">
+                <span class="material-symbols-outlined">bug_report</span>
+                <span class="nav-text">Incident Management</span>
+                <svg class="chevron" :class="open ? 'open' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
 
-        @if(auth()->user()->can('view_all_databreach'))
-        <a href="{{ route('databreach.index') }}" 
-           title="All Reports"
-           class="nav-link {{ request()->routeIs('databreach.index') ? 'active' : '' }}">
-            <span class="material-symbols-outlined">assignment_turned_in</span>
-            <span class="nav-text">All Reports</span>
-        </a>
-        @endif
+            <ul x-show="open && (sidebarOpen || mobileSidebarOpen)" x-collapse class="submenu" style="display: none;">
+                @if(auth()->user()->can('view_overview_databreach'))
+                <li>
+                    <a href="{{ url('overview_databreach') }}" class="submenu-link {{ request()->is('overview_databreach*') ? 'active' : '' }}">
+                        <span class="submenu-dot"></span> <span class="submenu-text">Incident Overview</span>
+                    </a>
+                </li>
+                @endif
 
-        @if(auth()->user()->canAny(['view_dbrt', 'create_dbrt', 'edit_dbrt', 'delete_dbrt']))
-        <a href="{{ route('databreach.team_databreach') }}" 
-           title="DBRT"
-           class="nav-link {{ request()->routeIs('databreach.team_databreach') ? 'active' : '' }}">
-            <span class="material-symbols-outlined">group</span>
-            <span class="nav-text">DBRT</span>
-        </a>
-        @endif
+                @if(auth()->user()->can('view_all_databreach'))
+                <li>
+                    <a href="{{ route('databreach.index') }}" class="submenu-link {{ request()->routeIs('databreach.index') ? 'active' : '' }}">
+                        <span class="submenu-dot"></span> <span class="submenu-text">All Incident Reports</span>
+                    </a> 
+                </li>
+                @endif
+
+                @if(auth()->user()->canAny(['view_dbrt', 'create_dbrt', 'edit_dbrt', 'delete_dbrt']))
+                <li>
+                    <a href="{{ route('databreach.team_databreach') }}" class="submenu-link {{ request()->routeIs('databreach.team_databreach') ? 'active' : '' }}">
+                        <span class="submenu-dot"></span> <span class="submenu-text">DBRT</span>
+                    </a>
+                </li>
+                @endif
+            </ul>
+        </div>
 
         @if(auth()->user()->canAny(['view_technical_personnel', 'view_technical_services', 'view_tech_users', 'view_roles']))
             <div class="nav-label">System Setup</div>
@@ -127,7 +144,7 @@
            title="Users"
            class="nav-link {{ request()->routeIs('users.index') ? 'active' : '' }}">
             <span class="material-symbols-outlined">manage_accounts</span>
-            <span class="nav-text">Users</span>
+            <span class="nav-text">Users Management</span>
         </a>
         @endif
 
@@ -136,9 +153,9 @@
            title="Roles"
            class="nav-link {{ request()->routeIs('roles.index') ? 'active' : '' }}">
             <span class="material-symbols-outlined">add_moderator</span>
-            <span class="nav-text">Roles</span>
+            <span class="nav-text">Access Roles</span>
         </a>
         @endif
 
     </nav>
-    </aside>
+</aside>

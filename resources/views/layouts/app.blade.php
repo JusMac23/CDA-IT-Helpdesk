@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>CDA-DBRS</title>
+    <title>CDA-ICT Helpdesk</title>
     <link rel="icon" href="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" type="image/png">
 
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
@@ -56,7 +56,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Figtree', sans-serif; background-color: var(--body-bg); color: var(--text-main); overflow: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
         a { text-decoration: none; }
-        button { background: none; border: none; cursor: pointer; font-family: inherit; }
+        button { background: none; border: none; cursor: pointer; font-family: inherit; outline: none; }
         [x-cloak] { display: none !important; }
         
         /* Updated Icon Base Class */
@@ -66,33 +66,47 @@
         .main-content { display: flex; flex-direction: column; flex: 1; min-width: 0; overflow: hidden; transition: margin 0.3s ease; }
         .content-area { flex: 1; padding: 24px; overflow-y: auto; }
 
+        /* Sidebar Styling */
         .sidebar { background-color: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); color: white; display: flex; flex-direction: column; transition: width 0.3s ease, transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease; z-index: 50; flex-shrink: 0; box-shadow: 4px 0 15px rgba(0,0,0,0.1); }
         .sidebar-header { height: 64px; display: flex; align-items: center; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; overflow: hidden; }
-        .sidebar-logo { height: 32px; width: auto; background: rgba(255,255,255,0.1); padding: 4px; border-radius: 4px; }
+        .sidebar-logo { height: 32px; width: auto; background: rgba(255,255,255,0.1); padding: 4px; border-radius: 4px; object-fit: contain; }
         .sidebar-brand { display: flex; flex-direction: column; margin-left: 12px; white-space: nowrap; }
-        .sidebar-brand-title { font-size: 18px; font-weight: bold; line-height: 1; }
+        .sidebar-brand-title { font-size: 18px; font-weight: bold; line-height: 1; color: white; }
         .sidebar-brand-sub { font-size: 10px; font-weight: 600; color: #7dd3fc; text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px; }
+        
+        /* Custom Scrollbar for Sidebar */
         .sidebar-nav { flex: 1; overflow-y: auto; padding: 24px 12px; }
-        .sidebar-footer { height: 64px; display: flex; align-items: center; justify-content: center; padding: 0 16px; border-top: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
-        .nav-label { font-size: 10px; font-weight: bold; color: #7dd3fc; text-transform: uppercase; letter-spacing: 1px; padding: 16px 12px 4px; margin-top: 8px; }
+        .sidebar-nav::-webkit-scrollbar { width: 5px; }
+        .sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+        .sidebar-nav::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
 
-        .nav-link { display: flex; align-items: center; padding: 10px 12px; color: var(--sidebar-text); border-radius: 8px; font-weight: 500; transition: all 0.2s ease; margin-bottom: 4px; white-space: nowrap; }
+        .sidebar-footer { height: 64px; display: flex; align-items: center; justify-content: center; padding: 0 16px; border-top: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
+        .nav-label { font-size: 10px; font-weight: bold; color: #7dd3fc; text-transform: uppercase; letter-spacing: 1px; padding: 16px 12px 8px; margin-top: 8px; }
+
+        /* Navigation Links */
+        .nav-link { width: 100%; display: flex; align-items: center; text-align: left; padding: 10px 12px; color: var(--sidebar-text); border-radius: 8px; font-weight: 500; transition: all 0.2s ease; margin-bottom: 4px; white-space: nowrap; }
         .nav-link:hover { background-color: var(--sidebar-hover); color: white; }
         .nav-link.active { background-color: var(--sidebar-active); color: white; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
         .nav-link .material-symbols-outlined { font-size: 22px; margin-right: 12px; flex-shrink: 0; }
+        .nav-link .nav-text { flex-grow: 1; }
         
         .nav-link.logout { color: #fb7185; }
         .nav-link.logout:hover { background-color: rgba(244, 63, 94, 0.1); color: #fda4af; }
 
+        /* Submenus */
         .submenu { list-style: none; padding-left: 0; margin-top: 4px; margin-bottom: 8px; }
-        .submenu-link { display: flex; align-items: center; padding: 8px 12px 8px 44px; color: #94a3b8; font-size: 14px; border-radius: 8px; transition: 0.2s; }
+        .submenu-link { display: flex; align-items: center; padding: 8px 12px 8px 44px; color: #94a3b8; font-size: 14px; border-radius: 8px; transition: 0.2s; text-decoration: none; }
         .submenu-link:hover { background-color: rgba(255,255,255,0.05); color: white; }
         .submenu-link.active { background-color: rgba(255,255,255,0.1); color: white; font-weight: 600; }
-        .submenu-dot { width: 6px; height: 6px; border-radius: 50%; background-color: #64748b; margin-right: 12px; }
+        .submenu-dot { width: 6px; height: 6px; border-radius: 50%; background-color: #64748b; margin-right: 12px; flex-shrink: 0; }
         .submenu-link.active .submenu-dot { background-color: #38bdf8; }
-        .chevron { margin-left: auto; transition: transform 0.2s; width: 16px; height: 16px; }
+        
+        /* Dropdown Chevron */
+        .chevron { margin-left: auto; transition: transform 0.3s ease; width: 18px; height: 18px; color: inherit; }
         .chevron.open { transform: rotate(90deg); }
 
+        /* Top Header */
         .top-header { height: 64px; background-color: var(--header-bg); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 24px; z-index: 30; flex-shrink: 0; transition: background-color 0.3s ease, border-color 0.3s ease; }
         .header-left, .header-right { display: flex; align-items: center; height: 100%; gap: 12px; }
         .icon-btn { padding: 8px; color: var(--text-muted); border-radius: 8px; transition: background 0.2s; display: flex; align-items: center; justify-content: center; }
@@ -126,20 +140,23 @@
 
         .mobile-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(2px); z-index: 40; display: none; }
 
+        /* Desktop Sidebar Collapse States */
         @media (min-width: 768px) {
             .mobile-only { display: none !important; }
             .sidebar { width: var(--sidebar-width); position: relative; }
             .sidebar.collapsed { width: var(--sidebar-collapsed-width); }
             .sidebar.collapsed .sidebar-brand { display: none; }
-            .sidebar.collapsed .sidebar-header { justify-content: center; }
+            .sidebar.collapsed .sidebar-header { justify-content: center; padding: 0; }
             .sidebar.collapsed .nav-text { display: none; }
             .sidebar.collapsed .nav-label { display: none; }
-            .sidebar.collapsed .nav-link { justify-content: center; padding-left: 0; padding-right: 0; }
+            .sidebar.collapsed .submenu { display: none !important; } /* Fixes layout glitch */
+            .sidebar.collapsed .nav-link { justify-content: center; padding: 12px 0; }
             .sidebar.collapsed .nav-link .material-symbols-outlined { margin-right: 0; }
             .sidebar.collapsed .chevron { display: none; }
-            .sidebar.collapsed hr { display: block !important; margin: 16px 0; border: 0; border-top: 1px solid rgba(255,255,255,0.1); }
+            .sidebar.collapsed hr { display: block !important; margin: 16px 12px; border: 0; border-top: 1px solid rgba(255,255,255,0.1); }
         }
 
+        /* Mobile Adjustments */
         @media (max-width: 767px) {
             .desktop-only { display: none !important; }
             .sidebar { position: fixed; top: 0; bottom: 0; left: 0; width: var(--sidebar-width); transform: translateX(-100%); }
@@ -270,7 +287,7 @@
             </main>
 
             <footer class="app-footer">
-                <p>&copy; {{ date('Y') }} CDA-DBRS. All rights reserved.</p>
+                <p>&copy; {{ date('Y') }} CDA-ICT Helpdesk. All rights reserved.</p>
             </footer>
 
         </div>

@@ -262,6 +262,7 @@
                             <th>FullName / Division</th>
                             <th>Email Address</th>
                             <th>Region Assignment</th>
+                            <th>Technical Services Category</th>
                             @if(auth()->user()->can('edit_technical_personnel') || auth()->user()->can('delete_technical_personnel'))
                                 <th class="text-center" @if(auth()->user()->can('edit_technical_personnel') && auth()->user()->can('delete_technical_personnel')) style="text-align: center;" @endif>Actions</th>
                             @endif
@@ -307,7 +308,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center" style="padding: 3rem; color: var(--text-muted); font-size: 1rem;">
+                                <td colspan="5" class="text-center" style="padding: 3rem; color: var(--text-muted); font-size: 1rem;">
                                     No Technical Personnel found.
                                 </td>
                             </tr>

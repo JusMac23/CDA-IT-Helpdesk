@@ -9,77 +9,175 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>CDA-ITHelpdesk - Create Ticket</title>
+    <title>CDA-ICT Helpdesk</title>
     <link rel="icon" href="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" type="image/png">
 
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="/assets/js/sweetalert2.min.js"></script>
 
     <style>
-        @keyframes fade-in-down {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* CSS Variables derived from snippet & header theme */
+        :root { 
+            --card-bg: #ffffff;
+            --border-light: #e2e8f0;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --input-border: #cbd5e1;
+            --input-text: #1e293b;
+            --input-bg: #ffffff;
+            --bg-alt: #f8fafc;
+            --btn-gray-bg: #e2e8f0;
+            --btn-gray-text: #475569;
+            --btn-gray-hover-bg: #cbd5e1;
+            --btn-gray-hover-text: #1e293b;
+            --accent-blue: #3b82f6; 
+            --alert-red: #ef4444; 
+            --glass-bg: rgba(15, 23, 42, 0.9); 
+            --glass-border: rgba(255, 255, 255, 0.1); 
+            --primary-indigo: #4f46e5; 
+            --indigo-hover: #4338ca; 
+            --bg-body: #f8fafc; 
+            --error-bg: #fef2f2; 
+            --error-text: #991b1b; 
         }
 
-        .animate-fade-in-down { animation: fade-in-down 0.7s ease-out both; }
-        .card-hover { transition: all 0.3s ease; }
-        .card-hover:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1); }
-        .input-focus:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); }
-        body, button, input, select, textarea, h1, h2, h3, h4, p, a, span, li, legend, label, option { font-family: 'Figtree', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif !important; }
-        .material-icons-outlined { font-family: 'Material Icons Outlined' !important; }
-        .fa, .fas, .far, .fal, .fab { font-family: 'Font Awesome 6 Free' !important; }
+        /* Base Resets & Typography */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: var(--bg-body); color: var(--input-text); font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.5; }
+        a { text-decoration: none; }
+        ul { list-style: none; }
+
+        /* Animations */
+        @keyframes fade-in-down { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in-down { animation: fade-in-down 0.5s ease-out forwards; }
+
+        /* Header Styles (Preserved) */
+        .app-header { background-color: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--glass-border); }
+        .header-gradient { height: 3px; background: linear-gradient(90deg, var(--accent-blue), var(--alert-red)); }
+        .container { max-width: 1280px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Branding */
+        .brand { font-size: 1.5rem; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 0.75rem; letter-spacing: -0.025em; }
+        .brand img { width: 44px; height: 44px; object-fit: contain; transition: transform 0.3s ease; }
+        .brand:hover img { transform: scale(1.1) rotate(-5deg); }
+
+        /* Navigation */
+        .nav-links { display: flex; gap: 1rem; align-items: center; font-weight: 600; font-size: 0.95rem; }
+        .nav-link { color: #e2e8f0; padding: 0.6rem 1.25rem; border-radius: 8px; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; border: 1px solid transparent; }
+        .nav-link:hover { color: #ffffff; background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
+
+        /* Logout Link Specifics */
+        .nav-link.nav-link-logout { color: #fca5a5; background: none; cursor: pointer; font: inherit; border: none; }
+        .nav-link.nav-link-logout:hover { color: #ffffff; background-color: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); }
+
+        @media (max-width: 768px) {
+            .nav-text { display: none !important; }
+            .nav-link { padding: 0.6rem 0.8rem; margin: 0 !important; justify-content: center; }
+        }
+
+        /* Form Page Container (Derived from .modal-box design without overlay) */
+        .page-form-container { position: relative; background-color: var(--card-bg); border-radius: 1rem; border: 1px solid var(--border-light); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08); width: calc(100% - 2rem); max-width: 1150px; margin: 2.5rem auto 4rem; padding: 2rem; transition: background-color 0.3s ease, border-color 0.3s ease; }
+
+        @media (max-width: 640px) {
+            .page-form-container { padding: 1.25rem; margin: 1.5rem auto 2.5rem; width: calc(100% - 1.25rem); }
+        }
+
+        /* Form Title Design */
+        .form-title { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin-top: 0; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem; padding-right: 2.5rem; letter-spacing: -0.025em; transition: color 0.3s ease, border-color 0.3s ease; display: flex; align-items: center; gap: 0.75rem; }
+
+        /* Close Button Design */
+        .close-btn { position: absolute; top: 1.25rem; right: 1.25rem; color: var(--text-muted); font-size: 2rem; background: none; border: none; cursor: pointer; transition: all 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0 0.5rem; }
+        .close-btn:hover { color: var(--text-dark); }
+
+        /* Form Grids & Layout */
+        form { width: 100%; }
+        .form-grid { display: grid; grid-template-columns: 1fr; gap: 1.25rem; width: 100%; }
+        
+        @media (min-width: 768px) {
+            .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+            .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .form-group { display: flex; flex-direction: column; width: 100%; margin-bottom: 1rem; }
+        .form-label { font-weight: 600; margin-bottom: 0.5rem; font-size: 0.875rem; color: var(--text-muted); transition: color 0.3s ease; }
+        .text-required { color: var(--alert-red); margin-left: 0.125rem; }
+
+        /* Form Inputs & Selects Design */
+        .form-input, .form-select { height: 44px; padding: 0 1rem; border: 1px solid var(--input-border); border-radius: 0.5rem; font-size: 0.95rem; color: var(--input-text); width: 100%; box-sizing: border-box; outline: none; transition: all 0.2s; background-color: var(--input-bg); font-family: inherit; }
+        .form-input:focus, .form-select:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
+        textarea.form-input { height: auto; resize: vertical; padding: 0.75rem 1rem; min-height: 100px; }
+
+        /* Fieldset Design */
+        fieldset.form-fieldset { border: 1px solid var(--border-light); border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 1.75rem; background: var(--card-bg); transition: background-color 0.3s ease, border-color 0.3s ease; }
+        fieldset.form-fieldset legend { font-weight: 700; color: var(--text-dark); padding: 0 0.5rem; font-size: 1.05rem; text-transform: uppercase; letter-spacing: 0.05em; transition: color 0.3s ease; }
+
+        /* Form Footer Design */
+        .form-footer { display: flex; flex-direction: column; padding-top: 1.5rem; border-top: 1px solid var(--border-light); margin-top: 1.5rem; gap: 0.75rem; transition: border-color 0.3s ease; }
+        @media (min-width: 768px) { .form-footer { flex-direction: row; justify-content: flex-end; align-items: center; } }
+
+        /* Readonly & Disabled Input Styling */
+        .form-input:read-only, .form-select:disabled, .form-input[readonly] { background-color: var(--bg-alt) !important; color: var(--text-muted) !important; cursor: not-allowed; opacity: 0.85; border-color: var(--border-light); }
+        .form-input[readonly]:focus { box-shadow: none; border-color: var(--border-light); }
+
+        /* File Input Styling */
+        input[type="file"].form-input { padding: 0.4rem 0.5rem; line-height: 1.75; }
+        input[type="file"]::file-selector-button { margin-right: 1rem; border: none; background: var(--btn-gray-bg); color: var(--btn-gray-text); padding: 0.4rem 0.8rem; border-radius: 0.25rem; cursor: pointer; transition: all 0.2s ease; font-weight: 600; font-size: 0.85rem; font-family: inherit; }
+        input[type="file"]::file-selector-button:hover { background: var(--btn-gray-hover-bg); color: var(--btn-gray-hover-text); }
+
+        /* Terms & Submit Button */
+        .terms-wrapper { margin-top: 1.25rem; margin-bottom: 1.25rem; width: 100%; }
+        .terms-label { display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; }
+        .terms-checkbox { margin-top: 0.2rem; width: 1.1rem; height: 1.1rem; accent-color: var(--primary-indigo); cursor: pointer; flex-shrink: 0; }
+        .terms-link { color: var(--primary-indigo); font-weight: 600; }
+        .terms-link:hover { text-decoration: underline; }
+
+        .btn-submit { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 2rem; font-size: 0.95rem; font-weight: 600; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
+        .btn-submit:hover:not(:disabled) { background-color: var(--indigo-hover); transform: translateY(-1px); }
+        .btn-submit:disabled { background-color: #cbd5e1; color: #f8fafc; cursor: not-allowed; box-shadow: none; transform: none; }
+
+        /* Error Banner */
+        .alert-error { width: 100%; background-color: var(--error-bg); border-left: 4px solid var(--alert-red); color: var(--error-text); padding: 1.25rem; margin-bottom: 1.5rem; border-radius: 0.5rem; display: flex; gap: 0.75rem; }
+        .alert-error h4 { margin-bottom: 0.5rem; font-size: 0.95rem; font-weight: 700; }
+        .alert-error ul { padding-left: 1.25rem; list-style-type: disc; font-size: 0.875rem; }
     </style>
 </head>
 
-<body class="bg-gray-50 text-gray-800 antialiased">
+<body>
 
-<header class="bg-white shadow-lg sticky top-0 z-50 border-b border-gray-200">
-    <div class="h-1 bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500"></div>
-    
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-        <!-- Logo & Title -->
-        <h1 class="text-2xl lg:text-3xl font-bold text-blue-800 flex items-center gap-3">
-            <img src="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" 
-                 alt="Cooperative Development Authority Seal" 
-                 class="w-12 h-12 object-contain drop-shadow-sm transition-transform duration-300 hover:scale-105"/>
-            <span class="tracking-tight">CDA IT-Helpdesk System</span>
+<header class="app-header">
+    <div class="header-gradient"></div>
+    <div class="container">
+        <h1 class="brand">
+            <img src="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" alt="CDA Seal">
+            <span>CDA-ICT Helpdesk</span>
         </h1>
 
-        <!-- Navigation -->
         <nav>
-            <ul class="flex space-x-6 text-base font-medium items-center">
+            <ul class="nav-links">
                 @auth
-                    <!-- Dashboard Link -->
                     <li>
-                        <a href="{{ url('/dashboard') }}" 
-                           class="text-blue-600 hover:text-blue-800 hover:bg-blue-100 px-3 py-2 rounded-full flex items-center gap-2 transition-all duration-300 ease-in-out">
-                            <span class="material-icons-outlined text-lg">dashboard</span> Dashboard
+                        <a href="{{ url('/tickets/overview_tickets') }}" class="nav-link">
+                            <span class="material-symbols-outlined" style="font-size: 1.25rem;">table_chart_view</span> 
+                            <span class="nav-text">Tickets Overview</span>
                         </a>
                     </li>
-
-                    <!-- Logout Button -->
                     <li>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" 
-                                    class="text-red-500 hover:text-red-700 hover:bg-red-100 px-3 py-2 rounded-full flex items-center gap-2 transition-all duration-300 ease-in-out">
-                                <span class="material-icons-outlined text-lg">logout</span> Logout
+                            <button type="submit" class="nav-link nav-link-logout">
+                                <span class="material-symbols-outlined" style="font-size: 1.25rem;">logout</span> 
+                                <span class="nav-text">Logout</span>
                             </button>
                         </form>
                     </li>
                 @else
-                    <!-- Login Button -->
                     <li>
-                        <a href="{{ route('login') }}" 
-                           class="text-blue-600 hover:text-blue-800 hover:bg-blue-100 px-3 py-2 rounded-full flex items-center gap-2 font-medium transition-all duration-300 ease-in-out shadow-sm hover:shadow-md">
-                            <span class="material-icons-outlined text-lg">login</span>
-                            Login
+                        <a href="{{ route('login') }}" class="nav-link">
+                            <span class="material-symbols-outlined" style="font-size: 1.25rem;">login</span> 
+                            <span class="nav-text">Login</span>
                         </a>
                     </li>
                 @endauth
@@ -88,220 +186,169 @@
     </div>
 </header>
 
-<section class="p-8 max-w-6xl mx-auto bg-white rounded-2xl shadow-xl mt-10 mb-16 animate-fade-in-down relative">
-    <button id="close" onclick="window.location.href='{{ url('/') }}'" 
-        class="absolute top-6 right-8 text-gray-500 hover:text-gray-700 text-3xl leading-none w-10 h-10 flex items-center justify-center bg-transparent border-none shadow-none transition-colors duration-200">
+<section class="page-form-container animate-fade-in-down">
+    <button id="close" onclick="window.location.href='{{ url('/') }}'" class="close-btn" aria-label="Close form">
         &times;
     </button>
 
     @if ($errors->any())
-        <div class="bg-red-100 border-l-4 border-red-500 text-red-800 px-6 py-4 mb-6 rounded-lg">
-            <div class="flex">
-                <i class="fas fa-exclamation-circle text-xl mt-1 mr-3"></i>
-                <div>
-                    <h4 class="font-semibold text-sm mb-1">Please fix the following errors:</h4>
-                    <ul class="list-disc pl-5 space-y-1 text-sm">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
+        <div class="alert-error">
+            <i class="fas fa-exclamation-circle text-lg mt-0.5"></i>
+            <div>
+                <h4>Please fix the following errors:</h4>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
         </div>
     @endif
 
-    <h2 class="text-2xl font-bold text-gray-900 mb-10 border-b-2 border-gray-200 pb-4 flex items-center gap-3">
-        <i class="fas fa-file-alt text-indigo-600"></i>
-        Tickets Form    
+    <h2 class="form-title">
+        <span>Tickets Form</span>
     </h2>
 
-    <form action="{{ route('tickets.store.client') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
+    <form action="{{ route('tickets.store.client') }}" method="POST" enctype="multipart/form-data">
         @csrf
 
         <!-- Client Information -->
-        <fieldset class="border border-gray-200 rounded-2xl p-8 bg-white card-hover shadow-sm">
-            <legend class="text-xl font-bold text-indigo-700 px-3 flex items-center gap-2">
-                Client Information
-            </legend>
-            <div class="space-y-6 mt-4">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="space-y-2">
-                        <label for="firstname" class="block text-sm font-semibold text-gray-700">
-                            First Name <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="firstname" name="firstname" 
-                            placeholder="e.g., Juan" required
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 input-focus">
-                    </div>
-
-                    <div class="space-y-2">
-                        <label for="lastname" class="block text-sm font-semibold text-gray-700">
-                            Last Name <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="lastname" name="lastname" 
-                            placeholder="e.g., Dela Cruz" required
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 input-focus">
-                    </div>
-
-                    <div class="space-y-2">
-                        <label for="email" class="block text-sm font-semibold text-gray-700">
-                            Email <span class="text-red-500">*</span>
-                        </label>
-                        <input type="email" id="email" name="email" 
-                            placeholder="e.g., j_delacruz@cda.gov.ph" required
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 input-focus">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <label class="block text-sm font-semibold text-gray-700">
-                            Date Created
-                        </label>
-                        <input type="text" value="{{ \Carbon\Carbon::now('Asia/Manila')->format('F j, Y h:i A') }}" readonly
-                            class="w-full bg-gray-100 text-gray-600 border border-gray-300 rounded-xl px-4 py-3 focus:outline-none">
-                        <input type="hidden" name="date_created" value="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}">
-                    </div>
-
-                    <div class="space-y-2">
-                        <label for="division" class="block text-sm font-semibold text-gray-700">
-                            Division <span class="text-red-500">*</span>
-                        </label>
-                        <select id="division" name="division" required
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 input-focus appearance-none bg-white">
-                            <option value="" disabled selected>Select Division</option>
-                            @foreach ($sections_divisions as $division)
-                                <option value="{{ $division }}">{{ $division }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <label for="device" class="block text-sm font-semibold text-gray-700">
-                            Device <span class="text-red-500">*</span>
-                        </label>
-                        <select id="device" name="device" required
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 input-focus appearance-none bg-white">
-                            <option value="" disabled selected>Select Device</option>
-                            @foreach (['Desktop PC', 'Laptop/Netbook PC', 'Tablet PC', 'All-in-1 Printer', 'Printer Only', 'Scanner Only', 'Others'] as $device)
-                                <option value="{{ $device }}">{{ $device }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label for="service" class="block text-sm font-semibold text-gray-700">
-                            Technical Service <span class="text-red-500">*</span>
-                        </label>
-                        <select id="service" name="service" required
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 input-focus appearance-none bg-white">
-                            <option value="" disabled selected>Select Service</option>
-                            @foreach ($technical_services as $service)
-                                <option value="{{ $service }}">{{ $service }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <div class="space-y-2">
-                        <label for="photo" class="block text-sm font-semibold text-gray-700">
-                            Attach Photo (Optional)
-                        </label>
-                        <input type="file" id="photo" name="photo" accept="image/*"
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                    </div>
-                </div>
-
-                <div class="space-y-2">
-                    <label for="request" class="block text-sm font-semibold text-gray-700">
-                        Request Details <span class="text-red-500">*</span>
+        <fieldset class="form-fieldset">
+            <legend>Client Information</legend>
+            <div class="form-grid grid-cols-3">
+                <div class="form-group">
+                    <label for="firstname" class="form-label">
+                        First Name <span class="text-required">*</span>
                     </label>
-                    <textarea id="request" name="request" rows="4"
-                        placeholder="Describe the issue or request in detail..."
-                        required
-                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 input-focus resize-none"></textarea>
+                    <input type="text" id="firstname" name="firstname" placeholder="e.g., Juan" required class="form-input">
                 </div>
+
+                <div class="form-group">
+                    <label for="lastname" class="form-label">
+                        Last Name <span class="text-required">*</span>
+                    </label>
+                    <input type="text" id="lastname" name="lastname" placeholder="e.g., Dela Cruz" required class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        Email <span class="text-required">*</span>
+                    </label>
+                    <input type="email" id="email" name="email" placeholder="e.g., j_delacruz@cda.gov.ph" required class="form-input">
+                </div>
+            </div>
+
+            <div class="form-grid grid-cols-2">
+                <div class="form-group">
+                    <label class="form-label">Date Created</label>
+                    <input type="text" value="{{ \Carbon\Carbon::now('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input">
+                    <input type="hidden" name="date_created" value="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="division" class="form-label">
+                        Division <span class="text-required">*</span>
+                    </label>
+                    <select id="division" name="division" required class="form-select">
+                        <option value="" disabled selected>Select Division</option>
+                        @foreach ($sections_divisions as $division)
+                            <option value="{{ $division }}">{{ $division }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-grid grid-cols-2">
+                <div class="form-group">
+                    <label for="device" class="form-label">
+                        Device <span class="text-required">*</span>
+                    </label>
+                    <select id="device" name="device" required class="form-select">
+                        <option value="" disabled selected>Select Device</option>
+                        @foreach (['Desktop PC', 'Laptop/Netbook PC', 'Tablet PC', 'All-in-1 Printer', 'Printer Only', 'Scanner Only', 'Others'] as $device)
+                            <option value="{{ $device }}">{{ $device }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="service" class="form-label">
+                        Technical Service <span class="text-required">*</span>
+                    </label>
+                    <select id="service" name="service" required class="form-select">
+                        <option value="" disabled selected>Select Service</option>
+                        @foreach ($technical_services as $service)
+                            <option value="{{ $service }}">{{ $service }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="photo" class="form-label">Attach Photo (Optional)</label>
+                <input type="file" id="photo" name="photo" accept="image/*" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label for="request" class="form-label">
+                    Request Details <span class="text-required">*</span>
+                </label>
+                <textarea id="request" name="request" rows="4" placeholder="Describe the issue or request in detail..." required class="form-input"></textarea>
             </div>
         </fieldset>
 
         <!-- Designated Personnel -->
-        <fieldset class="border border-gray-200 rounded-2xl p-8 bg-white card-hover shadow-sm">
-            <legend class="text-xl font-bold text-gray-800 px-4 flex items-center gap-2">
-                Designated Personnel
-            </legend>
-            <div class="space-y-6 mt-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <label for="it_area" class="block text-sm font-semibold text-gray-700">
-                            Region <span class="text-red-500">*</span>
-                        </label>
-                        <select id="it_area" name="it_area" required
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 input-focus appearance-none bg-white">
-                            <option value="" disabled selected>Select Region</option>
-                            @foreach($it_area as $area)
-                                <option value="{{ $area }}">{{ $area }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label for="it_personnel" class="block text-sm font-semibold text-gray-700">
-                            Assigned Personnel
-                        </label>
-                        <select id="it_personnel" name="it_personnel"
-                            class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-200 input-focus appearance-none bg-white">
-                            <option value="" disabled selected>Select Personnel</option>
-                        </select>
-                    </div>
+        <fieldset class="form-fieldset">
+            <legend>Designated Personnel</legend>
+            <div class="form-grid grid-cols-2">
+                <div class="form-group">
+                    <label for="it_area" class="form-label">
+                        Region <span class="text-required">*</span>
+                    </label>
+                    <select id="it_area" name="it_area" required class="form-select">
+                        <option value="" disabled selected>Select Region</option>
+                        @foreach($it_area as $area)
+                            <option value="{{ $area }}">{{ $area }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="space-y-2">
-                        <label for="it_email" class="block text-sm font-semibold text-gray-700">
-                            IT Email
-                        </label>
-                        <input type="text" id="it_email" name="it_email" readonly
-                            class="w-full bg-gray-100 text-gray-600 border border-gray-300 rounded-xl px-4 py-3 focus:outline-none">
-                    </div>
+                <div class="form-group">
+                    <label for="it_personnel" class="form-label">Assigned Personnel</label>
+                    <select id="it_personnel" name="it_personnel" class="form-select">
+                        <option value="" disabled selected>Select Personnel</option>
+                    </select>
+                </div>
+            </div>
 
-                    <div class="space-y-2">
-                        <label for="status" class="block text-sm font-semibold text-gray-700">
-                            Status
-                        </label>
-                        <input type="text" id="status" name="status" value="Pending" readonly
-                            class="w-full bg-gray-100 text-gray-600 border border-gray-300 rounded-xl px-4 py-3 focus:outline-none">
-                    </div>
+            <div class="form-grid grid-cols-2">
+                <div class="form-group">
+                    <label for="it_email" class="form-label">IT Email</label>
+                    <input type="text" id="it_email" name="it_email" readonly class="form-input">
+                </div>
+
+                <div class="form-group">
+                    <label for="status" class="form-label">Status</label>
+                    <input type="text" id="status" name="status" value="Pending" readonly class="form-input">
                 </div>
             </div>
         </fieldset>
 
-        <!-- Action Buttons -->
-        <div>
-            <div class="g-recaptcha"
-                data-sitekey="{{ config('services.recaptcha.site_key') }}"
-                data-callback="enableLoginButton"
-                data-expired-callback="disableLoginButton"
-                data-error-callback="disableLoginButton"></div>
-
-            @if ($errors->has('g-recaptcha-response'))
-                <x-input-error :messages="$errors->get('g-recaptcha-response')" class="mt-2" />
-            @endif
+        <!-- Form Footer & Terms -->
+        <div class="terms-wrapper">
+            <label class="terms-label" for="terms_agree">
+                <input type="checkbox" id="terms_agree" name="terms_agree" required class="terms-checkbox">
+                <span>I have read and agree to the <a href="https://cda.gov.ph/cda-privacy-policy/" class="terms-link" target="_blank">Terms and Conditions</a> and the <a href="https://cda.gov.ph/cda-privacy-policy/" class="terms-link" target="_blank">Privacy Policy</a>, and I confirm that the information provided is accurate and true to the best of my knowledge. <span class="text-required">*</span></span>
+            </label>
         </div>
 
-        <div class="flex justify-end gap-4 pt-8 border-t border-gray-200">
-            <button type="submit" id="submitTicketBtn"
-                class="inline-flex items-center gap-3 px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-md transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                disabled>
-                <i class="fas fa-paper-plane text-sm"></i> Submit Ticket
+        <div class="form-footer">
+            <button type="submit" id="submitTicketBtn" class="btn-submit" disabled>
+            Submit Ticket
             </button>
         </div>
     </form>
 </section>
-
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
 <script>
 
@@ -421,15 +468,15 @@
         }
     }
 
-    // Called when reCAPTCHA expires or fails
-    function disableLoginButton() {
-        const button = document.getElementById('submitTicketBtn');
-        if (button) {
-            button.disabled = true;
-            button.style.opacity = '0.6';
-            button.style.cursor = 'not-allowed';
-            button.style.pointerEvents = 'none';
-        }
+    // Terms and Conditions Checkbox Logic
+    if (termsCheckbox && submitBtn) {
+        // Ensure initial state matches checkbox status on reload
+        submitBtn.disabled = !termsCheckbox.checked;
+
+        // Toggle submit button state when checkbox is clicked
+        termsCheckbox.addEventListener('change', function() {
+            submitBtn.disabled = !this.checked;
+        });
     }
 
     // Always start disabled when page loads

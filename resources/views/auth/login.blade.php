@@ -35,7 +35,7 @@
         .btn-primary:disabled{ background:#94a3b8;cursor:not-allowed;opacity:.7;}
 
         /* cda */
-        .cda-button{ display:flex;align-items:center;justify-content:center;width:100%;padding:.75rem;background:#fff;border:1px solid #d1d5db;border-radius:.5rem;text-decoration:none;color:#374151;font-weight:600;font-size:.95rem;transition:all .2s;box-shadow:0 1px 2px rgba(0,0,0,.05); }
+        .cda-button{ display:flex;align-items:center;justify-content:center;width:100%;padding:.75rem; margin-bottom:1rem;background:#fff;border:1px solid #d1d5db;border-radius:.5rem;text-decoration:none;color:#374151;font-weight:600;font-size:.95rem;transition:all .2s;box-shadow:0 1px 2px rgba(0,0,0,.05); }
         .cda-button:hover{ background:#f9fafb;border-color:#9ca3af;color:#111827; }
 
         /* misc */
@@ -119,9 +119,16 @@
             </a>
         </div>
 
+        {{-- Google Login --}}
+        <div>
+            <a href="{{ route('auth.google') }}" class="cda-button">
+                Continue with Google
+            </a>
+        </div>
+
         {{-- Footer --}}
         <p class="footer-text">
-            &copy; {{ date('Y') }} CDA-DBRS. All rights reserved.
+            &copy; {{ date('Y') }} CDA-ICT Helpdesk. All rights reserved.
         </p>
     </div>
 

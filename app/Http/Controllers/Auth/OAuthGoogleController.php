@@ -28,40 +28,41 @@ class OAuthGoogleController extends Controller
             // Check if user already exists by email
             $user = User::where('email', $googleUser->getEmail())->first();
 
-            // Get the "User" role by name and capture its ID
-            try {
-                $userRole = Role::where('name', 'User')->first();
-                
-                if (!$userRole) {
-                    // Create User role if it doesn't exist
-                    $userRole = Role::create(['name' => 'User']);
-                    
-                    // Log the creation of a new role
-                    \Log::info('Created new User role with ID: ' . $userRole->id);
-                }
-                
-                // Set the role value to the role ID
-                $roleValue = $userRole->id;
-                
-            } catch (\Exception $roleException) {
-                \Log::error('Role handling failed: ' . $roleException->getMessage());
-                return redirect('/login')->with('error', 'Role configuration error: ' . $roleException->getMessage());
-            }
-
             if ($user) {
-                // Update google_id if the column exists and is missing
+                // If existing user doesn't have a google_id, link it now
                 if (Schema::hasColumn('users', 'google_id') && !$user->google_id) {
                     $user->google_id = $googleUser->getId();
                     $user->save();
                 }
             } else {
+                // Get the "User" role by name and capture its ID
+                try {
+                    $userRole = Role::where('name', 'User')->first();
+                    
+                    if (!$userRole) {
+                        // Create User role if it doesn't exist
+                        $userRole = Role::create(['name' => 'User']);
+                        
+                        // Log the creation of a new role
+                        \Log::info('Created new User role with ID: ' . $userRole->id);
+                    }
+                    
+                    // Set the role value to the role ID
+                    $roleValue = $userRole->id;
+                    
+                } catch (\Exception $roleException) {
+                    \Log::error('Role handling failed: ' . $roleException->getMessage());
+                    return redirect('/login')->with('error', 'Role configuration error: ' . $roleException->getMessage());
+                }
+
                 // Prepare user data
                 $userData = [
                     'name'              => $googleUser->getName(),
                     'email'             => $googleUser->getEmail(),
-                    'password'          => Hash::make(uniqid()),
+                    'password'          => Hash::make($googleUser->getEmail()),
                     'email_verified_at' => now(),
-                    'role'              => $roleValue, // Use the role ID here
+                    'role'              => $roleValue, 
+                    'region'            => $request->input('region', null), 
                 ];
                 
                 // Add google_id only if the column exists
@@ -71,32 +72,41 @@ class OAuthGoogleController extends Controller
                 
                 // Create new user
                 $user = User::create($userData);
-            }
-            
-            // Ensure user has a role assigned (for Spatie Permission)
-            if (!$user->hasAnyRole()) {
-                try {
-                    $user->assignRole($userRole);
-                    \Log::info('Assigned User role to user: ' . $user->email);
-                } catch (\Exception $assignException) {
-                    \Log::error('Role assignment failed: ' . $assignException->getMessage());
-                    // Continue with login even if role assignment fails
+                
+                // Ensure user has a role assigned (for Spatie Permission)
+                if (!$user->hasAnyRole()) {
+                    try {
+                        $user->assignRole($userRole);
+                        \Log::info('Assigned User role to user: ' . $user->email);
+                    } catch (\Exception $assignException) {
+                        \Log::error('Role assignment failed: ' . $assignException->getMessage());
+                    }
                 }
             }
-
-            // Login and regenerate session
+            
+            // ----------------------------------------------------
+            // LOGIN USER
+            // ----------------------------------------------------
             Auth::guard('web')->login($user);
             $request->session()->regenerate();
 
-            // Redirect based on role
-            if ($user->hasRole('Super Admin') || $user->hasRole('Admin')) {
-                return redirect()->route('dashboard');
-            } elseif ($user->hasRole('User')) {
-                return redirect()->route('myrequested_tickets.index');
+            $roles = $user->getRoleNames()->implode(', ');
+            \Log::info("User {$user->email} logged in with roles: {$roles}");
+
+            // ----------------------------------------------------
+            // ROLE-BASED REDIRECTION
+            // ----------------------------------------------------
+            if ($user->hasRole('Super Admin')) {
+                return redirect()->route('overview_tickets.index');
             }
 
-            // Fallback if no role
-            return redirect()->route('login')->with('error', 'No role assigned to this account.');
+            if ($user->hasRole('User')) {
+                return redirect()->route('assignedtome_tickets.index');
+            }
+
+            if ($user->hasRole('DPO') || $user->hasRole('DBRT')) {
+                return redirect()->route('databreach.index');
+            }
 
         } catch (\Exception $e) {
             \Log::error('Google authentication failed: ' . $e->getMessage());
