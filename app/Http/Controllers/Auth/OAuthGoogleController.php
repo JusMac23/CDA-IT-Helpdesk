@@ -37,11 +37,11 @@ class OAuthGoogleController extends Controller
             } else {
                 // Get the "User" role by name and capture its ID
                 try {
-                    $userRole = Role::where('name', 'User')->first();
+                    $userRole = Role::where('name', 'Client')->first();
                     
                     if (!$userRole) {
                         // Create User role if it doesn't exist
-                        $userRole = Role::create(['name' => 'User']);
+                        $userRole = Role::create(['name' => 'Client']);
                         
                         // Log the creation of a new role
                         \Log::info('Created new User role with ID: ' . $userRole->id);
@@ -98,15 +98,16 @@ class OAuthGoogleController extends Controller
             // ----------------------------------------------------
             if ($user->hasRole('Super Admin')) {
                 return redirect()->route('overview_tickets.index');
-            }
-
-            if ($user->hasRole('User')) {
-                return redirect()->route('assignedtome_tickets.index');
-            }
-
-            if ($user->hasRole('DPO') || $user->hasRole('DBRT')) {
+            } elseif ($user->hasRole('Client')) {
+                return redirect()->route('myrequested_tickets.index');
+            } elseif ($user->hasRole(['ICTS', 'ICTD'])) {
+                return redirect()->route('tickets.index');
+            } elseif ($user->hasAnyRole(['DPO', 'DBRT'])) {
                 return redirect()->route('databreach.index');
             }
+
+            // Fallback for authenticated Google users with no assigned roles
+            return redirect('/');
 
         } catch (\Exception $e) {
             \Log::error('Google authentication failed: ' . $e->getMessage());

@@ -134,8 +134,9 @@
         .terms-link { color: var(--primary-indigo); font-weight: 600; }
         .terms-link:hover { text-decoration: underline; }
 
-        .btn-submit { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 2rem; font-size: 0.95rem; font-weight: 600; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
-        .btn-submit:hover:not(:disabled) { background-color: var(--indigo-hover); transform: translateY(-1px); }
+        .btn-submit { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 2rem; background-color: var(--primary-indigo); color: #f8fafc; font-size: 0.95rem; font-weight: 600; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
+        .btn-submit:hover:not(:disabled) { background-color: var(--indigo-hover); color: #f8fafc; transform: translateY(-1px); }
+        .btn-submit:hover { background-color: var(--indigo-hover); color: #f8fafc; transform: translateY(-1px); }
         .btn-submit:disabled { background-color: #cbd5e1; color: #f8fafc; cursor: not-allowed; box-shadow: none; transform: none; }
 
         /* Error Banner */
@@ -285,21 +286,36 @@
             </div>
 
             <div class="form-group">
-                <label for="photo" class="form-label">Attach Photo (Optional)</label>
-                <input type="file" id="photo" name="photo" accept="image/*" class="form-input">
-            </div>
-
-            <div class="form-group">
                 <label for="request" class="form-label">
                     Request Details <span class="text-required">*</span>
                 </label>
                 <textarea id="request" name="request" rows="4" placeholder="Describe the issue or request in detail..." required class="form-input"></textarea>
             </div>
+
+            <div class="form-group">
+                <label for="photo" class="form-label">Attach Photo (Optional)</label>
+                <input type="file" id="photo" name="photo" accept="image/*" class="form-input">
+            </div>
+
+            <div class="form-group">
+                <label for="priority" class="form-label">
+                    Priority <span class="text-required">*</span>
+                </label>
+                <select id="priority" name="priority" required class="form-select">
+                    <option value="" disabled selected>Select Priority</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                    <option value="Critical">Critical</option>
+                </select>
+            </div>
+
         </fieldset>
 
         <!-- Designated Personnel -->
         <fieldset class="form-fieldset">
             <legend>Designated Personnel</legend>
+            
             <div class="form-grid grid-cols-2">
                 <div class="form-group">
                     <label for="it_area" class="form-label">
@@ -314,24 +330,13 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="it_personnel" class="form-label">Assigned Personnel</label>
-                    <select id="it_personnel" name="it_personnel" class="form-select">
-                        <option value="" disabled selected>Select Personnel</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-grid grid-cols-2">
-                <div class="form-group">
-                    <label for="it_email" class="form-label">IT Email</label>
-                    <input type="text" id="it_email" name="it_email" readonly class="form-input">
-                </div>
-
-                <div class="form-group">
                     <label for="status" class="form-label">Status</label>
                     <input type="text" id="status" name="status" value="Pending" readonly class="form-input">
                 </div>
             </div>
+
+            <input type="hidden" id="it_personnel" name="it_personnel" value="">
+            <input type="hidden" id="it_email" name="it_email" value="">
         </fieldset>
 
         <!-- Form Footer & Terms -->
@@ -344,14 +349,14 @@
 
         <div class="form-footer">
             <button type="submit" id="submitTicketBtn" class="btn-submit" disabled>
-            Submit Ticket
+                Submit Ticket
             </button>
         </div>
+        
     </form>
 </section>
 
 <script>
-
     // SweetAlert notifications
     @if(session('success'))
         Swal.fire({
@@ -372,31 +377,43 @@
             showConfirmButton: false
         });
     @endif
-    
-    // Auto-populate IT personnel based on region selection
-    const itMapping = @json($it_mapping);
+
+    // Complete Round-Robin Auto-Assignment Logic 
+    const nextAssignmentMap = @json($nextAssignment);
+    const serviceSelect = document.getElementById('service');
     const regionSelect = document.getElementById('it_area');
-    const personnelSelect = document.getElementById('it_personnel');
+    const personnelInput = document.getElementById('it_personnel');
     const emailInput = document.getElementById('it_email');
 
-    if (regionSelect && personnelSelect && emailInput) {
-        regionSelect.addEventListener('change', function () {
-            personnelSelect.innerHTML = '<option value="" disabled selected>Select Personnel</option>';
-            emailInput.value = '';
-            const personnelList = itMapping[this.value] || [];
+    // Triggered when Region or Service dropdown changes
+    function updatePersonnelAndEmails() {
+        const selectedRegion = regionSelect.value;
+        const selectedService = serviceSelect.value;
 
-            personnelList.forEach(p => {
-                const opt = document.createElement('option');
-                opt.value = p.name;
-                opt.textContent = p.name;
-                personnelSelect.appendChild(opt);
-            });
-        });
+        personnelInput.value = '';
+        emailInput.value = '';
 
-        personnelSelect.addEventListener('change', function () {
-            const selected = (itMapping[regionSelect.value] || []).find(p => p.name === this.value);
-            emailInput.value = selected ? selected.email : '';
-        });
+        if (!selectedRegion) return;
+
+        // Try exact match with selected service first, otherwise fallback to default for that region
+        const exactKey = `${selectedRegion}_${selectedService}`;
+        const defaultKey = `${selectedRegion}_default`;
+
+        const assignedPerson = nextAssignmentMap[exactKey] || nextAssignmentMap[defaultKey];
+
+        if (assignedPerson) {
+            personnelInput.value = assignedPerson.name;
+            emailInput.value = assignedPerson.email;
+        } else {
+            personnelInput.value = 'No personnel found for this region';
+        }
+    }
+
+    if (serviceSelect) {
+        serviceSelect.addEventListener('change', updatePersonnelAndEmails);
+    }
+    if (regionSelect) {
+        regionSelect.addEventListener('change', updatePersonnelAndEmails);
     }
 
     // Form validation enhancement
@@ -441,49 +458,18 @@
         });
     });
 
-    // Device "Others" option handling
-    document.getElementById('device').addEventListener('change', function() {
-        if (this.value === 'Others') {
-            // You can add a text input for specifying other devices here
-            console.log('Other device selected - consider adding a text input');
-        }
-    });
+    // Enable/Disable Submit button on Terms acceptance
+    const termsCheckbox = document.getElementById('terms_agree');
+    const submitBtn = document.getElementById('submitTicketBtn');
 
-    // Service "Others" option handling (if applicable)
-    document.getElementById('service').addEventListener('change', function() {
-        if (this.value === 'Others') {
-            // You can add a text input for specifying other services here
-            console.log('Other service selected - consider adding a text input');
-        }
-    });
-
-     // Called when reCAPTCHA is successfully completed
-    function enableLoginButton() {
-        const button = document.getElementById('submitTicketBtn');
-        if (button) {
-            button.disabled = false;
-            button.style.opacity = '1';
-            button.style.cursor = 'pointer';
-            button.style.pointerEvents = 'auto';
-        }
-    }
-
-    // Terms and Conditions Checkbox Logic
     if (termsCheckbox && submitBtn) {
-        // Ensure initial state matches checkbox status on reload
         submitBtn.disabled = !termsCheckbox.checked;
 
-        // Toggle submit button state when checkbox is clicked
         termsCheckbox.addEventListener('change', function() {
             submitBtn.disabled = !this.checked;
         });
     }
-
-    // Always start disabled when page loads
-    document.addEventListener('DOMContentLoaded', function () {
-        disableLoginButton();
-    });
-
 </script>
+
 </body>
 </html>

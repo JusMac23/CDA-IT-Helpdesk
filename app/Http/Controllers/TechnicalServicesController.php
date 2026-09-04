@@ -8,37 +8,46 @@ use App\Models\TechnicalServices;
 
 class TechnicalServicesController extends Controller
 {
-    // Display Technical Services List
     public function index(Request $request)
     {
-        // Start query
         $query = TechnicalServices::query();
 
-        // Apply search if provided
         if ($request->filled('search_query')) {
             $search = $request->search_query;
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%{$search}%")
                   ->orWhere('technical_services', 'like', "%{$search}%")
+                  ->orWhere('low_resolution_time', 'like', "%{$search}%")
+                  ->orWhere('medium_resolution_time', 'like', "%{$search}%")
+                  ->orWhere('high_resolution_time', 'like', "%{$search}%")
+                  ->orWhere('critical_resolution_time', 'like', "%{$search}%")
                   ->orWhere('added_at', 'like', "%{$search}%")
                   ->orWhere('updated_at', 'like', "%{$search}%");
             });
         }
 
-        // Paginate results
-        $technical_services = $query->orderBy('id', 'asc')->paginate(10);
+        $technical_services = $query->orderBy('id', 'asc')
+                                   ->paginate(10)
+                                   ->appends($request->all());
 
         return view('tech_services.index', compact('technical_services'));
     }
 
-    // Add New Technical Service
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'technical_services' => 'required|string|max:255',
+            'technical_services'       => 'required|string|max:255',
+            'low_resolution_time'      => 'nullable|string|max:255',
+            'medium_resolution_time'   => 'nullable|string|max:255',
+            'high_resolution_time'     => 'nullable|string|max:255',
+            'critical_resolution_time' => 'nullable|string|max:255',
         ]);
 
-        // Set created timestamp
+        $validatedData['low_resolution_time']      = $validatedData['low_resolution_time'] ?? 'N/A';
+        $validatedData['medium_resolution_time']   = $validatedData['medium_resolution_time'] ?? 'N/A';
+        $validatedData['high_resolution_time']     = $validatedData['high_resolution_time'] ?? 'N/A';
+        $validatedData['critical_resolution_time'] = $validatedData['critical_resolution_time'] ?? 'N/A';
+
         $validatedData['added_at'] = Carbon::now('Asia/Manila')->format('Y-m-d H:i:s');
 
         TechnicalServices::create($validatedData);
@@ -46,14 +55,22 @@ class TechnicalServicesController extends Controller
         return redirect()->route('tech_services.index')->with('success', 'Technical service successfully added.');
     }
 
-    // Update Technical Service
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'technical_services' => 'required|string|max:255',
+            'technical_services'       => 'required|string|max:255',
+            'low_resolution_time'      => 'nullable|string|max:255',
+            'medium_resolution_time'   => 'nullable|string|max:255',
+            'high_resolution_time'     => 'nullable|string|max:255',
+            'critical_resolution_time' => 'nullable|string|max:255',
         ]);
 
         $technical_services = TechnicalServices::findOrFail($id);
+
+        $validatedData['low_resolution_time']      = $validatedData['low_resolution_time'] ?? 'N/A';
+        $validatedData['medium_resolution_time']   = $validatedData['medium_resolution_time'] ?? 'N/A';
+        $validatedData['high_resolution_time']     = $validatedData['high_resolution_time'] ?? 'N/A';
+        $validatedData['critical_resolution_time'] = $validatedData['critical_resolution_time'] ?? 'N/A';
 
         $validatedData['updated_at'] = Carbon::now('Asia/Manila')->format('Y-m-d H:i:s');
 
@@ -62,7 +79,6 @@ class TechnicalServicesController extends Controller
         return redirect()->route('tech_services.index')->with('success', 'Technical Service successfully updated.');
     }
 
-    // Delete Technical Service
     public function destroy($id)
     {
         $tech_services = TechnicalServices::findOrFail($id);

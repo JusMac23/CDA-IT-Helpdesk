@@ -22,10 +22,16 @@ Hello {{ $ticket->firstname . ' ' . $ticket->lastname }},
 
 This is to inform you that your request has been successfully resolved.
 
-We request that you upload your e-signature for confirmation. Please click the link below to proceed:
+We request that you upload your e-signature for confirmation. Please click Upload Signature below to proceed:
 
 @component('mail::button', ['url' => route('tickets.client_signature', $ticket->ticket_id)])
 Upload Signature
+@endcomponent
+
+We request also to fill out the feedback form to help us improve our services. Please click Feedback Form below to proceed:
+
+@component('mail::button', ['url' => 'https://docs.google.com/forms/d/e/1FAIpQLSf4wzO96Dzzoj68n0OIYvEYRupsHZLPxnn8QHBV8jRWjSpzqQ/viewform'])
+Feedback Form
 @endcomponent
 
 **Ticket Number:** {{ $ticket->ticket_number }}  

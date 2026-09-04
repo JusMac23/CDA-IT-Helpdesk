@@ -33,6 +33,7 @@ class Tickets extends Model
         'date_resolved',
         'assigned_to',
         'assigned_it_email',
-        'notes'
+        'notes',
+        'priority'
     ];
 }

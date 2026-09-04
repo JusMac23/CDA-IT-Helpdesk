@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\ITPersonnel;
 use App\Models\RegionEmail;
+use Illuminate\Support\Facades\DB; 
 
 class TechnicalPersonnelController extends Controller
 {
@@ -14,6 +15,9 @@ class TechnicalPersonnelController extends Controller
     {
         $query = ITPersonnel::orderBy('it_area', 'asc');
         $region = RegionEmail::pluck('region')->toArray();
+        
+        // Fetch all technical services from the database
+        $services = DB::table('technical_services')->pluck('technical_services')->toArray();
 
         if ($request->filled('search_query')) {
             $search = $request->search_query;
@@ -24,6 +28,7 @@ class TechnicalPersonnelController extends Controller
                   ->orWhere('lastname', 'like', "%{$search}%")
                   ->orWhere('it_email', 'like', "%{$search}%")
                   ->orWhere('it_area', 'like', "%{$search}%")
+                  ->orWhere('tech_services_category', 'like', "%{$search}%")
                   ->orWhere('date_added', 'like', "%{$search}%")
                   ->orWhere('date_updated', 'like', "%{$search}%");
             });
@@ -31,22 +36,26 @@ class TechnicalPersonnelController extends Controller
 
         $technical_personnel = $query->paginate(10);
 
-        return view('tech_personnel.index', compact('technical_personnel', 'region'));
+        return view('tech_personnel.index', compact('technical_personnel', 'region', 'services'));
     }
 
     // Add New Technical Personnel
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'firstname'       => 'required|string|max:255',
-            'middle_initial'  => 'nullable|string|max:10',
-            'lastname'        => 'required|string|max:255',
-            'it_email'        => 'required|email|max:255',
-            'it_area'         => 'required|string|max:255',
-            'date_added'      => 'required|date',
+            'firstname'              => 'required|string|max:255',
+            'middle_initial'         => 'nullable|string|max:10',
+            'lastname'               => 'required|string|max:255',
+            'it_email'               => 'required|email|max:255',
+            'it_area'                => 'required|string|max:255',
+            'tech_services_category' => 'required|array', // Validate as array
+            'tech_services_category.*'=> 'string',
         ]);
 
+        // Convert array of checkboxes into a comma-separated string
+        $validatedData['tech_services_category'] = implode(', ', $request->tech_services_category);
         $validatedData['date_added'] = Carbon::now('Asia/Manila')->format('Y-m-d H:i:s');
+        $validatedData['date_updated'] = Carbon::now('Asia/Manila')->format('Y-m-d H:i:s'); 
 
         ITPersonnel::create($validatedData);
 
@@ -57,13 +66,17 @@ class TechnicalPersonnelController extends Controller
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'firstname'       => 'required|string|max:255',
-            'middle_initial'  => 'nullable|string|max:10',
-            'lastname'        => 'required|string|max:255',
-            'it_email'        => 'required|email|max:255',
-            'it_area'         => 'required|string|max:255',
+            'firstname'              => 'required|string|max:255',
+            'middle_initial'         => 'nullable|string|max:10',
+            'lastname'               => 'required|string|max:255',
+            'it_email'               => 'required|email|max:255',
+            'it_area'                => 'required|string|max:255',
+            'tech_services_category' => 'required|array', 
+            'tech_services_category.*'=> 'string',
         ]);
 
+        // Convert array of checkboxes into a comma-separated string
+        $validatedData['tech_services_category'] = implode(', ', $request->tech_services_category);
         $validatedData['date_updated'] = Carbon::now('Asia/Manila')->format('Y-m-d H:i:s');
 
         $technical_personnel = ITPersonnel::findOrFail($id);

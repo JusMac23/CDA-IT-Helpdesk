@@ -5,6 +5,7 @@
     <style>
         /* --- Theme Variables --- */
         :root {
+            --bg-main: #f1f5f9;
             --card-bg: #ffffff;
             --bg-alt: #f8fafc;
             --text-dark: #0f172a;
@@ -14,6 +15,12 @@
             --input-bg: #ffffff;
             --input-border: #cbd5e1;
             --input-text: #334155;
+
+            /* Badges */
+            --badge-bg: #eff6ff;
+            --badge-text: #2563eb;
+            --badge-border: #bfdbfe;
+            --badge-hover-bg: #dbeafe;
 
             /* Action Buttons (Gray) */
             --btn-gray-bg: #f1f5f9;
@@ -33,6 +40,7 @@
         }
 
         body.dark {
+            --bg-main: #020617;
             --card-bg: #0f172a; 
             --bg-alt: #1e293b; 
             --text-dark: #f8fafc;
@@ -42,6 +50,12 @@
             --input-bg: #0f172a;
             --input-border: #4b5563;
             --input-text: #f1f5f9;
+
+            /* Badges - Dark Mode */
+            --badge-bg: rgba(30, 58, 138, 0.4);
+            --badge-text: #93c5fd;
+            --badge-border: #1e3a8a;
+            --badge-hover-bg: rgba(30, 58, 138, 0.7);
 
             /* Action Buttons (Gray) - Dark */
             --btn-gray-bg: #1e293b;
@@ -62,7 +76,7 @@
 
         /* Global Box Sizing & Font Fix */
         *, *::before, *::after { box-sizing: border-box; }
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: var(--bg-main); color: var(--text-dark); transition: background-color 0.3s ease, color 0.3s ease; margin: 0; padding: 0; }
 
         /* Main Layout - Mobile First 100% Width & Dark Mode Outline */
         .panel { background-color: var(--card-bg); border-radius: 1rem; border: 1px solid var(--border-light); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); padding: 1.25rem; width: 100%; transition: background-color 0.3s ease, border-color 0.3s ease; }
@@ -126,6 +140,18 @@
         .text-center { text-align: center; }
         .font-bold-name { font-weight: 700; color: var(--text-dark); transition: color 0.3s ease; }
 
+        /* Container Box inside the table cell */
+        .tech-services-box { display: flex; flex-wrap: wrap; gap: 0.35rem; padding: 0.5rem; border-radius: 0.5rem; max-width: 320px; align-items: center; }
+
+        /* Individual Category Badges - Theme Fixed */
+        .service-badge { display: inline-flex; align-items: center; padding: 0.2rem 0.55rem; font-size: 0.75rem; font-weight: 600; line-height: 1.25; color: var(--badge-text); background-color: var(--badge-bg); border: 1px solid var(--badge-border); border-radius: 0.375rem; white-space: nowrap; transition: all 0.15s ease-in-out; }
+
+        /* Subtle Hover Effect on Badges */
+        .service-badge:hover { background-color: var(--badge-hover-bg); }
+
+        /* Empty State styling */
+        .no-services { font-size: 0.75rem; color: var(--text-muted); }
+
         /* --- Modern UI Pagination (Laravel Structure Fix) --- */
         .pagination-wrapper { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-light); width: 100%; transition: border-color 0.3s ease; }
         .pagination-wrapper nav { display: flex; flex-direction: column; gap: 1.25rem; width: 100%; align-items: center; }
@@ -175,6 +201,10 @@
         /* Form Grid - Mobile First 100% Width */
         .form-grid { display: flex; flex-direction: column; gap: 1.25rem; width: 100%; }
 
+        /* Checkbox Grid - Fixed Variable Fallbacks */
+        .checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.5rem; margin-top: 0.5rem; padding: 0.5rem; border: 1px solid var(--border-light); border-radius: 0.375rem; background-color: var(--bg-alt); transition: all 0.3s ease; }
+        .checkbox-grid label { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; color: var(--text-dark); }
+
         /* Form Controls - Unified 44px Heights */
         .form-group { display: flex; flex-direction: column; width: 100%; }
         .form-label { font-size: 0.875rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.5rem; width: 100%; transition: color 0.3s ease; }
@@ -191,40 +221,23 @@
         .error-title { margin: 0 0 0.5rem 0; font-weight: 700; font-size: 0.95rem; color: var(--error-title); transition: color 0.3s ease; }
         .error-list { margin: 0; padding-left: 1.5rem; font-size: 0.9rem; font-weight: 500; }
 
-        /* --------------------------------------------------- */
-        /* Responsive Overrides                                */
-        /* --------------------------------------------------- */
-        
-        /* Mobile Breakpoint for Pagination */
+        /* Responsive Overrides */
         @media (max-width: 639px) {
             .pagination-wrapper nav .hidden { display: none !important; }
             .pagination-wrapper nav .sm\:hidden { display: flex; width: 100%; justify-content: space-between; }
         }
 
-        /* Desktop & Tablet Overrides */
         @media (min-width: 640px) {
             .panel { padding: 2rem; }
             .header-flex { flex-direction: row; justify-content: space-between; align-items: center; }
-            
-            /* Align Add button and Search inline */
             .action-container { flex-direction: row; justify-content: space-between; align-items: center; }
             .search-form { width: auto; min-width: 320px; }
-            
-            /* Un-stretch buttons on desktop */
             .btn { width: auto; }
-            
-            /* Restore Grid layout for Desktop */
             .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
             .col-span-2 { grid-column: span 2; }
-            
-            /* Modal formatting for Desktop */
             .modal-box { padding: 2.5rem; }
             .close-btn { top: 1.5rem; right: 2rem; }
-            
-            /* Modal Footer Buttons */
             .modal-footer { flex-direction: row; justify-content: flex-end; }
-
-            /* Pagination Layout */
             .pagination-wrapper nav { flex-direction: row; justify-content: space-between; }
             .pagination-wrapper nav > div.sm\:hidden { display: none !important; }
             .pagination-wrapper nav > div.hidden.sm\:flex-1 { display: flex !important; width: 100%; justify-content: space-between; align-items: center; }
@@ -264,7 +277,7 @@
                             <th>Region Assignment</th>
                             <th>Technical Services Category</th>
                             @if(auth()->user()->can('edit_technical_personnel') || auth()->user()->can('delete_technical_personnel'))
-                                <th class="text-center" @if(auth()->user()->can('edit_technical_personnel') && auth()->user()->can('delete_technical_personnel')) style="text-align: center;" @endif>Actions</th>
+                            <th class="text-center" @if(auth()->user()->can('edit_technical_personnel') && auth()->user()->can('delete_technical_personnel')) style="text-align: center;" @endif>Actions</th>
                             @endif
                         </tr>
                     </thead>
@@ -274,6 +287,17 @@
                                 <td class="font-bold-name">{{ $tech_personnel->firstname }} {{ $tech_personnel->middle_initial }} {{ $tech_personnel->lastname }}</td>
                                 <td>{{ $tech_personnel->it_email }}</td>
                                 <td>{{ $tech_personnel->it_area }}</td>
+                                <td>
+                                    <div class="tech-services-box">
+                                        @if (!empty($tech_personnel->tech_services_category))
+                                            @foreach (explode(',', $tech_personnel->tech_services_category) as $service)
+                                                <span class="service-badge">{{ trim($service) }}</span>
+                                            @endforeach
+                                        @else
+                                            <span class="no-services">No categories assigned</span>
+                                        @endif
+                                    </div>
+                                </td>
                                 
                                 @if(auth()->user()->can('edit_technical_personnel') || auth()->user()->can('delete_technical_personnel'))
                                 <td>
@@ -287,7 +311,8 @@
                                                 data-middle_initial="{{ $tech_personnel->middle_initial }}"
                                                 data-lastname="{{ $tech_personnel->lastname }}"
                                                 data-it_email="{{ $tech_personnel->it_email }}"
-                                                data-it_area="{{ $tech_personnel->it_area }}">
+                                                data-it_area="{{ $tech_personnel->it_area }}"
+                                                data-tech_services="{{ $tech_personnel->tech_services_category }}">
                                                 <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">edit</span> Edit
                                             </button>
                                         @endcan
@@ -375,6 +400,18 @@
                         </select>
                     </div>
 
+                    <!-- Added Checkboxes for Add Modal -->
+                    <div class="form-group col-span-2">
+                        <label class="form-label">Technical Services Category <span style="color:#ef4444;">*</span></label>
+                        <div class="checkbox-grid">
+                            @foreach($services as $service)
+                                <label>
+                                    <input type="checkbox" name="tech_services_category[]" value="{{ $service }}"> {{ $service }}
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+
                     <div class="form-group col-span-2">
                         <label for="date_added" class="form-label">Date Added</label>
                         <input type="text" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input">
@@ -442,6 +479,18 @@
                         </select>
                     </div>
 
+                    <!-- Added Checkboxes for Edit Modal -->
+                    <div class="form-group col-span-2">
+                        <label class="form-label">Technical Services Category <span style="color:#ef4444;">*</span></label>
+                        <div class="checkbox-grid">
+                            @foreach($services as $service)
+                                <label>
+                                    <input type="checkbox" name="tech_services_category[]" value="{{ $service }}" class="edit-tech-service-checkbox"> {{ $service }}
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+
                     <div class="form-group col-span-2">
                         <label class="form-label">Date Updated</label>
                         <input type="text" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input">
@@ -469,7 +518,7 @@
                     icon: 'success',
                     title: 'Success!',
                     text: @json(session('success')),
-                    timer: 2500,
+                    timer: 2000,
                     showConfirmButton: false,
                     background: getComputedColor('--card-bg'),
                     color: getComputedColor('--text-dark')
@@ -481,7 +530,7 @@
                     icon: 'error',
                     title: 'Notice!',
                     text: @json(session('error')),
-                    timer: 3000,
+                    timer: 2000,
                     showConfirmButton: false,
                     background: getComputedColor('--card-bg'),
                     color: getComputedColor('--text-dark')
@@ -532,6 +581,7 @@
             const editLastname = document.getElementById("edit_lastname");
             const editEmail = document.getElementById("edit_it_email");
             const editArea = document.getElementById("edit_it_area");
+            const editCheckboxes = document.querySelectorAll(".edit-tech-service-checkbox"); // Checkboxes
 
             editButtons.forEach(button => {
                 button.addEventListener("click", (e) => {
@@ -543,6 +593,14 @@
                     editLastname.value = button.dataset.lastname;
                     editEmail.value = button.dataset.it_email;
                     editArea.value = button.dataset.it_area;
+
+                    // Automatically check the correct Checkboxes
+                    const techServicesStr = button.dataset.tech_services || '';
+                    const selectedServices = techServicesStr.split(',').map(item => item.trim());
+                    
+                    editCheckboxes.forEach(checkbox => {
+                        checkbox.checked = selectedServices.includes(checkbox.value);
+                    });
 
                     // Update form action dynamically
                     editForm.action = `/tech_personnel/${id}`;

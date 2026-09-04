@@ -24,6 +24,9 @@ class PermissionSeeder extends Seeder
 
             'view_all_tickets',
             'create_ticket',
+            'filter_ticket_by_region',
+            'filter_ticket_by_status',
+            'filter_ticket_by_priority',
             'reassign_ticket',
             'update_status_ticket',
             'delete_ticket',

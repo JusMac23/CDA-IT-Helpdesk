@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Divisions extends Model
 {
- use HasFactory;
+    use HasFactory;
 
     protected $table = 'divisions';
-
     protected $primaryKey = 'div_id';
+    public $timestamps = false; 
 
     protected $fillable = [
         'sections_divisions',

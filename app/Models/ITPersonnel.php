@@ -21,6 +21,7 @@ class ITPersonnel extends Model
         'lastname',
         'it_area',
         'it_email',
+        'tech_services_category',
         'date_added',
         'date_updated'
     ];

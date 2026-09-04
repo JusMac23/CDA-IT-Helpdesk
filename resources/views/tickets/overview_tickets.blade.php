@@ -3,9 +3,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     
     @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin']))
-    <style>
+   <style>
         /* --- Theme Variables --- */
         :root {
+            --bg-main: #f1f5f9;
             --card-bg: #ffffff;
             --bg-alt: #f8fafc;
             --text-dark: #0f172a;
@@ -28,6 +29,7 @@
         }
 
         body.dark {
+            --bg-main: #020617;
             --card-bg: #0f172a; 
             --bg-alt: #1e293b; 
             --text-dark: #f8fafc;
@@ -51,7 +53,7 @@
 
         /* Global Box Sizing & Font Fix */
         *, *::before, *::after { box-sizing: border-box; }
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; transition: background-color 0.3s ease, color 0.3s ease; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: var(--bg-main); color: var(--text-main); transition: background-color 0.3s ease, color 0.3s ease; margin: 0; padding: 0; }
 
         /* Dashboard Container */
         .dashboard-panel { background-color: var(--card-bg); border-radius: 1rem; border: 1px solid var(--border-light); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03); padding: 2rem; width: 100%; transition: background-color 0.3s ease, border-color 0.3s ease; }
@@ -82,7 +84,7 @@
         
         /* Grid Tables (Middle Section) */
         .tables-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
-        .table-card { background-color: var(--card-bg); border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 1.5rem; border: 1px solid var(--border-light); border-top: 4px solid #cbd5e1; overflow: hidden; display: flex; flex-direction: column; transition: all 0.3s ease; }
+        .table-card { background-color: var(--card-bg); border-radius: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); padding: 1.5rem; border: 1px solid var(--border-light); border-top: 4px solid var(--border-light); overflow: hidden; display: flex; flex-direction: column; transition: all 0.3s ease; }
         .table-card-title { font-size: 1.15rem; font-weight: 700; margin-top: 0; margin-bottom: 1.25rem; color: var(--text-dark); display: flex; align-items: center; gap: 0.75rem; transition: color 0.3s ease; }
         
         /* Accent Colors for Table Cards */
@@ -117,6 +119,12 @@
         .badge-blue { background-color: var(--badge-blue-bg); color: var(--badge-blue-text); }
         .badge-gray { background-color: var(--badge-gray-bg); color: var(--badge-gray-text); }
 
+        /* Export PDF Button - Variable Fix */
+        .export-container { display: flex; justify-content: flex-end; margin: 12px 0; }
+        .btn-export-pdf { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background-color: var(--card-bg); color: var(--text-dark); border: 1px solid var(--border-light); border-radius: 8px; font-size: 0.875rem; font-weight: 500; text-decoration: none; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); transition: all 0.2s ease-in-out; }
+        .btn-export-pdf:hover { background-color: var(--bg-alt); border-color: var(--border-light); transform: translateY(-1px); }
+        .btn-export-pdf .material-symbols-outlined { font-size: 1.15rem; color: #ef4444; }
+
         /* General Mobile Responsiveness */
         @media (max-width: 640px) {
             .dashboard-panel { padding: 1.25rem; }
@@ -133,6 +141,13 @@
             <div class="dashboard-panel">
                 
                 <h3 class="dashboard-title">Tickets Overview</h3>
+
+                <div class="export-container">
+                    <a href="{{ route('tickets.export_pdf') }}" class="btn-export-pdf">
+                        <span class="material-symbols-outlined">download</span>
+                        Export Report
+                    </a>
+                </div>
 
                 {{-- Dashboard Cards --}}
                 <div class="stat-cards">

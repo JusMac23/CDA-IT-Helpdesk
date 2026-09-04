@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class RegionEmail extends Model
 {
- use HasFactory;
+    use HasFactory;
 
     protected $table = 'region_email';
-
     protected $primaryKey = 'area_id';
+    public $timestamps = false; 
 
     protected $fillable = [
         'region',

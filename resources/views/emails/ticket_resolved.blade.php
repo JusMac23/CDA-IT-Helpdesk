@@ -22,10 +22,14 @@ Hello {{ $ticket->it_personnel }},
 
 This is a confirmation that the ticket has been successfully resolved.
 
-Click the link below to upload your e-signature:
+Click Upload Signature below to upload your e-signature:
 
 @component('mail::button', ['url' => route('tickets.personnel_signature', $ticket->ticket_id)])
 Upload Signature
+@endcomponent
+
+@component('mail::button', ['url' => 'https://docs.google.com/forms/d/e/1FAIpQLSf4wzO96Dzzoj68n0OIYvEYRupsHZLPxnn8QHBV8jRWjSpzqQ/viewform'])
+Feedback Form
 @endcomponent
 
 **Ticket Number:** {{ $ticket->ticket_number }}  

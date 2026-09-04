@@ -1,7 +1,24 @@
+@php
+    // Dynamically set the logo link based on role so non-admins don't get 403 errors
+    $logoUrl = url('/');
+    if (auth()->check()) {
+        $user = auth()->user();
+        if ($user->hasRole('Super Admin')) {
+            $logoUrl = route('overview_tickets.index');
+        } elseif ($user->hasRole('Client')) {
+            $logoUrl = route('myrequested_tickets.index');
+        } elseif ($user->hasRole('ICTS')) {
+            $logoUrl = route('tickets.index');
+        } elseif ($user->hasAnyRole(['DPO', 'DBRT'])) {
+            $logoUrl = route('databreach.index');
+        }
+    }
+@endphp
+
 <aside class="sidebar" :class="{ 'collapsed': !sidebarOpen, 'mobile-open': mobileSidebarOpen }">
     
     <div class="sidebar-header">
-        <a href="{{ route('overview_tickets.index') }}" style="display: flex; align-items: center; color: white; width: 100%;">
+        <a href="{{ $logoUrl }}" style="display: flex; align-items: center; color: white; width: 100%;">
             <img src="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" alt="CDA Logo" class="sidebar-logo">
             <div class="sidebar-brand">
                 <span class="sidebar-brand-title">CDA-ICT Helpdesk</span>
@@ -13,8 +30,7 @@
     </div>
 
     <nav class="sidebar-nav">
-
-        @if(auth()->user()->canAny(['view_all_tickets', 'view_myrequested_tickets', 'view_assignedtome_tickets', 'view_reassigned_tickets']))
+        @if(auth()->user()->canAny(['view_all_tickets', 'view_overview_tickets', 'view_myrequested_tickets', 'view_assignedtome_tickets']))
         <div x-data="{ 
             open: {{ request()->routeIs('*tickets.index') ? 'true' : 'false' }},
             toggleMenu() {
@@ -22,6 +38,7 @@
                 this.open = !this.open;
             }
         }">
+
             <button @click="toggleMenu()" title="Ticket Management" class="nav-link {{ request()->routeIs('*tickets.index') ? 'active' : '' }}">
                 <span class="material-symbols-outlined">confirmation_number</span>
                 <span class="nav-text">Ticket Management</span>
@@ -42,7 +59,7 @@
                 @if(auth()->user()->can('view_all_tickets'))
                 <li>
                     <a href="{{ route('tickets.index') }}" class="submenu-link {{ request()->routeIs('tickets.index') ? 'active' : '' }}">
-                        <span class="submenu-dot"></span> <span class="submenu-text">All Tickets Reports</span>
+                        <span class="submenu-dot"></span> <span class="submenu-text">All Tickets</span>
                     </a>
                 </li>
                 @endif
@@ -74,6 +91,7 @@
         </div>
         @endif
 
+        @if(auth()->user()->canAny(['view_overview_databreach', 'view_all_databreach', 'view_dbrt']))
         <div x-data="{ 
             open: {{ (request()->routeIs('databreach.*') || request()->is('overview_databreach*')) ? 'true' : 'false' }},
             toggleMenu() {
@@ -81,8 +99,9 @@
                 this.open = !this.open;
             }
         }">
+
             <button @click="toggleMenu()" title="Incident Management" class="nav-link {{ (request()->routeIs('databreach.*') || request()->is('overview_databreach*')) ? 'active' : '' }}">
-                <span class="material-symbols-outlined">bug_report</span>
+                <span class="material-symbols-outlined">shield_radar</span>
                 <span class="nav-text">Incident Management</span>
                 <svg class="chevron" :class="open ? 'open' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -115,6 +134,7 @@
                 @endif
             </ul>
         </div>
+        @endif
 
         @if(auth()->user()->canAny(['view_technical_personnel', 'view_technical_services', 'view_tech_users', 'view_roles']))
             <div class="nav-label">System Setup</div>

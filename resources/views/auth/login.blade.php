@@ -11,6 +11,12 @@
         .custom-input:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 1px #2563eb; }
         .custom-input::placeholder { color: #9ca3af; }
 
+        /* password toggle styles */
+        .password-wrapper { position: relative; display: block; }
+        .password-wrapper .custom-input { padding-right: 2.5rem; /* make room for the icon */ }
+        .toggle-password { position: absolute; top: 50%; right: 0.85rem; transform: translateY(-50%); cursor: pointer; color: #6b7280; font-size: 1rem; transition: color 0.2s; }
+        .toggle-password:hover { color: #374151; }
+
         /* helpers */
         .flex-between{ display:flex;align-items:center;justify-content:space-between;font-size:.875rem;margin:.5rem 0 1.5rem; }
         .remember-wrap{ display:inline-flex;align-items:center;cursor:pointer; }
@@ -67,9 +73,14 @@
             {{-- Password --}}
             <div class="form-group">
                 <label for="password" class="form-label">Password</label>
-                <input id="password" class="custom-input"
-                    type="password" name="password" required autocomplete="current-password" 
-                    placeholder="Enter your password" />
+                <div class="password-wrapper">
+                    <input id="password" class="custom-input"
+                        type="password" name="password" required autocomplete="current-password" 
+                        placeholder="Enter your password" />
+                    
+                    {{-- Eye Icon Toggle --}}
+                    <i class="fa-regular fa-eye toggle-password" id="togglePassword"></i>
+                </div>
 
                 @if ($errors->has('password'))
                     <span class="error-text">{{ $errors->first('password') }}</span>
@@ -135,6 +146,24 @@
     <script src="/assets/js/sweetalert2.min.js"></script>
     
     <script>
+        // Password Toggle Logic
+        document.addEventListener('DOMContentLoaded', function () {
+            const togglePassword = document.querySelector('#togglePassword');
+            const password = document.querySelector('#password');
+
+            if (togglePassword && password) {
+                togglePassword.addEventListener('click', function () {
+                    // Toggle the type attribute
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+                    
+                    // Toggle the eye / eye-slash icon
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                });
+            }
+        });
+
         // SweetAlert Logic
         @if(session('success'))
             document.addEventListener('DOMContentLoaded', function () {

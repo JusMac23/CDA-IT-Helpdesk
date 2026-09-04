@@ -7,7 +7,8 @@ use App\Http\Controllers\TicketsController;
 use App\Http\Controllers\AssignedToMeController;
 use App\Http\Controllers\ReassignedTicketsController;
 use App\Http\Controllers\MyRequestedTicketsController;
-use App\Http\Controllers\CreateTicketController;
+use App\Http\Controllers\CreateTicketPublicController;
+use App\Http\Controllers\CreateTicketPrivateController;
 use App\Http\Controllers\UploadClientSignatureController;
 use App\Http\Controllers\UploadPersonnelSignatureController;
 use App\Http\Controllers\GenerateTSARController;
@@ -40,8 +41,8 @@ Route::middleware('web')->group(function () {
 });
 
 // Create Ticket (public)
-Route::get('/create_ticket', [CreateTicketController::class, 'showForm'])->name('tickets.create');
-Route::post('/create_ticket', [CreateTicketController::class, 'store'])->name('tickets.store.client');
+Route::get('/create_ticket', [CreateTicketPublicController::class, 'showForm'])->name('tickets.create');
+Route::post('/create_ticket', [CreateTicketPublicController::class, 'store'])->name('tickets.store.client');
 
 // Create Incident Report (public)
 Route::get('/create_incident', [CreateIncidentReportController::class, 'create'])->name('incident.create');
@@ -70,11 +71,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Ticket Management
     Route::get('/tickets', [TicketsController::class, 'index'])->name('tickets.index')
         ->middleware('permission:view_all_tickets|create_ticket|reassign_ticket|update_status_ticket|delete_ticket|search_ticket|generate_tsar|generate_report');
-    Route::post('/tickets/store', [TicketsController::class, 'store'])->name('tickets.store')->middleware('permission:create_ticket');
+    Route::post('/tickets/store', [CreateTicketPrivateController::class, 'store'])->name('tickets.store')->middleware('permission:create_ticket');
     Route::post('/tickets/assign', [TicketsController::class, 'assign'])->name('tickets.assign')->middleware('permission:reassign_ticket');
     Route::put('/tickets/{ticket_id}', [TicketsController::class, 'update'])->name('tickets.update')->middleware('permission:update_status_ticket');
     Route::delete('/tickets/{ticket_id}', [TicketsController::class, 'destroy'])->name('tickets.destroy')->middleware('permission:delete_ticket');
     Route::get('/tickets/{ticket_id}/generate-tsar', [GenerateTSARController::class, 'generateTSAR'])->name('tickets.generateTSAR')->middleware('permission:generate_tsar');
+
+    // Export Tickets Overview to CSV
+    Route::get('/dashboard/export-pdf', [TicketsOverviewController::class, 'exportPdf'])->name('tickets.export_pdf')->middleware('permission:generate_report');
 
     // Tickets Assigned per Technical Personnel
     Route::get('/tickets/assignedtome_tickets', [AssignedToMeController::class, 'index'])->name('assignedtome_tickets.index')
@@ -107,7 +111,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Generate Data Breach Report
     Route::get('/databreach/{id}/generate-pdf', [GenerateDocsController::class, 'generatePdf'])->name('databreach.generatePdf');
-
 
     // Create Data Breach Notification Per Region
     Route::get('/per_region_databreach', [DatabreachPerRegionController::class, 'index'])->name('databreach.per_region_databreach');

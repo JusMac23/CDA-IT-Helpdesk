@@ -92,13 +92,11 @@ class OAuthAuthentikController extends Controller
             // ----------------------------------------------------
             if ($user->hasRole('Super Admin')) {
                 return redirect()->route('overview_tickets.index');
-            }
-
-            if ($user->hasRole('User')) {
-                return redirect()->route('assignedtome_tickets.index');
-            }
-
-            if ($user->hasRole('DPO') || $user->hasRole('DBRT')) {
+            } elseif ($user->hasRole('Client')) {
+                return redirect()->route('myrequested_tickets.index');
+            } elseif ($user->hasRole(['ICTS', 'ICTD'])) {
+                return redirect()->route('all_tickets.index');
+            } elseif ($user->hasAnyRole(['DPO', 'DBRT'])) {
                 return redirect()->route('databreach.index');
             }
 

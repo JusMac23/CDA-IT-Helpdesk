@@ -9,15 +9,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'CDA-DBRS') }}</title>
+    <title>CDA-ICT Helpdesk</title>
     <link rel="icon" href="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" type="image/png">
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" />
-
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
     <script src="/assets/js/sweetalert2.min.js"></script>
 
@@ -26,7 +23,7 @@
         :root{--primary-dark:#0f172a;--secondary-dark:#1e293b;--accent-blue:#3b82f6;--accent-blue-hover:#2563eb;--alert-red:#ef4444;--alert-red-hover:#dc2626;--text-main:#f8fafc;--text-muted:#94a3b8;--glass-bg:rgba(15,23,42,.9);--glass-border:rgba(255,255,255,.1);--primary-blue:#1e40af;--primary-indigo:#4f46e5;--indigo-hover:#4338ca;--bg-body:#f9fafb;--text-body:#1f2937;--border-color:#d1d5db;--error-bg:#fee2e2;--error-text:#991b1b;--error-border:#ef4444;}
 
         /* base */
-        body{margin:0;font-family:'Figtree',ui-sans-serif,system-ui,-apple-system,sans-serif!important;color:var(--text-body);background-color:var(--bg-body);-webkit-font-smoothing:antialiased;}
+        body{margin:0;font-family: 'Inter', system-ui, -apple-system, sans-serif;color:var(--text-body);background-color:var(--bg-body);-webkit-font-smoothing:antialiased;}
         *{box-sizing:border-box;}
 
         /* animations */
@@ -78,7 +75,7 @@
 <header class="app-header">
     <div class="header-gradient"></div> <div class="container"> <h1 class="brand">
             <img src="{{ asset('images/CDA-logo-RA11364-PNG.png') }}" alt="CDA Seal" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Cooperative_Development_Authority_%28CDA%29.svg/1200px-Cooperative_Development_Authority_%28CDA%29.svg.png'" />
-            <span>CDA-DBRS</span>
+            <span>CDA-ICT Helpdesk</span>
         </h1>
     </div>
 </header>

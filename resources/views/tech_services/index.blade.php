@@ -237,6 +237,8 @@
                 <h3 class="title">All Technical Services</h3>
             </div>
 
+            <span style="margin-bottom: 1rem; display: block;">The resolution times per Category and Level, as may be applicable are presented in the table below.</span>
+
             <div class="action-container">
                 @can('create_technical_services')
                     <button id="openModal" class="btn btn-green">
@@ -254,30 +256,46 @@
                 @endcan
             </div>
 
+            @php
+                $canManage = auth()->user()->can('edit_technical_services') || auth()->user()->can('delete_technical_services');
+            @endphp
+
             <div class="table-container">
                 <table class="data-table">
                     <thead>
                         <tr>
                             <th>Technical Services Description</th>
-                            @can('edit_technical_services')
-                            <th class="text-center" @if(auth()->user()->can('edit_technical_services') && auth()->user()->can('delete_technical_services')) style="text-align: center;" @endif>Actions</th>
-                            @endcan
+                            <th>Low</th>
+                            <th>Medium</th>
+                            <th>High</th>
+                            <th>Critical</th>
+                            @if($canManage)
+                                <th class="text-center">Actions</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($technical_services as $tech_services)
                             <tr>
                                 <td>{{ $tech_services->technical_services }}</td>
-                                
-                                @if(auth()->user()->can('edit_technical_services') || auth()->user()->can('delete_technical_services'))
+                                <td>{{ $tech_services->low_resolution_time }}</td>
+                                <td>{{ $tech_services->medium_resolution_time }}</td>
+                                <td>{{ $tech_services->high_resolution_time }}</td>
+                                <td>{{ $tech_services->critical_resolution_time }}</td>
+
+                                @if($canManage)
                                 <td>
-                                    <div class="action-cell" @if(auth()->user()->can('edit_technical_services') && auth()->user()->can('delete_technical_services')) style="justify-content: center;" @endif>
+                                    <div class="action-cell" style="display: flex; justify-content: center; gap: 0.5rem;">
                                         
                                         {{-- Edit Button --}}
                                         @can('edit_technical_services')
                                             <button type="button" class="action-link link-blue editBtn"
                                                 data-id="{{ $tech_services->id }}"
-                                                data-technical_services="{{ $tech_services->technical_services }}">
+                                                data-technical_services="{{ $tech_services->technical_services }}"
+                                                data-low_resolution_time="{{ $tech_services->low_resolution_time }}"
+                                                data-medium_resolution_time="{{ $tech_services->medium_resolution_time }}"
+                                                data-high_resolution_time="{{ $tech_services->high_resolution_time }}"
+                                                data-critical_resolution_time="{{ $tech_services->critical_resolution_time }}">
                                                 <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">edit</span> Edit
                                             </button>
                                         @endcan
@@ -298,7 +316,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="2" class="text-center" style="padding: 3rem; color: var(--text-muted); font-size: 1rem;">
+                                <td colspan="{{ $canManage ? 6 : 5 }}" class="text-center" style="padding: 3rem; color: var(--text-muted); font-size: 1rem;">
                                     No Technical Services found.
                                 </td>
                             </tr>
@@ -336,19 +354,40 @@
                 @csrf
                 <div class="form-grid">
                     <div class="form-group col-span-2">
-                        <label for="technical_services" class="form-label">Technical Services</label>
-                        <input type="text" name="technical_services" id="technical_services" required class="form-input" autocomplete="off">
+                        <label for="technical_services" class="form-label">Technical Services Description</label>
+                        <input type="text" name="technical_services" id="technical_services" required class="form-input" autocomplete="off" placeholder="e.g. Cybersecurity Incident Management">
+                    </div>
+
+                    {{-- SLA Fields --}}
+                    <div class="form-group">
+                        <label for="low_resolution_time" class="form-label">Low Level SLA</label>
+                        <input type="text" name="low_resolution_time" id="low_resolution_time" class="form-input" autocomplete="off" placeholder="e.g. 1 day 30 mins or N/A">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="medium_resolution_time" class="form-label">Medium Level SLA</label>
+                        <input type="text" name="medium_resolution_time" id="medium_resolution_time" class="form-input" autocomplete="off" placeholder="e.g. 4 hours 30 mins">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="high_resolution_time" class="form-label">High Level SLA</label>
+                        <input type="text" name="high_resolution_time" id="high_resolution_time" class="form-input" autocomplete="off" placeholder="e.g. 2 hours 30 mins">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="critical_resolution_time" class="form-label">Critical Level SLA</label>
+                        <input type="text" name="critical_resolution_time" id="critical_resolution_time" class="form-input" autocomplete="off" placeholder="e.g. 1 hour 30 mins">
                     </div>
 
                     <div class="form-group col-span-2">
-                        <label for="added_at" class="form-label">Date Added</label>
+                        <label class="form-label">Date Added</label>
                         <input type="text" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input">
-                        <input type="hidden" name="added_at" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('Y-m-d') }}">
+                        <input type="hidden" name="added_at" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('Y-m-d H:i:s') }}">
                     </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-indigo"></i> Submit Service</button>
+                    <button type="submit" class="btn btn-indigo">Submit Service</button>
                     <button type="button" class="btn btn-gray" id="cancelAddModal">Cancel</button>
                 </div>
             </form>
@@ -378,14 +417,35 @@
                 @method('PUT')
                 <div class="form-grid">
                     <div class="form-group col-span-2">
-                        <label for="edit_technical_services" class="form-label">Technical Services</label>
+                        <label for="edit_technical_services" class="form-label">Technical Services Description</label>
                         <input type="text" name="technical_services" id="edit_technical_services" required class="form-input" autocomplete="off">
+                    </div>
+
+                    {{-- SLA Fields --}}
+                    <div class="form-group">
+                        <label for="edit_low_resolution_time" class="form-label">Low Level SLA</label>
+                        <input type="text" name="low_resolution_time" id="edit_low_resolution_time" class="form-input" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_medium_resolution_time" class="form-label">Medium Level SLA</label>
+                        <input type="text" name="medium_resolution_time" id="edit_medium_resolution_time" class="form-input" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_high_resolution_time" class="form-label">High Level SLA</label>
+                        <input type="text" name="high_resolution_time" id="edit_high_resolution_time" class="form-input" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="edit_critical_resolution_time" class="form-label">Critical Level SLA</label>
+                        <input type="text" name="critical_resolution_time" id="edit_critical_resolution_time" class="form-input" autocomplete="off">
                     </div>
 
                     <div class="form-group col-span-2">
                         <label class="form-label">Date Updated</label>
                         <input type="text" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input">
-                        <input type="hidden" name="added_at" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('Y-m-d') }}">
+                        <input type="hidden" name="updated_at" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('Y-m-d H:i:s') }}">
                     </div>
                 </div>
 
@@ -432,7 +492,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Validation Error',
-                    html: `{!! implode('<br>', $errors->all()) !!}`,
+                    html: @json($errors->all()).join('<br>'),
                     showConfirmButton: true,
                     confirmButtonColor: '#4f46e5',
                     background: getComputedColor('--card-bg'),
@@ -440,7 +500,7 @@
                 });
             @endif
 
-            // Add Modal Toggles
+            // --- ADD MODAL TOGGLES ---
             const addModal = document.getElementById("servicesModal");
             const openAddBtn = document.getElementById("openModal");
             const closeAddBtn = document.getElementById("closeModal");
@@ -454,11 +514,12 @@
             }
 
             const closeAddModalFunc = () => { 
-                if(addModal) {
+                if (addModal) {
                     addModal.classList.add("hidden");
                     document.body.classList.remove("overflow-hidden");
                 }
             };
+
             if (closeAddBtn) closeAddBtn.addEventListener("click", closeAddModalFunc);
             if (cancelAddBtn) cancelAddBtn.addEventListener("click", closeAddModalFunc);
 
@@ -468,39 +529,51 @@
                 });
             }
 
-            // Edit Modal Toggles
+            // --- EDIT MODAL TOGGLES ---
             const editModal = document.getElementById("editModal");
             const closeEditBtn = document.getElementById("closeEditModal");
             const cancelEditBtn = document.getElementById("cancelEditModal");
             const editButtons = document.querySelectorAll(".editBtn");
             const editForm = document.getElementById("editForm");
-            const editTechnicalservices = document.getElementById("edit_technical_services");
+
+            // Input references for Edit Modal
+            const editTechnicalServices = document.getElementById("edit_technical_services");
+            const editLowRes = document.getElementById("edit_low_resolution_time");
+            const editMediumRes = document.getElementById("edit_medium_resolution_time");
+            const editHighRes = document.getElementById("edit_high_resolution_time");
+            const editCriticalRes = document.getElementById("edit_critical_resolution_time");
 
             editButtons.forEach(button => {
                 button.addEventListener("click", (e) => {
                     e.preventDefault();
 
                     const id = button.dataset.id;
-                    const technical_services = button.dataset.technical_services;
 
-                    // Fill modal inputs
-                    editTechnicalservices.value = technical_services;
+                    // Populate modal text and SLA input fields from button data attributes
+                    if (editTechnicalServices) editTechnicalServices.value = button.dataset.technical_services || '';
+                    if (editLowRes) editLowRes.value = button.dataset.low_resolution_time || '';
+                    if (editMediumRes) editMediumRes.value = button.dataset.medium_resolution_time || '';
+                    if (editHighRes) editHighRes.value = button.dataset.high_resolution_time || '';
+                    if (editCriticalRes) editCriticalRes.value = button.dataset.critical_resolution_time || '';
 
-                    // Update form action dynamically
-                    editForm.action = `/tech_services/${id}`;
+                    // Update form action route dynamically
+                    if (editForm) editForm.action = `/tech_services/${id}`;
 
                     // Show modal
-                    editModal.classList.remove("hidden");
-                    document.body.classList.add("overflow-hidden");
+                    if (editModal) {
+                        editModal.classList.remove("hidden");
+                        document.body.classList.add("overflow-hidden");
+                    }
                 });
             });
 
             const closeEditModalFunc = () => { 
-                if(editModal) {
+                if (editModal) {
                     editModal.classList.add("hidden");
                     document.body.classList.remove("overflow-hidden");
                 }
             };
+
             if (closeEditBtn) closeEditBtn.addEventListener("click", closeEditModalFunc);
             if (cancelEditBtn) cancelEditBtn.addEventListener("click", closeEditModalFunc);
 
@@ -510,7 +583,7 @@
                 });
             }
 
-            // Delete confirmation
+            // --- DELETE CONFIRMATION ---
             document.querySelectorAll('.delete-btn').forEach(function (button) {
                 button.addEventListener('click', function (event) {
                     event.preventDefault();
@@ -535,7 +608,7 @@
                 });
             });
             
-            // Allow closing modals with Escape key
+            // --- KEYBOARD ACCESSIBILITY (ESC KEY) ---
             document.addEventListener('keydown', function(event) {
                 if (event.key === "Escape") {
                     closeAddModalFunc();

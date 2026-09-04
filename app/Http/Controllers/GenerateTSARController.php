@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Response;
-
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 use App\Models\Tickets;
@@ -52,7 +52,7 @@ class GenerateTSARController extends Controller
         $pdf->Cell(79.6, 7, 'Date Request:', 'LTR', 1);
         $pdf->SetFont('Arial', '', 8);
         $pdf->Cell(79.6, 10, $t->division, 'LR', 0);
-        $pdf->Cell(79.6, 10, Carbon::parse($t->date_created)->format('M d, Y h:i A'), 'LR', 1);
+        $pdf->Cell(79.6, 10, $t->date_created ? Carbon::parse($t->date_created)->format('M d, Y h:i A') : '', 'LR', 1);
         $pdf->Cell(159.2, 0, '', 'T', 1);
 
         $pdf->SetFont('Arial', 'B', 8);
@@ -98,23 +98,33 @@ class GenerateTSARController extends Controller
         $xLeft = 25.4;        
         $xRight = $xLeft + 79.6; 
 
-        // Show signature if it exists and file is found
-        if ($t->client_signature && file_exists(public_path('storage/' . $t->client_signature))) {
-            $pdf->Image(public_path('storage/' . $t->client_signature), $xLeft + 5, $ySignature, $signatureWidth, $signatureHeight);
-            $yAfterSignature = $ySignature + $signatureHeight; 
-        } else {
-            $yAfterSignature = $ySignature + 10;
+        // Resolve signature image paths (handles local file paths and Base64 URIs)
+        $tempFiles = [];
+        $clientSigPath = $this->resolveSignaturePath($t->client_signature, $tempFiles);
+        $personnelSigPath = $this->resolveSignaturePath($t->personnel_signature, $tempFiles);
+
+        // Render Client Signature
+        if ($clientSigPath) {
+            $pdf->Image($clientSigPath, $xLeft + 20, $ySignature, $signatureWidth, $signatureHeight);
         }
 
-        if ($t->personnel_signature && file_exists(public_path('storage/' . $t->personnel_signature))) {
-            $pdf->Image(public_path('storage/' . $t->personnel_signature), $xRight + 5, $ySignature, $signatureWidth, $signatureHeight);
+        // Render Personnel Signature
+        if ($personnelSigPath) {
+            $pdf->Image($personnelSigPath, $xRight + 20, $ySignature, $signatureWidth, $signatureHeight);
         }
 
-        $pdf->Cell(79.6, 7, strtoupper($t->firstname . ' ' . $t->lastname . ' ' . Carbon::parse($t->date_created)->format('m/d/Y')), 0, 0, 'C');
-        $pdf->Cell(79.6, 7, strtoupper($t->it_personnel . ' ' . Carbon::parse($t->date_resolved)->format('m/d/Y')), 0, 1, 'C');
+        // Move PDF Y-cursor directly below signature images before rendering text
+        $pdf->SetY($ySignature + $signatureHeight + 1);
+
+        $clientDate = $t->date_created ? Carbon::parse($t->date_created)->format('m/d/Y') : '';
+        $personnelDate = $t->date_resolved ? Carbon::parse($t->date_resolved)->format('m/d/Y') : '';
+
+        $pdf->Cell(79.6, 5, strtoupper(trim($t->firstname . ' ' . $t->lastname)) . ($clientDate ? ' ' . $clientDate : ''), 0, 0, 'C');
+        $pdf->Cell(79.6, 5, strtoupper(trim($t->it_personnel)) . ($personnelDate ? ' ' . $personnelDate : ''), 0, 1, 'C');
+        
         $pdf->SetFont('Arial', '', 8);
-        $pdf->Cell(79.6, 7, 'Name/Signature of Responsible Staff/Date', 0, 0, 'C');
-        $pdf->Cell(79.6, 7, 'Name/Signature of ICT Personnel/Date', 0, 1, 'C');
+        $pdf->Cell(79.6, 5, 'Name/Signature of Responsible Staff/Date', 0, 0, 'C');
+        $pdf->Cell(79.6, 5, 'Name/Signature of ICT Personnel/Date', 0, 1, 'C');
 
         $pdf->Ln(10);
 
@@ -129,9 +139,57 @@ class GenerateTSARController extends Controller
         $pdf->SetFont('Arial', 'B', 8);
         $pdf->Cell(29.6, 7, 'https:bit.ly/3NCfJCV', 0, 1);
 
+        // Output PDF
+        $pdfOutput = $pdf->Output('TSAR_'.$t->ticket_number.'.pdf', 'S');
 
-        // Output PDF inline
-        return response($pdf->Output('TSAR_'.$t->ticket_number.'.pdf', 'S'), 200)
-                ->header('Content-Type', 'application/pdf');
+        // Cleanup temporary base64 signature files if generated
+        foreach ($tempFiles as $tempFile) {
+            if (file_exists($tempFile)) {
+                @unlink($tempFile);
+            }
+        }
+
+        return response($pdfOutput, 200)
+            ->header('Content-Type', 'application/pdf');
+    }
+
+    /**
+     * Resolves physical file path for signature data (supports local paths & Base64 URIs).
+     */
+    private function resolveSignaturePath($signatureData, &$tempFiles = [])
+    {
+        if (empty($signatureData)) {
+            return null;
+        }
+
+        // Case 1: Base64 Encoded Image Data (e.g., data:image/png;base64,...)
+        if (Str::startsWith($signatureData, 'data:image')) {
+            $parts = explode(',', $signatureData);
+            if (count($parts) > 1) {
+                $decoded = base64_decode($parts[1]);
+                $tempPath = sys_get_temp_dir() . '/sig_' . uniqid() . '.png';
+                file_put_contents($tempPath, $decoded);
+                $tempFiles[] = $tempPath;
+                return $tempPath;
+            }
+        }
+
+        // Case 2: Standard File Path
+        $cleanPath = ltrim(str_replace(['public/', 'storage/'], '', $signatureData), '/');
+
+        $possiblePaths = [
+            storage_path('app/public/' . $cleanPath),
+            public_path('storage/' . $cleanPath),
+            public_path($signatureData),
+            storage_path('app/' . $signatureData),
+        ];
+
+        foreach ($possiblePaths as $path) {
+            if (file_exists($path) && is_file($path)) {
+                return $path;
+            }
+        }
+
+        return null;
     }
 }
