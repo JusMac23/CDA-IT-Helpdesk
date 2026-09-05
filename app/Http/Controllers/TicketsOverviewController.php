@@ -8,9 +8,10 @@ use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 use App\Models\Tickets;
+use App\Models\TechnicalServices;
 
 use App\PDF\TSARpdf;
-use FPDF; 
+use FPDF;
 
 class TicketsOverviewController extends Controller
 {
@@ -18,13 +19,12 @@ class TicketsOverviewController extends Controller
     {
         // Total ticket counts
         $total = Tickets::count();
-        $pending = Tickets::whereIn('status', ['Pending', 'Pending/Re-Assigned'])->count();
+        $pending = Tickets::whereIn('status', ['Pending', 'Pending/Re-Assigned', 'Pending / Re-Assigned', 'Pending/Reassigned'])->count();
         $resolved = Tickets::where('status', 'Resolved')->count();
 
-        // Count overdue (older than 3 days and not resolved)
-        $overdue = Tickets::whereIn('status', ['Pending', 'Pending/Re-Assigned'])
-            ->whereDate('date_created', '<', now()->subDays(3))
-            ->count();
+        // Calculate dynamic overdue tickets
+        $overdueCollection = $this->getOverdueTicketsCollection();
+        $overdue = $overdueCollection->count();
 
         // Group by IT Area
         $byItArea = DB::table('tickets')
@@ -50,12 +50,8 @@ class TicketsOverviewController extends Controller
             ->limit(5)
             ->get();
 
-        // Overdue Tickets per Personnel (grouped)
-        $overdueTickets = Tickets::where('status', '!=', 'Resolved')
-            ->whereDate('date_created', '<', Carbon::now()->subDays(3))
-            ->orderBy('it_personnel')
-            ->get()
-            ->groupBy('it_personnel');
+        // Overdue Tickets per Personnel (grouped by IT Personnel)
+        $overdueTickets = $overdueCollection->sortBy('it_personnel')->groupBy('it_personnel');
 
         return view('tickets.overview_tickets', compact(
             'total',
@@ -72,15 +68,14 @@ class TicketsOverviewController extends Controller
 
     public function exportPdf()
     {
-        // 1. Fetch Metrics & Data (Aligned exactly with index() logic)
+        // 1. Fetch Metrics & Data
         $total    = Tickets::count();
-        $pending  = Tickets::whereIn('status', ['Pending', 'Pending/Re-Assigned'])->count();
+        $pending  = Tickets::whereIn('status', ['Pending', 'Pending/Re-Assigned', 'Pending / Re-Assigned', 'Pending/Reassigned'])->count();
         $resolved = Tickets::where('status', 'Resolved')->count();
 
-        // Count overdue (older than 3 days and not resolved)
-        $overdue = Tickets::whereIn('status', ['Pending', 'Pending/Re-Assigned'])
-            ->whereDate('date_created', '<', now()->subDays(3))
-            ->count();
+        // Calculate dynamic overdue tickets
+        $overdueCollection = $this->getOverdueTicketsCollection();
+        $overdue = $overdueCollection->count();
 
         // Group by IT Area
         $byItArea = DB::table('tickets')
@@ -100,11 +95,8 @@ class TicketsOverviewController extends Controller
             ->groupBy('service')
             ->get();
 
-        // Overdue Tickets List (Flat list for PDF table iteration)
-        $overdueTickets = Tickets::where('status', '!=', 'Resolved')
-            ->whereDate('date_created', '<', Carbon::now()->subDays(3))
-            ->orderBy('it_personnel')
-            ->get();
+        // Overdue Tickets List (Flat indexed collection for PDF iteration)
+        $overdueTickets = $overdueCollection->sortBy('it_personnel')->values();
 
         // 2. Initialize FPDF Instance
         $pdf = new FPDF('P', 'mm', 'A4');
@@ -288,7 +280,7 @@ class TicketsOverviewController extends Controller
             // Right Side: Overdue Tickets
             $pdf->SetX(108);
             if (isset($overdueTickets[$i])) {
-                $reqDetail = $overdueTickets[$i]->request ?? $overdueTickets[$i]->subject ?? 'Ticket #' . $overdueTickets[$i]->id;
+                $reqDetail = $overdueTickets[$i]->request ?? 'Ticket #' . ($overdueTickets[$i]->ticket_id ?? $overdueTickets[$i]->ticket_number);
                 $pdf->Cell(60, 6, ' ' . substr($reqDetail, 0, 30), 1, 0, 'L');
                 $personnel = $overdueTickets[$i]->it_personnel ?? 'Unassigned';
                 $pdf->Cell(32, 6, ' ' . substr($personnel, 0, 17), 1, 1, 'L');
@@ -313,5 +305,71 @@ class TicketsOverviewController extends Controller
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
         ]);
+    }
+
+    /**
+     * Helper Method: Fetches all Pending tickets that have exceeded their dynamic SLA deadline.
+     */
+    private function getOverdueTicketsCollection()
+    {
+        $currentTime = Carbon::now('Asia/Manila');
+
+        // Fetch Technical Services mapped by technical_services name
+        $allTechServices = TechnicalServices::all()->keyBy(function ($item) {
+            return strtolower(trim($item->technical_services));
+        });
+
+        $pendingStatuses = [
+            'Pending',
+            'Pending/Re-Assigned',
+            'Pending / Re-Assigned',
+            'Pending/Reassigned',
+            'pending',
+            'pending/re-assigned'
+        ];
+
+        // Retrieve pending tickets
+        $pendingTickets = Tickets::whereIn('status', $pendingStatuses)->get();
+
+        return $pendingTickets->filter(function ($ticket) use ($allTechServices, $currentTime) {
+            $serviceName = strtolower(trim($ticket->service ?? ''));
+            $priorityKey = strtolower(trim($ticket->priority ?? ''));
+
+            if (!isset($allTechServices[$serviceName])) {
+                return false;
+            }
+
+            if (!in_array($priorityKey, ['low', 'medium', 'high', 'critical'], true)) {
+                return false;
+            }
+
+            $slaTimeStr = $allTechServices[$serviceName]->{$priorityKey} ?? null;
+
+            if (empty($slaTimeStr) || strtoupper(trim($slaTimeStr)) === 'N/A') {
+                return false;
+            }
+
+            try {
+                $createdAt = Carbon::parse($ticket->date_created, 'Asia/Manila');
+            } catch (\Exception $e) {
+                return false;
+            }
+
+            $deadline = $createdAt->copy();
+
+            // Extract SLA duration values
+            if (preg_match('/(\d+)\s*days?/', $slaTimeStr, $matches)) {
+                $deadline->addDays((int)$matches[1]);
+            }
+            if (preg_match('/(\d+)\s*hours?/', $slaTimeStr, $matches)) {
+                $deadline->addHours((int)$matches[1]);
+            }
+            if (preg_match('/(\d+)\s*mins?/', $slaTimeStr, $matches)) {
+                $deadline->addMinutes((int)$matches[1]);
+            }
+
+            // Flag as overdue if current time exceeds calculated SLA deadline
+            return $currentTime->greaterThan($deadline);
+        });
     }
 }

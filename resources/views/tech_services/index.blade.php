@@ -237,7 +237,7 @@
                 <h3 class="title">All Technical Services</h3>
             </div>
 
-            <span style="margin-bottom: 1rem; display: block;">The resolution times per Category and Level, as may be applicable are presented in the table below.</span>
+            <span style="margin-bottom: 1rem; display: block;">The Resolution Times per Category and Level, as may be applicable are presented in the table below.</span>
 
             <div class="action-container">
                 @can('create_technical_services')
@@ -278,10 +278,10 @@
                         @forelse ($technical_services as $tech_services)
                             <tr>
                                 <td>{{ $tech_services->technical_services }}</td>
-                                <td>{{ $tech_services->low_resolution_time }}</td>
-                                <td>{{ $tech_services->medium_resolution_time }}</td>
-                                <td>{{ $tech_services->high_resolution_time }}</td>
-                                <td>{{ $tech_services->critical_resolution_time }}</td>
+                                <td>{{ $tech_services->low }}</td>
+                                <td>{{ $tech_services->medium }}</td>
+                                <td>{{ $tech_services->high }}</td>
+                                <td>{{ $tech_services->critical }}</td>
 
                                 @if($canManage)
                                 <td>
@@ -292,10 +292,10 @@
                                             <button type="button" class="action-link link-blue editBtn"
                                                 data-id="{{ $tech_services->id }}"
                                                 data-technical_services="{{ $tech_services->technical_services }}"
-                                                data-low_resolution_time="{{ $tech_services->low_resolution_time }}"
-                                                data-medium_resolution_time="{{ $tech_services->medium_resolution_time }}"
-                                                data-high_resolution_time="{{ $tech_services->high_resolution_time }}"
-                                                data-critical_resolution_time="{{ $tech_services->critical_resolution_time }}">
+                                                data-low="{{ $tech_services->low }}"
+                                                data-medium="{{ $tech_services->medium }}"
+                                                data-high="{{ $tech_services->high }}"
+                                                data-critical="{{ $tech_services->critical }}">
                                                 <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">edit</span> Edit
                                             </button>
                                         @endcan
@@ -360,23 +360,23 @@
 
                     {{-- SLA Fields --}}
                     <div class="form-group">
-                        <label for="low_resolution_time" class="form-label">Low Level SLA</label>
-                        <input type="text" name="low_resolution_time" id="low_resolution_time" class="form-input" autocomplete="off" placeholder="e.g. 1 day 30 mins or N/A">
+                        <label for="low" class="form-label">Low Level SLA</label>
+                        <input type="text" name="low" id="low" class="form-input" autocomplete="off" placeholder="e.g. 1 day 30 mins or N/A">
                     </div>
 
                     <div class="form-group">
-                        <label for="medium_resolution_time" class="form-label">Medium Level SLA</label>
-                        <input type="text" name="medium_resolution_time" id="medium_resolution_time" class="form-input" autocomplete="off" placeholder="e.g. 4 hours 30 mins">
+                        <label for="medium" class="form-label">Medium Level SLA</label>
+                        <input type="text" name="medium" id="medium" class="form-input" autocomplete="off" placeholder="e.g. 4 hours 30 mins">
                     </div>
 
                     <div class="form-group">
-                        <label for="high_resolution_time" class="form-label">High Level SLA</label>
-                        <input type="text" name="high_resolution_time" id="high_resolution_time" class="form-input" autocomplete="off" placeholder="e.g. 2 hours 30 mins">
+                        <label for="high" class="form-label">High Level SLA</label>
+                        <input type="text" name="high" id="high" class="form-input" autocomplete="off" placeholder="e.g. 2 hours 30 mins">
                     </div>
 
                     <div class="form-group">
-                        <label for="critical_resolution_time" class="form-label">Critical Level SLA</label>
-                        <input type="text" name="critical_resolution_time" id="critical_resolution_time" class="form-input" autocomplete="off" placeholder="e.g. 1 hour 30 mins">
+                        <label for="critical" class="form-label">Critical Level SLA</label>
+                        <input type="text" name="critical" id="critical" class="form-input" autocomplete="off" placeholder="e.g. 1 hour 30 mins">
                     </div>
 
                     <div class="form-group col-span-2">
@@ -423,23 +423,23 @@
 
                     {{-- SLA Fields --}}
                     <div class="form-group">
-                        <label for="edit_low_resolution_time" class="form-label">Low Level SLA</label>
-                        <input type="text" name="low_resolution_time" id="edit_low_resolution_time" class="form-input" autocomplete="off">
+                        <label for="edit_low" class="form-label">Low Level SLA</label>
+                        <input type="text" name="low" id="edit_low" class="form-input" autocomplete="off">
                     </div>
 
                     <div class="form-group">
-                        <label for="edit_medium_resolution_time" class="form-label">Medium Level SLA</label>
-                        <input type="text" name="medium_resolution_time" id="edit_medium_resolution_time" class="form-input" autocomplete="off">
+                        <label for="edit_medium" class="form-label">Medium Level SLA</label>
+                        <input type="text" name="medium" id="edit_medium" class="form-input" autocomplete="off">
                     </div>
 
                     <div class="form-group">
-                        <label for="edit_high_resolution_time" class="form-label">High Level SLA</label>
-                        <input type="text" name="high_resolution_time" id="edit_high_resolution_time" class="form-input" autocomplete="off">
+                        <label for="edit_high" class="form-label">High Level SLA</label>
+                        <input type="text" name="high" id="edit_high" class="form-input" autocomplete="off">
                     </div>
 
                     <div class="form-group">
-                        <label for="edit_critical_resolution_time" class="form-label">Critical Level SLA</label>
-                        <input type="text" name="critical_resolution_time" id="edit_critical_resolution_time" class="form-input" autocomplete="off">
+                        <label for="edit_critical" class="form-label">Critical Level SLA</label>
+                        <input type="text" name="critical" id="edit_critical" class="form-input" autocomplete="off">
                     </div>
 
                     <div class="form-group col-span-2">
@@ -538,10 +538,10 @@
 
             // Input references for Edit Modal
             const editTechnicalServices = document.getElementById("edit_technical_services");
-            const editLowRes = document.getElementById("edit_low_resolution_time");
-            const editMediumRes = document.getElementById("edit_medium_resolution_time");
-            const editHighRes = document.getElementById("edit_high_resolution_time");
-            const editCriticalRes = document.getElementById("edit_critical_resolution_time");
+            const editLowRes = document.getElementById("edit_low");
+            const editMediumRes = document.getElementById("edit_medium");
+            const editHighRes = document.getElementById("edit_high");
+            const editCriticalRes = document.getElementById("edit_critical");
 
             editButtons.forEach(button => {
                 button.addEventListener("click", (e) => {
@@ -551,10 +551,10 @@
 
                     // Populate modal text and SLA input fields from button data attributes
                     if (editTechnicalServices) editTechnicalServices.value = button.dataset.technical_services || '';
-                    if (editLowRes) editLowRes.value = button.dataset.low_resolution_time || '';
-                    if (editMediumRes) editMediumRes.value = button.dataset.medium_resolution_time || '';
-                    if (editHighRes) editHighRes.value = button.dataset.high_resolution_time || '';
-                    if (editCriticalRes) editCriticalRes.value = button.dataset.critical_resolution_time || '';
+                    if (editLowRes) editLowRes.value = button.dataset.low || '';
+                    if (editMediumRes) editMediumRes.value = button.dataset.medium || '';
+                    if (editHighRes) editHighRes.value = button.dataset.high || '';
+                    if (editCriticalRes) editCriticalRes.value = button.dataset.critical || '';
 
                     // Update form action route dynamically
                     if (editForm) editForm.action = `/tech_services/${id}`;

@@ -164,7 +164,7 @@
            title="Users"
            class="nav-link {{ request()->routeIs('users.index') ? 'active' : '' }}">
             <span class="material-symbols-outlined">manage_accounts</span>
-            <span class="nav-text">Users Management</span>
+            <span class="nav-text">User Management</span>
         </a>
         @endif
 

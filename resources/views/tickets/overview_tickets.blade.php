@@ -143,9 +143,9 @@
                 <h3 class="dashboard-title">Tickets Overview</h3>
 
                 <div class="export-container">
-                    <a href="{{ route('tickets.export_pdf') }}" class="btn-export-pdf">
+                    <a href="{{ route('tickets.export_pdf') }}" class="btn-export-pdf" title="PDF File Download">
                         <span class="material-symbols-outlined">download</span>
-                        Export Report
+                        Download Report
                     </a>
                 </div>
 

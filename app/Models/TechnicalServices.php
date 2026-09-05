@@ -15,10 +15,10 @@ class TechnicalServices extends Model
 
     protected $fillable = [
         'technical_services',
-        'low_resolution_time',
-        'medium_resolution_time',
-        'high_resolution_time',
-        'critical_resolution_time',
+        'low',
+        'medium',
+        'high',
+        'critical',
         'added_at',
         'updated_at'
     ];

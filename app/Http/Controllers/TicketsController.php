@@ -55,19 +55,93 @@ class TicketsController extends Controller
             $query->where('it_email', $loggedInEmail);
         }
 
-        // 5. Calculate total and overdue counts based strictly on role scope
+        $currentTime = Carbon::now('Asia/Manila');
+
+        // 5. Load all Technical Services into memory indexed by lowercased service name
+        $allTechServices = TechnicalServices::all()->keyBy(function ($item) {
+            return strtolower(trim($item->technical_services));
+        });
+
+        // Exact pending status strings as saved in the tickets.status database column
+        $pendingStatuses = [
+            'Pending',
+            'Pending/Re-Assigned',
+            'Pending / Re-Assigned',
+            'Pending/Reassigned',
+            'pending',
+            'pending/re-assigned'
+        ];
+
+        // 6. SLA Overdue Calculation Closure
+        $isTicketOverdue = function ($ticket) use ($allTechServices, $currentTime, $pendingStatuses) {
+            $status = trim($ticket->status ?? '');
+
+            // Check if ticket status matches pending states
+            $isPending = in_array($status, $pendingStatuses, true) || 
+                         in_array(strtolower($status), array_map('strtolower', $pendingStatuses), true);
+
+            if (!$isPending) {
+                return false;
+            }
+
+            $serviceName = strtolower(trim($ticket->service ?? ''));
+            $priorityKey = strtolower(trim($ticket->priority ?? ''));
+
+            // Match against technical_services table record
+            if (!isset($allTechServices[$serviceName])) {
+                return false;
+            }
+
+            $serviceConfig = $allTechServices[$serviceName];
+
+            // Validate priority column exists ('low', 'medium', 'high', 'critical')
+            if (!in_array($priorityKey, ['low', 'medium', 'high', 'critical'], true)) {
+                return false;
+            }
+
+            $slaTimeStr = $serviceConfig->{$priorityKey} ?? null;
+
+            // Skip calculation if SLA is set to N/A, empty, or null
+            if (empty($slaTimeStr) || strtoupper(trim($slaTimeStr)) === 'N/A') {
+                return false;
+            }
+
+            // Parse datetime created from tickets.date_created
+            try {
+                $createdAt = Carbon::parse($ticket->date_created, 'Asia/Manila');
+            } catch (\Exception $e) {
+                return false;
+            }
+
+            $deadline = $createdAt->copy();
+
+            // Extract days, hours, and minutes from SLA duration string (e.g. "3 days 30 mins")
+            if (preg_match('/(\d+)\s*days?/', $slaTimeStr, $matches)) {
+                $deadline->addDays((int)$matches[1]);
+            }
+            if (preg_match('/(\d+)\s*hours?/', $slaTimeStr, $matches)) {
+                $deadline->addHours((int)$matches[1]);
+            }
+            if (preg_match('/(\d+)\s*mins?/', $slaTimeStr, $matches)) {
+                $deadline->addMinutes((int)$matches[1]);
+            }
+
+            // Return true if current time has passed SLA deadline
+            return $currentTime->greaterThan($deadline);
+        };
+
+        // 7. Calculate total count strictly based on role scope
         $ticketsCount = (clone $query)->count();
 
-        $overdueCount = (clone $query)
-            ->where('status', '!=', 'Resolved')
-            ->where('date_created', '<', Carbon::now()->subDays(3))
-            ->count();
+        // 8. Fetch pending tickets to compute overdue count
+        $pendingScopedTickets = (clone $query)
+            ->whereIn('status', $pendingStatuses)
+            ->get();
 
-        // 6. Apply request filters
-        if ($request->input('filter') === 'overdue') {
-            $query->where('status', '!=', 'Resolved')
-                ->where('date_created', '<', Carbon::now()->subDays(2));
-        }
+        $overdueCount = $pendingScopedTickets->filter($isTicketOverdue)->count();
+
+        // 9. Apply Request Filters
+        $isOverdueFilterActive = ($request->input('filter') === 'overdue');
 
         if ($request->filled('it_area')) {
             $query->where('it_area', trim($request->input('it_area')));
@@ -89,7 +163,7 @@ class TicketsController extends Controller
             $query->whereDate('date_created', '<=', $request->input('end_date'));
         }
 
-        // 7. Apply search filter
+        // 10. Search Query Filter across schema columns
         if ($request->filled('search_query')) {
             $search = trim($request->input('search_query'));
             $query->where(function ($q) use ($search) {
@@ -110,18 +184,37 @@ class TicketsController extends Controller
             });
         }
 
-        // 8. CSV export handler
+        // 11. CSV Export Handler
         if ($request->input('action') === 'generate') {
-            return $this->generateCSVReport($query->get());
+            $exportRecords = $query->get();
+            if ($isOverdueFilterActive) {
+                $exportRecords = $exportRecords->filter($isTicketOverdue);
+            }
+            return $this->generateCSVReport($exportRecords);
         }
 
-        // 9. Paginate records
-        $tickets = $query->orderBy('ticket_id', 'desc')->paginate(10);
-        $tickets->appends($request->all());
+        // 12. Pagination Handling with Primary Key (ticket_id)
+        if ($isOverdueFilterActive) {
+            $filteredOverdue = $query->get()->filter($isTicketOverdue);
+            
+            $page = \Illuminate\Pagination\Paginator::resolveCurrentPage() ?: 1;
+            $perPage = 10;
+            
+            $tickets = new \Illuminate\Pagination\LengthAwarePaginator(
+                $filteredOverdue->forPage($page, $perPage)->values(),
+                $filteredOverdue->count(),
+                $perPage,
+                $page,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+        } else {
+            $tickets = $query->orderBy('ticket_id', 'desc')->paginate(10);
+            $tickets->appends($request->all());
+        }
 
         $ticket = null;
 
-        // 10. Fetch Dropdowns & Round-Robin Data required by the embedded Add Ticket Modal
+        // 13. Fetch Dropdowns & Round-Robin Data required by the embedded Add Ticket Modal
         $sections_divisions = Divisions::pluck('sections_divisions')->filter()->toArray();
         $technical_services = TechnicalServices::pluck('technical_services')->filter()->toArray();
 
@@ -155,9 +248,7 @@ class TicketsController extends Controller
 
         // Fetch Reassignable IT Personnel and group purely by IT Area
         $reassignable_personnel = ITPersonnel::all(['firstname', 'middle_initial', 'lastname', 'it_email', 'it_area']);
-        
         $reassignable_it_area = $reassignable_personnel->pluck('it_area')->unique()->values();
-
         $reassignable_it_mapping = $reassignable_personnel->groupBy('it_area')
             ->map(fn($group) => 
                 $group->values()->map(fn($p) => [
@@ -166,7 +257,7 @@ class TicketsController extends Controller
                 ])
             )->toArray();
 
-        // 11. Render view with ticket list AND modal data
+        // 14. Render View
         return view('tickets.index', compact(
             'request',
             'ticketsCount',
@@ -199,7 +290,7 @@ class TicketsController extends Controller
 
         $columns = [
             'Ticket Number', 'First Name', 'Last Name', 'Division', 'IT Area', 'Email',
-            'Device', 'Service', 'Request', 'Status', 'Date Created', 'Date Resolved', 'IT Personnel'
+            'Device', 'Service', 'Request', 'Status', 'Date Created', 'Date Resolved', 'IT Personnel', 'Priority', 'Action Taken'
         ];
 
         $callback = function () use ($tickets, $columns) {
@@ -220,7 +311,9 @@ class TicketsController extends Controller
                     $ticket->status,
                     $ticket->date_created,
                     $ticket->date_resolved,
-                    $ticket->it_personnel
+                    $ticket->it_personnel,
+                    $ticket->priority,
+                    $ticket->action_taken
                 ]);
             }
 

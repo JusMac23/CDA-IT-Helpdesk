@@ -365,11 +365,11 @@
                     
                     <div class="filter-container">
                         <button type="submit" name="action" value="search" class="btn btn-indigo">
-                            <i class="fas fa-filter"></i> Apply
+                            <i class="fas fa-filter"></i> Apply Filter
                         </button>
                         @can('generate_report')
-                        <button type="submit" name="action" value="generate" class="btn btn-green">
-                            <i class="fas fa-download"></i> Report
+                        <button type="submit" name="action" value="generate" class="btn btn-green" title="Excel File Download">
+                            <i class="fas fa-download"></i> Generate Report
                         </button>
                         @endcan
                     </div>
@@ -388,8 +388,8 @@
                                 <th>Request Details</th>
                                 <th>Assigned Personnel</th>
                                 <th>Action Taken</th>
-                                <th>Date Created</th>
-                                <th>Date Resolved</th>
+                                <th>Date & Time Created</th>
+                                <th>Date & Time Resolved</th>
                                 <th class="text-center">Photo</th>
                                 <th class="text-center">Status</th>
                                 <th class="text-center">Priority</th>
@@ -661,7 +661,7 @@
                     <div class="terms-wrapper" style="margin-top: 1rem;">
                         <label class="terms-label" for="terms_agree">
                             <input type="checkbox" id="terms_agree" name="terms_agree" required class="terms-checkbox">
-                            <span>I have read and agree to the <a href="https://cda.gov.ph/cda-privacy-policy/" class="terms-link" target="_blank">Terms and Conditions</a> and the <a href="https://cda.gov.ph/cda-privacy-policy/" class="terms-link" target="_blank">Privacy Policy</a>. <span style="color:#ef4444;">*</span></span>
+                            <span>I have read and agree to the <a href="https://cda.gov.ph/cda-privacy-policy/" class="terms-link" target="_blank">Terms and Conditions</a> and the <a href="https://cda.gov.ph/cda-privacy-policy/" class="terms-link" target="_blank">Privacy Policy</a>, and I confirm that the information provided is accurate and true to the best of my knowledge. <span style="color:#ef4444;">*</span></span>
                         </label>
                     </div>
 
@@ -1223,14 +1223,10 @@
 
                         // Map Priority database values to option display values
                         const priorityMapping = {
-                            'low_resolution_time': 'Low',
-                            'medium_resolution_time': 'Medium',
-                            'high_resolution_time': 'High',
-                            'critical_resolution_time': 'Critical',
-                            'low': 'Low',
-                            'medium': 'Medium',
-                            'high': 'High',
-                            'critical': 'Critical'
+                            'Low': 'Low',
+                            'Medium': 'Medium',
+                            'High': 'High',
+                            'Critical': 'Critical'
                         };
                         
                         const matchedPriority = priorityMapping[priority] || 'Low';

@@ -17,10 +17,10 @@ class TechnicalServicesController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('id', 'like', "%{$search}%")
                   ->orWhere('technical_services', 'like', "%{$search}%")
-                  ->orWhere('low_resolution_time', 'like', "%{$search}%")
-                  ->orWhere('medium_resolution_time', 'like', "%{$search}%")
-                  ->orWhere('high_resolution_time', 'like', "%{$search}%")
-                  ->orWhere('critical_resolution_time', 'like', "%{$search}%")
+                  ->orWhere('low', 'like', "%{$search}%")
+                  ->orWhere('medium', 'like', "%{$search}%")
+                  ->orWhere('high', 'like', "%{$search}%")
+                  ->orWhere('critical', 'like', "%{$search}%")
                   ->orWhere('added_at', 'like', "%{$search}%")
                   ->orWhere('updated_at', 'like', "%{$search}%");
             });
@@ -37,16 +37,16 @@ class TechnicalServicesController extends Controller
     {
         $validatedData = $request->validate([
             'technical_services'       => 'required|string|max:255',
-            'low_resolution_time'      => 'nullable|string|max:255',
-            'medium_resolution_time'   => 'nullable|string|max:255',
-            'high_resolution_time'     => 'nullable|string|max:255',
-            'critical_resolution_time' => 'nullable|string|max:255',
+            'low'      => 'nullable|string|max:255',
+            'medium'   => 'nullable|string|max:255',
+            'high'     => 'nullable|string|max:255',
+            'critical' => 'nullable|string|max:255',
         ]);
 
-        $validatedData['low_resolution_time']      = $validatedData['low_resolution_time'] ?? 'N/A';
-        $validatedData['medium_resolution_time']   = $validatedData['medium_resolution_time'] ?? 'N/A';
-        $validatedData['high_resolution_time']     = $validatedData['high_resolution_time'] ?? 'N/A';
-        $validatedData['critical_resolution_time'] = $validatedData['critical_resolution_time'] ?? 'N/A';
+        $validatedData['low']      = $validatedData['low'] ?? 'N/A';
+        $validatedData['medium']   = $validatedData['medium'] ?? 'N/A';
+        $validatedData['high']     = $validatedData['high'] ?? 'N/A';
+        $validatedData['critical'] = $validatedData['critical'] ?? 'N/A';
 
         $validatedData['added_at'] = Carbon::now('Asia/Manila')->format('Y-m-d H:i:s');
 
@@ -59,18 +59,18 @@ class TechnicalServicesController extends Controller
     {
         $validatedData = $request->validate([
             'technical_services'       => 'required|string|max:255',
-            'low_resolution_time'      => 'nullable|string|max:255',
-            'medium_resolution_time'   => 'nullable|string|max:255',
-            'high_resolution_time'     => 'nullable|string|max:255',
-            'critical_resolution_time' => 'nullable|string|max:255',
+            'low'      => 'nullable|string|max:255',
+            'medium'   => 'nullable|string|max:255',
+            'high'     => 'nullable|string|max:255',
+            'critical' => 'nullable|string|max:255',
         ]);
 
         $technical_services = TechnicalServices::findOrFail($id);
 
-        $validatedData['low_resolution_time']      = $validatedData['low_resolution_time'] ?? 'N/A';
-        $validatedData['medium_resolution_time']   = $validatedData['medium_resolution_time'] ?? 'N/A';
-        $validatedData['high_resolution_time']     = $validatedData['high_resolution_time'] ?? 'N/A';
-        $validatedData['critical_resolution_time'] = $validatedData['critical_resolution_time'] ?? 'N/A';
+        $validatedData['low']      = $validatedData['low'] ?? 'N/A';
+        $validatedData['medium']   = $validatedData['medium'] ?? 'N/A';
+        $validatedData['high']     = $validatedData['high'] ?? 'N/A';
+        $validatedData['critical'] = $validatedData['critical'] ?? 'N/A';
 
         $validatedData['updated_at'] = Carbon::now('Asia/Manila')->format('Y-m-d H:i:s');
 
