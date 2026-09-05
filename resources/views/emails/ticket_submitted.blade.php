@@ -32,5 +32,5 @@ View Dashboard
 @endcomponent
 
 Thanks,  
-CDA Helpdesk System
+CDA ICT Helpdesk System
 @endcomponent

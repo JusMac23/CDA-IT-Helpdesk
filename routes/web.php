@@ -89,7 +89,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Tickets Request per Client - This is the target page after login
     Route::get('/tickets/myrequested_tickets', [MyRequestedTicketsController::class, 'index'])->name('myrequested_tickets.index')
         ->middleware('permission:view_myrequested_tickets|create_myrequested_tickets|reassign_myrequested_tickets|update_status_myrequested_tickets|delete_myrequested_tickets|search_myrequested_tickets');
-    Route::post('/tickets/save', [MyRequestedTicketsController::class, 'save'])->name('tickets.save')->middleware('permission:create_myrequested_tickets');
+    Route::post('/tickets/store', [MyRequestedTicketsController::class, 'store'])->name('tickets.store')->middleware('permission:create_myrequested_tickets');
 
      //  Data Breach Notification
     Route::get('/databreach', [DataBreachReportsController::class, 'index'])->name('databreach.index')

@@ -16,6 +16,6 @@ _DBN ID not available._
 @endif
 
 Thanks,  
-**CDA Data Breach Reporting System**
+CDA ICT Helpdesk System
 @endcomponent
 

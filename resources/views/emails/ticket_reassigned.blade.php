@@ -22,6 +22,8 @@ Hello {{ $ticket->assigned_to }},
 
 <p>A new ticket has been re-assigned to you by <strong>{{ Auth::user()->name }}</strong>.</p>
 
+**Notes:** {{ $ticket->notes }} 
+
 <p>Please check the details below and take the necessary action.</p>
 
 **Ticket Number:** {{ $ticket->ticket_number }}  

@@ -14,5 +14,5 @@
 
 
 Thanks,  
-**CDA Data Breach Reporting System**
+CDA ICT Helpdesk System
 @endcomponent

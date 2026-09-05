@@ -147,6 +147,10 @@
             .sidebar.collapsed { width: var(--sidebar-collapsed-width); }
             .sidebar.collapsed .sidebar-brand { display: none; }
             .sidebar.collapsed .sidebar-header { justify-content: center; padding: 0; }
+            
+            /* -- FIX: Center the flex <a> wrapper containing the logo -- */
+            .sidebar.collapsed .sidebar-header a { justify-content: center !important; }
+            
             .sidebar.collapsed .nav-text { display: none; }
             .sidebar.collapsed .nav-label { display: none; }
             .sidebar.collapsed .submenu { display: none !important; } /* Fixes layout glitch */
@@ -261,7 +265,7 @@
                                 <div class="dropdown-region">{{ $user->region }}</div>
                                 
                                 @forelse($user->roles as $role)
-                                    <span class="dropdown-role">{{ $role->name }}</span>
+                                    <span class="dropdown-role">{{ $role->name }} Personnel</span>
                                 @empty
                                     <span class="dropdown-role" style="background: var(--dropdown-hover); color: var(--text-muted);">No Role</span>
                                 @endforelse

@@ -699,19 +699,20 @@
                             </select>
                         </div>
                         
-                        <div class="form-group">
+                        <div class="form-group col-span-2">
                             <label for="assigned_it_email" class="form-label">Personnel Email</label>
                             <input type="text" name="assigned_it_email" id="assigned_it_email" readonly class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label for="assigned_at" class="form-label">Date Assigned</label>
-                            <input type="text" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input">
-                            <input type="hidden" name="assigned_at" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('Y-m-d') }}">
                         </div>
                         
                         <div class="form-group col-span-2">
                             <label for="assign_notes" class="form-label">Instructions / Notes</label>
                             <textarea name="notes" id="assign_notes" class="form-input" style="min-height: 100px;"></textarea>
+                        </div>
+
+                        <div class="form-group col-span-2">
+                            <label for="assigned_at" class="form-label">Date Assigned</label>
+                            <input type="text" value="{{ \Carbon\Carbon::now('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input">
+                            <input type="hidden" name="assigned_at" value="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}">
                         </div>
                     </div>
 
@@ -756,11 +757,6 @@
                                 <option value="Critical">Critical</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">Date Resolved</label>
-                            <input type="text" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input">
-                            <input type="hidden" name="date_resolved" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('Y-m-d') }}">
-                        </div>
                         
                         <div class="form-group col-span-2">
                             <label for="action_taken" class="form-label">Action Taken <span style="color:#ef4444;">*</span></label>
@@ -774,6 +770,12 @@
                                 <img id="photo_preview" src="" alt="Uploaded Photo" class="thumb-img" style="display: none; height: 6rem; width: 6rem;">
                             </div>
                         </div>
+
+                        <div class="form-group col-span-2">
+                            <label class="form-label">Date Resolved</label>
+                            <input type="text" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input">
+                            <input type="hidden" name="date_resolved" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('Y-m-d') }}">
+                        </div>
                     </div>
 
                     <div class="modal-footer">
@@ -785,7 +787,6 @@
                 </form>
             </div>
         </div>
-
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -1171,6 +1172,7 @@
                 const cancelEditBtn = document.getElementById('cancelEditStatusModal');
                 const editForm = document.getElementById('editForm');
                 const statusSelect = editModal.querySelector('#edit_status');
+                const prioritySelect = editModal.querySelector('#edit_priority');
 
                 const closeEditFunc = () => closeModal(editModal);
                 if (editCloseBtn) editCloseBtn.addEventListener('click', closeEditFunc);
@@ -1212,7 +1214,11 @@
                     btn.addEventListener('click', function () {
                         const ticketId = this.dataset.id;
                         const status = this.dataset.status || '';
-                        let priority = (this.dataset.priority || '').toLowerCase().trim();
+                        
+                        // FIX 1: Format priority to match the exact capitalized values in the HTML options
+                        let rawPriority = this.dataset.priority || '';
+                        let priority = rawPriority ? (rawPriority.charAt(0).toUpperCase() + rawPriority.slice(1).toLowerCase()) : '';
+                        
                         const actionTaken = this.dataset.actionTaken || '';
                         const photoUrl = this.dataset.photo || '';
 
@@ -1221,26 +1227,18 @@
                             return;
                         }
 
-                        // Map Priority database values to option display values
-                        const priorityMapping = {
-                            'Low': 'Low',
-                            'Medium': 'Medium',
-                            'High': 'High',
-                            'Critical': 'Critical'
-                        };
-                        
-                        const matchedPriority = priorityMapping[priority] || 'Low';
-
                         // Populate form actions and fields
                         if (editForm) editForm.action = `/tickets/${ticketId}`;
                         
                         const editIdInput = editModal.querySelector('#edit_ticket_id');
-                        const prioritySelect = editModal.querySelector('#edit_priority');
                         const actionTextarea = editModal.querySelector('#action_taken');
                         const photoPreview = editModal.querySelector('#photo_preview');
 
                         if (editIdInput) editIdInput.value = ticketId;
-                        if (prioritySelect) prioritySelect.value = matchedPriority;
+                        
+                        // FIX 2: Assign priority to the prioritySelect (it was mistakenly set to 'status')
+                        if (prioritySelect) prioritySelect.value = priority;
+                        
                         if (statusSelect) statusSelect.value = status;
                         if (actionTextarea) actionTextarea.value = actionTaken;
 

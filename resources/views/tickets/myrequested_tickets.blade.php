@@ -21,6 +21,8 @@
             --btn-gray-border: #e2e8f0;
             --btn-gray-hover-bg: #e2e8f0;
             --btn-gray-hover-text: #0f172a;
+            --primary-indigo: #4f46e5; 
+            --indigo-hover: #4338ca; 
             
             /* Status Badges - Light */
             --badge-res-bg: #dcfce7; --badge-res-text: #166534; /* Resolved */
@@ -98,6 +100,9 @@
         .btn-gray { background-color: var(--btn-gray-bg); color: var(--btn-gray-text); border: 1px solid var(--btn-gray-border); }
         .btn-gray:hover { background-color: var(--btn-gray-hover-bg); color: var(--btn-gray-hover-text); }
 
+        .form-footer { display: flex; flex-direction: column; padding-top: 1.5rem; border-top: 1px solid var(--border-light); margin-top: 1.5rem; gap: 0.75rem; transition: border-color 0.3s ease; }
+        @media (min-width: 768px) { .form-footer { flex-direction: row; justify-content: flex-end; align-items: center; } }
+        
         /* --- Search Form Group --- */
         .search-form { display: flex; align-items: stretch; width: 100%; box-shadow: 0 1px 2px rgba(0,0,0,0.05); border-radius: 0.5rem; }
         .search-input { height: 44px; flex: 1; min-width: 0; padding: 0 1rem; font-size: 0.95rem; font-family: inherit; color: var(--input-text); border: 1px solid var(--input-border); border-right: none; border-top-left-radius: 0.5rem; border-bottom-left-radius: 0.5rem; outline: none; transition: all 0.2s; position: relative; z-index: 1; background-color: var(--input-bg); }
@@ -119,6 +124,18 @@
         /* Thumbnails */
         .thumb-img { width: 3rem; height: 3rem; object-fit: cover; border-radius: 0.5rem; border: 1px solid var(--border-light); transition: all 0.2s; cursor: pointer; }
         .thumb-img:hover { opacity: 0.8; border-color: var(--text-muted); }
+
+        /* Terms & Submit Button */
+        .terms-wrapper { margin-top: 1.25rem; margin-bottom: 1.25rem; width: 100%; }
+        .terms-label { display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; font-size: 0.875rem; color: var(--text-muted); line-height: 1.5; }
+        .terms-checkbox { margin-top: 0.2rem; width: 1.1rem; height: 1.1rem; accent-color: var(--primary-indigo); cursor: pointer; flex-shrink: 0; }
+        .terms-link { color: var(--primary-indigo); font-weight: 600; }
+        .terms-link:hover { text-decoration: underline; }
+
+        .btn-submit { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 2rem; background-color: var(--primary-indigo); color: #f8fafc; font-size: 0.95rem; font-weight: 600; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
+        .btn-submit:hover:not(:disabled) { background-color: var(--indigo-hover); color: #f8fafc; transform: translateY(-1px); }
+        .btn-submit:hover { background-color: var(--indigo-hover); color: #f8fafc; transform: translateY(-1px); }
+        .btn-submit:disabled { background-color: #cbd5e1; color: #f8fafc; cursor: not-allowed; box-shadow: none; transform: none; }
 
         /* Status Badges */
         .badge { display: inline-block; padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-align: center; white-space: nowrap; letter-spacing: 0.025em; transition: background-color 0.3s ease, color 0.3s ease; }
@@ -247,13 +264,14 @@
                 </div>
 
                 <div class="action-container">
+
+                    @can('create_myrequested_tickets')
+                    <button id="openAddTicketModalBtn" class="btn btn-green">
+                        <i class="fas fa-plus"></i> Add Ticket
+                    </button>
+                    @endcan
+
                     <div class="action-left-group">
-                        @can('create_myrequested_tickets')
-                            <button id="openModal" class="btn btn-green">
-                                <i class="fas fa-plus"></i> Add Ticket
-                            </button>
-                        @endcan
-                        
                         <label class="auto-reload-label">
                             <input type="checkbox" id="autoReloadCheckbox" class="auto-reload-checkbox">
                             <span>(<span id="countdown">60</span>s) Auto-Reload</span>
@@ -286,9 +304,7 @@
                                 <th>Date Resolved</th>
                                 <th class="text-center">Photo</th>
                                 <th class="text-center">Status</th>
-                                @if(auth()->user()->can('edit_myrequested_tickets') || auth()->user()->can('delete_myrequested_tickets'))
-                                    <th class="text-center">Actions</th>
-                                @endif
+                                <th class="text-center">Priority</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -344,44 +360,24 @@
                                             {{ $ticket->status }}
                                         </span>
                                     </td>
-
-                                    @if(auth()->user()->can('edit_myrequested_tickets') || auth()->user()->can('delete_myrequested_tickets'))
                                     <td class="text-center">
-                                        <div class="action-group">
-                                            @can('reassign_myrequested_tickets')
-                                                <button type="button" class="action-link link-yellow open-assign-modal"
-                                                    data-id="{{ $ticket->ticket_id }}" 
-                                                    data-status="{{ $ticket->status }}">
-                                                    <i class="fas fa-user-plus"></i> Re-Assign
-                                                </button>
-                                            @endcan
-
-                                            @can('update_status_myrequested_tickets')
-                                                <button type="button" class="action-link link-blue open-edit-modal"
-                                                    data-id="{{ $ticket->ticket_id }}"
-                                                    data-status="{{ $ticket->status }}"
-                                                    data-action_taken="{{ $ticket->action_taken }}"
-                                                    data-photo="{{ $ticket->photo }}">
-                                                    <i class="fas fa-edit"></i> Update Status
-                                                </button>
-                                            @endcan
-
-                                            @can('delete_myrequested_tickets')
-                                                <form id="delete-form-{{ $ticket->ticket_id }}" action="{{ route('tickets.destroy', $ticket->ticket_id) }}" method="POST" style="margin: 0; width: 100%;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="button" class="action-link link-red delete-btn" data-id="{{ $ticket->ticket_id }}">
-                                                        <i class="fas fa-trash-alt"></i> Delete
-                                                    </button>
-                                                </form>
-                                            @endcan
-                                        </div>
+                                        @php
+                                            $priority = trim($ticket->priority);
+                                            $priorityClass = match($priority) {
+                                                'High' => 'badge status-reassigned',
+                                                'Medium' => 'badge status-pending',
+                                                'Low' => 'badge status-default',
+                                                default => 'badge status-default',
+                                            };
+                                        @endphp
+                                        <span class="{{ $priorityClass }}">
+                                            {{ $ticket->priority }}
+                                        </span>
                                     </td>
-                                    @endif
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="13" class="text-center" style="padding: 3rem; color: var(--text-muted); font-size: 1rem;">
+                                    <td colspan="14" class="text-center" style="padding: 3rem; color: var(--text-muted); font-size: 1rem;">
                                         No Requested Ticket found.
                                     </td>
                                 </tr>
@@ -397,7 +393,7 @@
         </div>
 
         {{-- Add Ticket Modal --}}
-        <div id="ticketModal" class="modal-overlay hidden">
+        <div id="addticketModal" class="modal-overlay hidden">
             <div class="modal-box">
                 <button id="closeModal" class="close-btn" aria-label="Close">&times;</button>
                 
@@ -412,222 +408,137 @@
                     </div>
                 @endif
                 
-                <h2 class="modal-title">Create Ticket</h2>
+                <h2 class="modal-title">Create New Ticket</h2>
 
-                <form action="{{ route('tickets.save') }}" method="POST" enctype="multipart/form-data">
+                <form id="createTicketForm" action="{{ route('tickets.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    
+                    <!-- Client Information -->
                     <fieldset class="form-fieldset">
                         <legend>Client Information</legend>
-                        <div class="form-grid">
+                        <div class="form-grid grid-cols-3">
                             <div class="form-group">
-                                <label for="firstname" class="form-label">First Name <span style="color:#ef4444;">*</span></label>
-                                <input type="text" name="firstname" id="firstname" placeholder="e.g., Juan" required class="form-input">
+                                <label for="firstname" class="form-label">First Name <span class="text-required">*</span></label>
+                                <input type="text" id="firstname" name="firstname" placeholder="e.g., Juan" required class="form-input">
                             </div>
+
                             <div class="form-group">
-                                <label for="lastname" class="form-label">Last Name <span style="color:#ef4444;">*</span></label>
-                                <input type="text" name="lastname" id="lastname" placeholder="e.g., Dela Cruz" required class="form-input">
+                                <label for="lastname" class="form-label">Last Name <span class="text-required">*</span></label>
+                                <input type="text" id="lastname" name="lastname" placeholder="e.g., Dela Cruz" required class="form-input">
                             </div>
-                            
-                            <div class="form-group col-span-2">
-                                <label for="email" class="form-label">Email <span style="color:#ef4444;">*</span></label>
-                                <input type="email" name="email" id="email" placeholder="j_delacruz@cda.gov.ph" required class="form-input">
-                            </div>
-                            
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email <span class="text-required">*</span></label>
+                            <input type="email" id="email" name="email" placeholder="e.g., j_delacruz@cda.gov.ph" required class="form-input">
+                        </div>
+
+                        <div class="form-grid grid-cols-2">
                             <div class="form-group">
-                                <label for="division" class="form-label">Division <span style="color:#ef4444;">*</span></label>
-                                <select name="division" id="division" required class="form-select">
-                                    <option value="" disabled selected>Select Division</option>
-                                    @foreach ($sections_divisions as $division)
+                                <label class="form-label">Date Created</label>
+                                <input type="text" value="{{ \Carbon\Carbon::now('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input">
+                                <input type="hidden" name="date_created" value="{{ \Carbon\Carbon::now('Asia/Manila')->format('Y-m-d') }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="division" class="form-label">Section / Division</label>
+                                <select class="form-select" id="division" name="division" required>
+                                    <option value="" selected disabled>Select Division</option>
+                                    @forelse ($sections_divisions ?? [] as $division)
                                         <option value="{{ $division }}">{{ $division }}</option>
-                                    @endforeach
+                                    @empty
+                                        <option value="" disabled>No divisions available</option>
+                                    @endforelse
                                 </select>
                             </div>
+                        </div>
+
+                        <div class="form-grid grid-cols-2">
                             <div class="form-group">
-                                <label for="device" class="form-label">Device <span style="color:#ef4444;">*</span></label>
-                                <select name="device" id="device" required class="form-select">
+                                <label for="device" class="form-label">Device <span class="text-required">*</span></label>
+                                <select id="device" name="device" required class="form-select">
                                     <option value="" disabled selected>Select Device</option>
-                                    <option value="Desktop PC">Desktop PC</option>
-                                    <option value="Laptop/Netbook PC">Laptop/Netbook PC</option>
-                                    <option value="Tablet PC">Tablet PC</option>
-                                    <option value="All-in-1 Printer">All-in-1 Printer</option>
-                                    <option value="Printer Only">Printer Only</option>
-                                    <option value="Scanner Only">Scanner Only</option>
-                                    <option value="Others">Others</option>
+                                    @foreach (['Desktop PC', 'Laptop/Netbook PC', 'Tablet PC', 'All-in-1 Printer', 'Printer Only', 'Scanner Only', 'Others'] as $device)
+                                        <option value="{{ $device }}">{{ $device }}</option>
+                                    @endforeach
                                 </select>
                             </div>
-                            
+
                             <div class="form-group">
-                                <label for="service" class="form-label">Technical Service <span style="color:#ef4444;">*</span></label>
-                                <select name="service" id="service" required class="form-select">
-                                    <option value="" disabled selected>Select Service</option>
-                                    @foreach ($technical_services as $service)
+                                <label for="service" class="form-label">Technical Service</label>
+                                <select class="form-select" id="service" name="service" required>
+                                    <option value="" selected disabled>Select Technical Service</option>
+                                    @forelse ($technical_services ?? [] as $service)
                                         <option value="{{ $service }}">{{ $service }}</option>
-                                    @endforeach
+                                    @empty
+                                        <option value="" disabled>No technical services available</option>
+                                    @endforelse
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label for="date_created" class="form-label">Date Created</label>
-                                <input type="text" id="date_created_display" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input">
-                                <input type="hidden" name="date_created" id="date_created" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('Y-m-d') }}">
-                            </div>
+                        </div>
 
-                            <div class="form-group col-span-2">
-                                <label for="request" class="form-label">Request Details <span style="color:#ef4444;">*</span></label>
-                                <textarea name="request" id="request" rows="3" required placeholder="Please describe your issue or request in detail." class="form-input"></textarea>
-                            </div>
+                        <div class="form-group">
+                            <label for="request" class="form-label">Request Details <span class="text-required">*</span></label>
+                            <textarea id="request" name="request" rows="4" placeholder="Describe the issue or request in detail..." required class="form-input"></textarea>
+                        </div>
 
-                            <div class="form-group col-span-2">
-                                <label for="photo" class="form-label">Attach Photo (Optional)</label>
-                                <input type="file" name="photo" id="photo" class="form-input">
-                            </div>
+                        <div class="form-group">
+                            <label for="photo" class="form-label">Attach Photo (Optional)</label>
+                            <input type="file" id="photo" name="photo" accept="image/*" class="form-input">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="priority" class="form-label">Priority <span class="text-required">*</span></label>
+                            <select id="priority" name="priority" required class="form-select">
+                                <option value="" disabled selected>Select Priority</option>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                                <option value="Critical">Critical</option>
+                            </select>
                         </div>
                     </fieldset>
 
-                    <fieldset class="form-fieldset" style="margin-bottom: 0;">
+                    <!-- Designated Personnel -->
+                    <fieldset class="form-fieldset">
                         <legend>Designated Personnel</legend>
-                        <div class="form-grid">
+                        
+                        <div class="form-grid grid-cols-2">
                             <div class="form-group">
-                                <label for="it_area_add" class="form-label">Region <span style="color:#ef4444;">*</span></label>
-                                <select name="it_area" id="it_area_add" required class="form-select">
-                                    <option selected disabled value="">Select Region</option>
-                                    @foreach($it_area as $area)
+                                <label for="it_area" class="form-label">Region <span class="text-required">*</span></label>
+                                <select id="it_area" name="it_area" required class="form-select">
+                                    <option value="" disabled selected>Select Region</option>
+                                    @forelse ($it_area ?? [] as $area)
                                         <option value="{{ $area }}">{{ $area }}</option>
-                                    @endforeach
+                                    @empty
+                                        <option value="" disabled>No regions available</option>
+                                    @endforelse
                                 </select>
                             </div>
+
                             <div class="form-group">
-                                <label for="it_personnel_add" class="form-label">Assigned Personnel</label>
-                                <select name="it_personnel" id="it_personnel_add" class="form-select">
-                                    <option selected disabled value="">Select Personnel</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="it_email_add" class="form-label">IT Email</label>
-                                <input type="text" name="it_email" id="it_email_add" readonly class="form-input">
-                            </div>
-                            <div class="form-group">
-                                <label for="status_add" class="form-label">Status</label>
-                                <input type="text" name="status" id="status_add" value="Pending" readonly class="form-input" style="font-weight: 700;">
+                                <label for="status" class="form-label">Status</label>
+                                <input type="text" id="status" name="status" value="Pending" readonly class="form-input">
                             </div>
                         </div>
+
+                        <input type="hidden" id="it_personnel" name="it_personnel" value="">
+                        <input type="hidden" id="it_email" name="it_email" value="">
                     </fieldset>
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-gray" id="cancelAddModal">Cancel</button>
-                        <button type="submit" class="btn btn-indigo">
-                            <i class="fas fa-paper-plane"></i> Submit Ticket
-                        </button>
+                    <!-- Form Footer & Terms -->
+                    <div class="terms-wrapper" style="margin-top: 1rem;">
+                        <label class="terms-label" for="terms_agree">
+                            <input type="checkbox" id="terms_agree" name="terms_agree" required class="terms-checkbox">
+                            <span>I have read and agree to the <a href="https://cda.gov.ph/cda-privacy-policy/" class="terms-link" target="_blank">Terms and Conditions</a> and the <a href="https://cda.gov.ph/cda-privacy-policy/" class="terms-link" target="_blank">Privacy Policy</a>, and I confirm that the information provided is accurate and true to the best of my knowledge. <span style="color:#ef4444;">*</span></span>
+                        </label>
+                    </div>
+
+                    <div class="form-footer">
+                        <button type="submit" id="submitTicketBtn" class="btn-submit" disabled>Submit Ticket</button>
                     </div>
                 </form>
             </div>
         </div>
-
-        {{-- Re-Assign Modal --}}
-        <div id="assignTicketModal" class="modal-overlay hidden">
-            <div class="modal-box" style="max-width: 42rem;">
-                <button id="closeAssignModal" class="close-btn" aria-label="Close">&times;</button>
-                <h2 class="modal-title">Re-Assign Ticket</h2>
-                
-                <form id="assignForm" method="POST" action="{{ route('tickets.assign') }}">
-                    @csrf
-                    <input type="hidden" name="ticket_id" id="assignTicketId">
-
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="it_area_assign" class="form-label">Region <span style="color:#ef4444;">*</span></label>
-                            <select name="it_area" id="it_area_assign" required class="form-select">
-                                <option selected disabled value="">Select Region</option>
-                                @foreach($it_area ?? [] as $area)
-                                    <option value="{{ $area }}">{{ $area }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="assigned_to" class="form-label">Assign To <span style="color:#ef4444;">*</span></label>
-                            <select name="assigned_to" id="assigned_to" required class="form-select">
-                                <option selected disabled value="">Select Personnel</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="assigned_it_email" class="form-label">Personnel Email</label>
-                            <input type="text" name="assigned_it_email" id="assigned_it_email" readonly class="form-input">
-                        </div>
-                        <div class="form-group">
-                            <label for="assigned_at" class="form-label">Date Assigned</label>
-                            <input type="text" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input">
-                            <input type="hidden" name="assigned_at" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('Y-m-d') }}">
-                        </div>
-                        
-                        <div class="form-group col-span-2">
-                            <label for="assign_notes" class="form-label">Instructions / Notes</label>
-                            <textarea name="notes" id="assign_notes" rows="3" class="form-input"></textarea>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-gray" id="cancelAssignModal">Cancel</button>
-                        <button type="submit" class="btn btn-yellow">
-                            <i class="fas fa-user-plus"></i> Re-Assign
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        {{-- Edit Status Modal --}}
-        <div id="editticketModal" class="modal-overlay hidden">
-            <div class="modal-box" style="max-width: 42rem;">
-                <button id="closeEditModal" class="close-btn" aria-label="Close">&times;</button>
-                <h2 class="modal-title">Update Ticket Status</h2>
-                
-                <form id="editForm" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-                    <input type="hidden" name="ticket_id" id="edit_ticket_id">
-
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="edit_status" class="form-label">Status <span style="color:#ef4444;">*</span></label>
-                            <select name="status" id="edit_status" required class="form-select">
-                                <option value="" disabled>Select status</option>
-                                <option value="Pending">Pending</option>
-                                <option value="Pending/Re-Assigned">Pending/Re-Assigned</option>
-                                <option value="Resolved">Resolved</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Date Resolved</label>
-                            <input type="text" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('F j, Y h:i A') }}" readonly class="form-input">
-                            <input type="hidden" name="date_resolved" value="{{ \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('Y-m-d') }}">
-                        </div>
-                        
-                        <div class="form-group col-span-2">
-                            <label for="action_taken" class="form-label">Action Taken <span style="color:#ef4444;">*</span></label>
-                            <textarea name="action_taken" id="action_taken" rows="3" required class="form-input"></textarea>
-                        </div>
-                        
-                        <div class="form-group col-span-2">
-                            <label for="edit_photo" class="form-label">Update Photo Evidence</label>
-                            <input type="file" name="photo" id="edit_photo" accept="image/*" class="form-input">
-                            <div class="mt-2">
-                                <img id="photo_preview" src="" alt="Uploaded Photo" class="thumb-img" style="display: none; height: 6rem; width: 6rem;">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-gray" id="cancelEditStatusModal">Cancel</button>
-                        <button type="submit" class="btn btn-indigo">
-                            <i class="fas fa-save"></i> Save Updates
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -716,199 +627,121 @@
 
             const itMapping = @json($it_mapping ?? []);
 
-            // ======= ADD TICKET MODAL =======
-            const addModal = document.getElementById('ticketModal');
+            // Add Ticket Modal Logic
+            const addModal = document.getElementById('addticketModal');
             if (addModal) {
-                const addCloseBtn = addModal.querySelector('#closeModal');
-                const addCancelBtn = addModal.querySelector('#cancelAddModal');
-                const addOpenBtn = document.getElementById('openModal');
+                const closeAddBtn = addModal.querySelector('#closeModal');
+                const openAddBtns = document.querySelectorAll('#openAddTicketModalBtn, #openTicketModal, .open-ticket-modal, [data-modal-target="addticketModal"]');
 
-                if (addOpenBtn) addOpenBtn.addEventListener('click', () => openModal(addModal));
-                
-                const closeAddFunc = () => closeModal(addModal);
-                if (addCloseBtn) addCloseBtn.addEventListener('click', closeAddFunc);
-                if (addCancelBtn) addCancelBtn.addEventListener('click', closeAddFunc);
-                addModal.addEventListener('click', e => { if (e.target === addModal) closeAddFunc(); });
-
-                const regionSelectAdd = addModal.querySelector('#it_area_add');
-                const personnelSelectAdd = addModal.querySelector('#it_personnel_add');
-                const emailInputAdd = addModal.querySelector('#it_email_add');
-
-                if (regionSelectAdd && personnelSelectAdd && emailInputAdd) {
-                    regionSelectAdd.addEventListener('change', function () {
-                        personnelSelectAdd.innerHTML = '<option disabled selected value="">Select Personnel</option>';
-                        emailInputAdd.value = '';
-                        (itMapping[this.value] || []).forEach(p => {
-                            const opt = document.createElement('option');
-                            opt.value = p.name;
-                            opt.text = p.name;
-                            personnelSelectAdd.appendChild(opt);
-                        });
-                    });
-                    personnelSelectAdd.addEventListener('change', function () {
-                        const p = itMapping[regionSelectAdd.value].find(x => x.name === this.value);
-                        emailInputAdd.value = p ? p.email : '';
-                    });
-                }
-            }
-
-            // ======= ASSIGN TICKET MODAL =======
-            const assignModal = document.getElementById('assignTicketModal');
-            if (assignModal) {
-                const closeAssignBtn = document.getElementById('closeAssignModal');
-                const cancelAssignBtn = document.getElementById('cancelAssignModal');
-                const regionSelectAssign = assignModal.querySelector('#it_area_assign');
-                const assigneeSelect = assignModal.querySelector('#assigned_to');
-                const assigneeEmail = assignModal.querySelector('#assigned_it_email');
-                const assignForm = document.getElementById('assignForm');
-
-                document.querySelectorAll('.open-assign-modal').forEach(btn => {
-                    btn.addEventListener('click', function () {
-                        const ticketId = this.dataset.id;
-                        const currentStatus = this.dataset.status;
-
-                        if (currentStatus === 'Resolved') {
-                            Swal.fire({ title: 'Ticket Locked', text: 'Ticket was already resolved. Re-assignment is not allowed.', icon: 'warning', confirmButtonColor: '#4f46e5', background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(), color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim() });
-                            return;
-                        } else if (currentStatus === 'Pending/Re-Assigned') {
-                            Swal.fire({ title: 'Already Re-Assigned', text: 'Please follow up with the assigned personnel.', icon: 'info', confirmButtonColor: '#4f46e5', background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(), color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim() });
-                            return;
-                        }
-
-                        document.getElementById('assignTicketId').value = ticketId;
-                        regionSelectAssign.selectedIndex = 0;
-                        assigneeSelect.innerHTML = '<option disabled selected value="">Select Personnel</option>';
-                        assigneeEmail.value = '';
-                        openModal(assignModal);
-                    });
-                });
-
-                const closeAssignFunc = () => closeModal(assignModal);
-                if (closeAssignBtn) closeAssignBtn.addEventListener('click', closeAssignFunc);
-                if (cancelAssignBtn) cancelAssignBtn.addEventListener('click', closeAssignFunc);
-                assignModal.addEventListener('click', e => { if (e.target === assignModal) closeAssignFunc(); });
-
-                assignForm.addEventListener('submit', function (e) {
-                    const currentStatus = this.dataset.status?.trim() || '';
-                    if (currentStatus === 'Resolved') {
+                openAddBtns.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        Swal.fire({ title: 'Ticket Locked', text: 'You cannot assign a resolved ticket.', icon: 'error', confirmButtonColor: '#ef4444', background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(), color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim() });
+                        openModal(addModal);
+                    });
+                });
+
+                if (closeAddBtn) {
+                    closeAddBtn.addEventListener('click', () => closeModal(addModal));
+                }
+
+                addModal.addEventListener('click', function(e) {
+                    if (e.target === addModal) closeModal(addModal);
+                });
+
+                @if ($errors->any())
+                    openModal(addModal);
+                @endif
+
+                // Get NextAssignment Map safely
+                const nextAssignmentMap = @json($nextAssignment ?? new \stdClass());
+                
+                // Use querySelector scoped to addModal to avoid ID conflicts
+                const serviceSelect = addModal.querySelector('select[name="service"]');
+                const regionSelect = addModal.querySelector('select[name="it_area"]');
+                const personnelInput = addModal.querySelector('input[name="it_personnel"]');
+                const emailInput = addModal.querySelector('input[name="it_email"]');
+
+                function updatePersonnelAndEmails() {
+                    if (!regionSelect || !serviceSelect || !personnelInput || !emailInput) return;
+                    
+                    const selectedRegion = regionSelect.value;
+                    const selectedService = serviceSelect.value;
+
+                    personnelInput.value = '';
+                    emailInput.value = '';
+
+                    if (!selectedRegion) return;
+
+                    const exactKey = `${selectedRegion}_${selectedService}`;
+                    const defaultKey = `${selectedRegion}_default`;
+                    const assignedPerson = nextAssignmentMap[exactKey] || nextAssignmentMap[defaultKey];
+
+                    if (assignedPerson) {
+                        personnelInput.value = assignedPerson.name;
+                        emailInput.value = assignedPerson.email;
+                    } else {
+                        personnelInput.value = 'No personnel found for this region';
+                        
+                        // Optional: Alert the user natively if they select an empty region
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'No Personnel Found',
+                                text: 'There is no IT personnel assigned to this region/service yet.',
+                                timer: 2500,
+                                showConfirmButton: false
+                            });
+                        }
                     }
-                });
+                }
 
-                if (regionSelectAssign) {
-                    regionSelectAssign.addEventListener('change', function () {
-                        assigneeSelect.innerHTML = '<option disabled selected value="">Select Personnel</option>';
-                        assigneeEmail.value = '';
-                        (itMapping[this.value] || []).forEach(p => {
-                            const opt = document.createElement('option');
-                            opt.value = p.name;
-                            opt.text = p.name;
-                            opt.setAttribute('data-email', p.email);
-                            assigneeSelect.appendChild(opt);
+                if (serviceSelect) serviceSelect.addEventListener('change', updatePersonnelAndEmails);
+                if (regionSelect) regionSelect.addEventListener('change', updatePersonnelAndEmails);
+
+                // Form validation enhancement
+                const ticketForm = addModal.querySelector('#createTicketForm');
+                if (ticketForm) {
+                    ticketForm.addEventListener('submit', function(e) {
+                        let isValid = true;
+                        const requiredFields = this.querySelectorAll('[required]');
+                        
+                        requiredFields.forEach(field => {
+                            if (!field.value.trim()) {
+                                isValid = false;
+                                field.classList.add('border-red-500', 'bg-red-50');
+                            } else {
+                                field.classList.remove('border-red-500', 'bg-red-50');
+                            }
                         });
+
+                        if (!isValid) {
+                            e.preventDefault();
+                            if (typeof Swal !== 'undefined') {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Missing Information',
+                                    text: 'Please fill in all required fields marked with *.',
+                                    confirmButtonColor: '#3085d6'
+                                });
+                            } else {
+                                alert('Please fill in all required fields marked with *.');
+                            }
+                        }
                     });
                 }
 
-                if (assigneeSelect) {
-                    assigneeSelect.addEventListener('change', function () {
-                        const sel = this.options[this.selectedIndex];
-                        assigneeEmail.value = sel.getAttribute('data-email') || '';
+                // Enable/Disable Submit button on Terms acceptance
+                const termsCheckbox = addModal.querySelector('#terms_agree');
+                const submitBtn = addModal.querySelector('#submitTicketBtn');
+
+                if (termsCheckbox && submitBtn) {
+                    submitBtn.disabled = !termsCheckbox.checked;
+
+                    termsCheckbox.addEventListener('change', function() {
+                        submitBtn.disabled = !this.checked;
                     });
                 }
             }
-
-            // ======= EDIT TICKET MODAL =======
-            const editModal = document.getElementById('editticketModal');
-            if (editModal) {
-                const editCloseBtn = document.getElementById('closeEditModal');
-                const cancelEditBtn = document.getElementById('cancelEditStatusModal');
-                const editForm = document.getElementById('editForm');
-                const statusSelect = editModal.querySelector('#edit_status');
-                const actionTakenField = editModal.querySelector('#action_taken');
-                const photoPreview = editModal.querySelector('#photo_preview');
-
-                const closeEditFunc = () => closeModal(editModal);
-                if (editCloseBtn) editCloseBtn.addEventListener('click', closeEditFunc);
-                if (cancelEditBtn) cancelEditBtn.addEventListener('click', closeEditFunc);
-                editModal.addEventListener('click', e => { if (e.target === editModal) closeEditFunc(); });
-
-                document.querySelectorAll('.open-edit-modal').forEach(btn => {
-                    btn.addEventListener('click', function () {
-                        const ticketId = this.dataset.id;
-                        const status = this.dataset.status;
-                        const actionTaken = this.dataset.action_taken || '';
-                        const photo = this.dataset.photo;
-
-                        if (status === 'Resolved') {
-                            Swal.fire({ title: 'Ticket Locked', text: 'This ticket is already resolved.', icon: 'info', confirmButtonColor: '#4f46e5', background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(), color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim() });
-                            return;
-                        }
-
-                        editForm.action = `/tickets/${ticketId}`;
-                        document.getElementById('edit_ticket_id').value = ticketId;
-                        statusSelect.value = status;
-                        actionTakenField.value = actionTaken;
-
-                        if (photo && photoPreview) {
-                            photoPreview.src = `/storage/${photo}`;
-                            photoPreview.style.display = 'block';
-                        } else if (photoPreview) {
-                            photoPreview.style.display = 'none';
-                        }
-
-                        editForm.dataset.originalStatus = status;
-                        openModal(editModal);
-                    });
-                });
-
-                if (statusSelect) {
-                    statusSelect.addEventListener('change', function () {
-                        if (this.value === 'Pending/Re-Assigned') {
-                            Swal.fire({ title: 'Reminder', text: 'You must re-assign the ticket to another personnel.', icon: 'info', confirmButtonColor: '#4f46e5', background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(), color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim() });
-                        }
-                    });
-                }
-
-                if (editForm) {
-                    editForm.addEventListener('submit', function (e) {
-                        const newStatus = statusSelect.value;
-                        const originalStatus = this.dataset.originalStatus;
-
-                        if (originalStatus === 'Pending' && newStatus === 'Pending') {
-                            e.preventDefault();
-                            Swal.fire({ title: 'Status Not Updated', text: 'Please update your status before submitting.', icon: 'warning', confirmButtonColor: '#4f46e5', background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(), color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim() });
-                        } else if (originalStatus === 'Pending' && newStatus === 'Pending/Re-Assigned') {
-                            e.preventDefault();
-                            Swal.fire({ title: 'Assignment Needed', text: 'Assign the ticket to another Personnel before submitting.', icon: 'warning', confirmButtonColor: '#4f46e5', background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(), color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim() });
-                        } else if (originalStatus === 'Pending/Re-Assigned' && (newStatus === 'Pending' || newStatus === 'Pending/Re-Assigned')) {
-                            e.preventDefault();
-                            Swal.fire({ title: 'Ticket Already Re-Assigned', text: 'Please follow up to the Re-Assigned Personnel.', icon: 'warning', confirmButtonColor: '#4f46e5', background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(), color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim() });
-                        }
-                    });
-                }
-            }
-
-            // === DELETE CONFIRMATION ALERT ===
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const id = this.dataset.id;
-                    Swal.fire({
-                        title: 'Delete this Ticket?',
-                        text: "This action cannot be undone!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#ef4444',
-                        cancelButtonColor: '#64748b',
-                        confirmButtonText: 'Confirm',
-                        cancelButtonText: 'Cancel',
-                        background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim(),
-                        color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim()
-                    }).then(res => {
-                        if (res.isConfirmed) document.getElementById('delete-form-' + id).submit();
-                    });
-                });
-            });
             
             // Allow closing modals with Escape key
             document.addEventListener('keydown', function(event) {

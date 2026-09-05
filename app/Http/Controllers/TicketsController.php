@@ -324,48 +324,56 @@ class TicketsController extends Controller
     }
 
     /**
-     * Reassign ticket to another IT personnel with validation and notifications.
+     * Reassign ticket to another IT personnel with validation, priority update, and notifications.
      */
     public function assign(Request $request)
     {
-        // Validate the request
+        // 1. Validate the request including optional priority
         $request->validate([
             'ticket_id'         => 'required|integer|exists:tickets,ticket_id',
             'assigned_to'        => 'required|string',
             'assigned_it_email' => 'required|email',
-            'notes'             => 'nullable|string'
+            'priority'          => 'nullable|string|max:255',
+            'notes'             => 'nullable|string',
         ]);
 
         $ticket = Tickets::findOrFail($request->ticket_id);
 
-        // Prevent assigning if ticket is resolved
+        // 2. Prevent assigning if ticket is resolved
         if ($ticket->status === 'Resolved') {
             return redirect()->back()->with('error', 'Cannot assign a resolved ticket.');
         }
 
-        // Prevent assigning same personnel
+        // 3. Prevent assigning same personnel without any changes
         if (
             $ticket->it_personnel &&
             $ticket->it_personnel === $request->assigned_to &&
-            $ticket->it_email === $request->assigned_it_email
+            $ticket->it_email === $request->assigned_it_email &&
+            (!$request->filled('priority') || $ticket->priority === $request->priority)
         ) {
-            return redirect()->back()->with('error', 'You cannot reassign the same personnel. Please select another personnel.');
+            return redirect()->back()->with('error', 'You cannot reassign the same personnel without changes. Please select another personnel or priority.');
         }
 
         // Save previous assigned personnel
         $previous_assigned = $ticket->it_personnel ?? 'N/A';
 
-        // Update ticket with new assignee
-        $ticket->update([
+        // 4. Prepare ticket update data
+        $updateData = [
             'status'            => 'Pending/Re-Assigned',
             'it_personnel'      => $request->assigned_to,
             'it_email'          => $request->assigned_it_email,
             'assigned_to'       => $request->assigned_to,
             'assigned_it_email' => $request->assigned_it_email,
             'notes'             => $request->notes,
-        ]);
+        ];
 
-        // Log reassignment
+        if ($request->filled('priority')) {
+            $updateData['priority'] = $request->priority;
+        }
+
+        $ticket->update($updateData);
+
+        // 5. Log reassignment history with priority
         ReassignedTicket::create([
             'ticket_number'     => $ticket->ticket_number,
             'requested_by'      => $ticket->firstname . ' ' . $ticket->lastname,
@@ -373,15 +381,21 @@ class TicketsController extends Controller
             'assigned_by'       => Auth::user()->name,
             'previous_assigned' => $previous_assigned,
             'assigned_to'       => $request->assigned_to,
+            'priority'          => $ticket->priority,
             'notes'             => $request->notes,
             'assigned_at'       => now(),
         ]);
 
-        if ($ticket->it_email) {
-            Mail::to($ticket->it_email)->send(new TicketReassigned($ticket));
+        // 6. Safe Mail dispatch
+        if ($ticket->it_email && filter_var($ticket->it_email, FILTER_VALIDATE_EMAIL)) {
+            try {
+                Mail::to($ticket->it_email)->send(new TicketReassigned($ticket));
+            } catch (\Exception $e) {
+                Log::error('Failed sending ticket reassignment email: ' . $e->getMessage());
+            }
         }
 
-        // Notify the reassigned personnel
+        // 7. Notify the reassigned personnel
         $user = User::where('email', $request->assigned_it_email)->first();
         if ($user) {
             Notification::create([
@@ -392,7 +406,7 @@ class TicketsController extends Controller
             ]);
         }
 
-        // Notify the requestee (ticket owner)
+        // 8. Notify the requestee (ticket owner)
         $requesterUser = User::where('email', $ticket->email)->first();
         if ($requesterUser) {
             Notification::create([
@@ -403,7 +417,7 @@ class TicketsController extends Controller
             ]);
         }
 
-        return redirect()->route('tickets.index')->with('success', 'Ticket successfully re-assigned.');
+        return redirect()->back()->with('success', 'Ticket successfully re-assigned.');
     }
 
     /**
@@ -436,7 +450,7 @@ class TicketsController extends Controller
 
         $ticket = Tickets::findOrFail($ticket_id);
 
-        $validatedData['date_resolved'] = \Carbon\Carbon::now()->setTimezone('Asia/Manila')->format('Y-m-d H:i:s');
+        $validatedData['date_resolved'] = Carbon::now('Asia/Manila')->format('Y-m-d H:i:s');
 
         if ($request->hasFile('photo')) {
             $validatedData['photo'] = $request->file('photo')->store('ticket_photos', 'public');

@@ -23,6 +23,7 @@ class ReassignedTicket extends Model
         'assigned_to',
         'notes',
         'assigned_at',
-        'status'
+        'status',
+        'priority',
     ];
 }

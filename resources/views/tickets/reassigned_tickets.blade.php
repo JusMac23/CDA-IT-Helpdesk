@@ -27,6 +27,7 @@
             --badge-pen-bg: #fef9c3; --badge-pen-text: #854d0e; /* Pending */
             --badge-rea-bg: #eff6ff; --badge-rea-text: #1e40af; /* Reassigned */
             --badge-def-bg: #f1f5f9; --badge-def-text: #475569; /* Default */
+
         }
 
         body.dark {
@@ -52,6 +53,12 @@
             --badge-pen-bg: rgba(133, 77, 14, 0.4); --badge-pen-text: #facc15;
             --badge-rea-bg: rgba(30, 58, 138, 0.4); --badge-rea-text: #60a5fa;
             --badge-def-bg: rgba(71, 85, 105, 0.4); --badge-def-text: #94a3b8;
+
+            /* Priority Badges - Dark */
+            --priority-low-bg: rgba(71, 85, 105, 0.4); --priority-low-text: #94a3b8;
+            --priority-med-bg: rgba(133, 77, 14, 0.4); --priority-med-text: #facc15;
+            --priority-high-bg: rgba(194, 65, 12, 0.4); --priority-high-text: #fb923c;
+            --priority-crit-bg: rgba(153, 27, 27, 0.4); --priority-crit-text: #f87171;
         }
 
         /* Global Box Sizing & Font Fix */
@@ -109,12 +116,17 @@
         .thumb-img { width: 3rem; height: 3rem; object-fit: cover; border-radius: 0.5rem; border: 1px solid var(--border-light); transition: all 0.2s; cursor: pointer; }
         .thumb-img:hover { opacity: 0.8; border-color: var(--text-muted); }
 
-        /* Status Badges */
+        /* Status & Priority Badges */
         .badge { display: inline-block; padding: 0.4rem 0.85rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-align: center; white-space: nowrap; letter-spacing: 0.025em; transition: background-color 0.3s ease, color 0.3s ease; }
         .status-resolved { background-color: var(--badge-res-bg); color: var(--badge-res-text); } 
         .status-pending { background-color: var(--badge-pen-bg); color: var(--badge-pen-text); }
         .status-reassigned { background-color: var(--badge-rea-bg); color: var(--badge-rea-text); }
         .status-default { background-color: var(--badge-def-bg); color: var(--badge-def-text); }
+
+        .priority-low { background-color: var(--priority-low-bg); color: var(--priority-low-text); }
+        .priority-medium { background-color: var(--priority-med-bg); color: var(--priority-med-text); }
+        .priority-high { background-color: var(--priority-high-bg); color: var(--priority-high-text); }
+        .priority-critical { background-color: var(--priority-crit-bg); color: var(--priority-crit-text); }
 
         /* --- Modern UI Pagination --- */
         .pagination-wrapper { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-light); width: 100%; transition: border-color 0.3s ease; }
@@ -193,32 +205,37 @@
                                 <th>Notes</th>
                                 <th>Date Assigned</th>
                                 <th class="text-center">Status</th>
+                                <th class="text-center">Priority</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($tickets as $ticket)
                                 <tr>
-                                    <td class="font-bold text-center" style="font-size: 0.95rem;">{{ $ticket->ticket_number }}</td>
-                                    <td>{{ $ticket->requested_by }}</td>
+                                    <td class="font-bold text-center" style="font-size: 0.95rem;">{{ $ticket->ticket_number ?? 'N/A' }}</td>
+                                    <td>{{ $ticket->requested_by ?? 'N/A' }}</td>
                                     <td>
-                                        <span class="text-truncate" title="{{ $ticket->request }}">
-                                            {{ $ticket->request }}
+                                        <span class="text-truncate" title="{{ $ticket->request ?? '' }}">
+                                            {{ $ticket->request ?? '' }}
                                         </span>
                                     </td>
-                                    <td>{{ $ticket->assigned_by }}</td>
-                                    <td>{{ $ticket->previous_assigned }}</td>
-                                    <td>{{ $ticket->assigned_to }}</td>
+                                    <td>{{ $ticket->assigned_by ?? 'N/A' }}</td>
+                                    <td>{{ $ticket->previous_assigned ?? 'N/A' }}</td>
+                                    <td>{{ $ticket->assigned_to ?? 'N/A' }}</td>
                                     <td>
-                                        <span class="text-truncate" title="{{ $ticket->notes }}">
-                                            {{ $ticket->notes }}
+                                        <span class="text-truncate" title="{{ $ticket->notes ?? '' }}">
+                                            {{ $ticket->notes ?? '' }}
                                         </span>
                                     </td>
                                     <td style="color: var(--text-muted);">
-                                        {{ \Carbon\Carbon::parse($ticket->assigned_at)->timezone('Asia/Manila')->format('M d, Y h:i A') }}
+                                        @if(!empty($ticket->assigned_at))
+                                            {{ \Carbon\Carbon::parse($ticket->assigned_at)->timezone('Asia/Manila')->format('M d, Y h:i A') }}
+                                        @else
+                                            N/A
+                                        @endif
                                     </td>
                                     <td class="text-center">
                                         @php
-                                            $status = trim($ticket->status);
+                                            $status = trim($ticket->status ?? '');
                                             $badgeClass = match($status) {
                                                 'Resolved' => 'status-resolved',
                                                 'Pending' => 'status-pending',
@@ -227,13 +244,28 @@
                                             };
                                         @endphp
                                         <span class="badge {{ $badgeClass }}">
-                                            {{ $ticket->status }}
+                                            {{ $ticket->status ?? 'N/A' }}
+                                        </span>
+                                    </td>
+
+                                    <td class="text-center">
+                                        @php
+                                            $priority = trim($ticket->priority);
+                                            $priorityClass = match($priority) {
+                                                'High' => 'badge status-reassigned',
+                                                'Medium' => 'badge status-pending',
+                                                'Low' => 'badge status-default',
+                                                default => 'badge status-default',
+                                            };
+                                        @endphp
+                                        <span class="{{ $priorityClass }}">
+                                            {{ $ticket->priority }}
                                         </span>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="9" class="text-center" style="padding: 3rem; color: var(--text-muted); font-size: 1rem;">
+                                    <td colspan="10" class="text-center" style="padding: 3rem; color: var(--text-muted); font-size: 1rem;">
                                         No Re-Assigned Tickets found.
                                     </td>
                                 </tr>

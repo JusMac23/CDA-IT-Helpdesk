@@ -40,5 +40,5 @@ Feedback Form
 **Request:** {{ $ticket->request }}
 
 Thanks,  
-CDA Helpdesk System
+CDA ICT Helpdesk System
 @endcomponent
