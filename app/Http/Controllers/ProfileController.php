@@ -7,7 +7,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -39,32 +38,26 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update the user's profile photo.
+     * Store image directly in database column as base64 data string.
      */
     public function updatePhoto(Request $request): RedirectResponse
     {
         $request->validate([
-            // Validates that the file is an image, a standard web format, and max 2MB in size
-            'profile_photo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'], 
+            'profile_image' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'], 
         ]);
 
         $user = $request->user();
 
-        if ($request->hasFile('profile_photo')) {
-            // Delete the old photo from storage if it exists to save space
-            if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
-                Storage::disk('public')->delete($user->profile_photo);
-            }
-
-            // Store the new photo in the 'storage/app/public/profile-photos' directory
-            $path = $request->file('profile_photo')->store('profile-photos', 'public');
+        if ($request->hasFile('profile_image')) {
+            $file = $request->file('profile_image');
             
-            // Update the user record in the database
-            $user->profile_photo = $path; 
+            // Convert file to Base64 string to avoid raw binary session crashes
+            $base64Image = base64_encode(file_get_contents($file->getRealPath()));
+
+            $user->profile_image = $base64Image; 
             $user->save();
         }
 
-        // Return back to the previous page with a success flash message
         return Redirect::back()->with('success', 'Profile photo updated successfully!');
     }
 
@@ -78,11 +71,6 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
-
-        // Optional: Delete the user's profile photo from storage when the account is deleted
-        if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
-            Storage::disk('public')->delete($user->profile_photo);
-        }
 
         Auth::logout();
 

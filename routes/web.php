@@ -66,7 +66,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit')->middleware('permission:view_profile');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update')->middleware('permission:edit_profile|update_password');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy')->middleware('permission:delete_profile');
-    Route::patch('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.update_photo');
+    Route::post('/profile/image', [ProfileController::class, 'updatePhoto'])->name('profile.upload_image');
 
     // Ticket Management
     Route::get('/tickets', [TicketsController::class, 'index'])->name('tickets.index')
