@@ -5,9 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Role;
+
 use Carbon\Carbon;
+
 use App\Models\User;
+use App\Models\RegionEmail;
 use App\Models\DatabreachTeam;
+
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserCredentialsMail;
 
 class UsersController extends Controller
 {
@@ -18,6 +24,8 @@ class UsersController extends Controller
             ->select('users.*')
             ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
             ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id');
+
+        $region = RegionEmail::pluck('region')->toArray();    
 
         if ($request->filled('search_query')) {
             $search = $request->search_query;
@@ -46,7 +54,7 @@ class UsersController extends Controller
 
         $users = $query->paginate(10)->appends($request->only('search_query'));
 
-        return view('users.index', compact('users', 'roles'));
+        return view('users.index', compact('users', 'roles', 'region'));
     }
 
     // Add New User
@@ -59,7 +67,6 @@ class UsersController extends Controller
             'contact_number' => 'required|string|max:15|unique:users,contact_number',
             'password'       => 'required|string|min:8|confirmed',
             'role'           => 'required|exists:roles,id',
-            'region'         => 'nullable|string|max:255', 
         ]);
 
         $role = Role::findOrFail($validated['role']);
@@ -92,10 +99,7 @@ class UsersController extends Controller
         $user->syncRoles([$role->name]);
 
         if ($role->name === 'DBRT') {
-
-            // Split fullname
             $nameParts = explode(' ', trim($validated['name']));
-
             $firstname = $nameParts[0];
             $lastname  = count($nameParts) > 1 ? array_pop($nameParts) : null;
             $middlename = count($nameParts) > 1 ? $nameParts[1] : null;
@@ -109,8 +113,11 @@ class UsersController extends Controller
             ]);
         }
 
+        // Send Email Notification with the visible plain password
+        Mail::to($user->email)->send(new UserCredentialsMail($user, $validated['password']));
+
         return redirect()->route('users.index')
-            ->with('success', 'User successfully added.');
+            ->with('success', 'User successfully added and login credentials sent via email.');
     }
 
     // Update User
@@ -157,12 +164,12 @@ class UsersController extends Controller
         }
 
         $user->update([
-            'name'       => $validated['name'],
-            'email'      => $validated['email'],
-            'region'     => $validated['region'],
+            'name'           => $validated['name'],
+            'email'          => $validated['email'],
+            'region'         => $validated['region'],
             'contact_number' => $validated['contact_number'],
-            'role'       => $role->id, 
-            'updated_at' => Carbon::now('Asia/Manila'),
+            'role'           => $role->id, 
+            'updated_at'     => Carbon::now('Asia/Manila'),
         ]);
 
         $user->syncRoles([$role->name]);

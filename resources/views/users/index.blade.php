@@ -389,27 +389,12 @@
                     </div>
 
                     <div class="form-group col-span-2">
-                        <label for="region" class="form-label">Region Assignment</label>
-                        <select id="region" name="region" required class="form-select">
-                            <option value="">-- Select Region --</option>
-                            <option value="CDA HO">CDA HO</option>
-                            <option value="CDA CAR">CDA CAR</option>
-                            <option value="CDA NIR">CDA NIR</option>
-                            <option value="CDA NCR">CDA NCR</option>
-                            <option value="CDA Region I">CDA Region I</option>
-                            <option value="CDA Region II">CDA Region II</option>
-                            <option value="CDA Region III">CDA Region III</option>
-                            <option value="CDA Region IV-A">CDA Region IV-A</option>
-                            <option value="CDA Region IV-B">CDA Region IV-B</option>
-                            <option value="CDA Region V">CDA Region V</option>
-                            <option value="CDA Region VI">CDA Region VI</option>
-                            <option value="CDA Region VII">CDA Region VII</option>
-                            <option value="CDA Region VIII">CDA Region VIII</option>
-                            <option value="CDA Region IX">CDA Region IX</option>
-                            <option value="CDA Region X">CDA Region X</option>
-                            <option value="CDA Region XI">CDA Region XI</option>
-                            <option value="CDA Region XII">CDA Region XII</option>
-                            <option value="CDA Region XIII">CDA Region XIII</option>
+                        <label for="region" class="form-label">Region Assignment<span style="color:#ef4444;">*</span></label>
+                        <select name="region" id="region" required class="form-select">
+                            <option value="" disabled selected>Select Region</option>
+                            @foreach ($region as $area)
+                                <option value="{{ $area }}">{{ $area }}</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -418,9 +403,22 @@
                         <input type="text" name="contact_number" id="contact_number" required placeholder="e.g., 09123456789" class="form-input" autocomplete="tel">
                     </div>
 
+                    <!-- Password Options -->
+                    <div class="form-group col-span-2">
+                        <label class="form-label" for="auto_generate_password">
+                            <input type="checkbox" id="auto_generate_password" class="form-checkbox">
+                            <span>Generate Password Automatically</span>
+                        </label>
+                    </div>
+
                     <div class="form-group">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" name="password" id="password" required class="form-input" autocomplete="new-password">
+                        <div style="position: relative; display: flex; align-items: center;">
+                            <input type="password" name="password" id="password" required class="form-input" autocomplete="new-password" style="padding-right: 2.5rem;">
+                            <button type="button" id="regenerateBtn" class="hidden" style="position: absolute; right: 0.5rem; background: none; border: none; cursor: pointer; color: #4f46e5;" title="Regenerate Password">
+                                <span class="material-symbols-outlined" style="font-size: 1.25rem;">refresh</span>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -490,27 +488,12 @@
                     </div>
 
                     <div class="form-group col-span-2">
-                        <label for="edit_region" class="form-label">Region Assignment</label>
-                        <select id="edit_region" name="region" required class="form-select">
-                            <option value="">-- Select Region --</option>
-                            <option value="CDA HO">CDA HO</option>
-                            <option value="CDA CAR">CDA CAR</option>
-                            <option value="CDA NIR">CDA NIR</option>
-                            <option value="CDA NCR">CDA NCR</option>
-                            <option value="CDA Region I">CDA Region I</option>
-                            <option value="CDA Region II">CDA Region II</option>
-                            <option value="CDA Region III">CDA Region III</option>
-                            <option value="CDA Region IV-A">CDA Region IV-A</option>
-                            <option value="CDA Region IV-B">CDA Region IV-B</option>
-                            <option value="CDA Region V">CDA Region V</option>
-                            <option value="CDA Region VI">CDA Region VI</option>
-                            <option value="CDA Region VII">CDA Region VII</option>
-                            <option value="CDA Region VIII">CDA Region VIII</option>
-                            <option value="CDA Region IX">CDA Region IX</option>
-                            <option value="CDA Region X">CDA Region X</option>
-                            <option value="CDA Region XI">CDA Region XI</option>
-                            <option value="CDA Region XII">CDA Region XII</option>
-                            <option value="CDA Region XIII">CDA Region XIII</option>
+                        <label for="edit_region" class="form-label">Region Assignment<span style="color:#ef4444;">*</span></label>
+                        <select name="region" id="edit_region" required class="form-select">
+                            <option value="" disabled selected>Select Region</option>
+                            @foreach ($region as $area)
+                                <option value="{{ $area }}">{{ $area }}</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -552,163 +535,214 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
 
-            // Helper to get CSS variable colors for SweetAlert Dark Mode
-            const getComputedColor = (cssVar) => getComputedStyle(document.body).getPropertyValue(cssVar).trim();
+        // Helper to get CSS variable colors for SweetAlert Dark Mode
+        const getComputedColor = (cssVar) => getComputedStyle(document.body).getPropertyValue(cssVar).trim();
 
-            @if(session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Success!',
-                    text: '{!! addslashes(session("success")) !!}',
-                    timer: 2500,
-                    showConfirmButton: false,
-                    background: getComputedColor('--card-bg'),
-                    color: getComputedColor('--text-dark')
-                });
-            @endif
-
-            @if(session('error'))
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Notice!',
-                    text: '{!! addslashes(session("error")) !!}',
-                    timer: 3000,
-                    showConfirmButton: false,
-                    background: getComputedColor('--card-bg'),
-                    color: getComputedColor('--text-dark')
-                });
-            @endif
-
-            @if ($errors->any())
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Validation Error',
-                    html: `{!! implode('<br>', $errors->all()) !!}`,
-                    showConfirmButton: true,
-                    confirmButtonColor: '#4f46e5',
-                    background: getComputedColor('--card-bg'),
-                    color: getComputedColor('--text-dark')
-                });
-            @endif
-
-            // Add Modal Toggles
-            const addModal = document.getElementById("userModal");
-            const openAddBtn = document.getElementById("openModal");
-            const closeAddBtn = document.getElementById("closeModal");
-            const cancelAddBtn = document.getElementById("cancelAddModal");
-
-            if (openAddBtn && addModal) {
-                openAddBtn.addEventListener("click", () => {
-                    addModal.classList.remove("hidden");
-                    document.body.classList.add("overflow-hidden");
-                });
-            }
-
-            const closeAddModalFunc = () => { 
-                if(addModal) {
-                    addModal.classList.add("hidden");
-                    document.body.classList.remove("overflow-hidden");
-                }
-            };
-            if (closeAddBtn) closeAddBtn.addEventListener("click", closeAddModalFunc);
-            if (cancelAddBtn) cancelAddBtn.addEventListener("click", closeAddModalFunc);
-
-            if (addModal) {
-                addModal.addEventListener("click", (e) => {
-                    if (e.target === addModal) closeAddModalFunc();
-                });
-            }
-
-            // Edit Modal Toggles
-            const editModal = document.getElementById("editModal");
-            const closeEditBtn = document.getElementById("closeEditModal");
-            const cancelEditBtn = document.getElementById("cancelEditModal");
-            const editButtons = document.querySelectorAll(".editBtn");
-
-            const editForm = document.getElementById("editForm");
-            const editName = document.getElementById("edit_name");
-            const editRegion = document.getElementById("edit_region");
-            const editEmail = document.getElementById("edit_email");
-            const editContactNumber = document.getElementById("edit_contact_number");
-
-            editButtons.forEach(button => {
-                button.addEventListener("click", (e) => {
-                    e.preventDefault();
-
-                    const id = button.dataset.id;
-                    const name = button.dataset.name;
-                    const email = button.dataset.email;
-                    const region = button.dataset.region;
-                    const contactNumber = button.dataset.contactNumber;
-                    const roleId = button.dataset.roleId;
-
-                    // Fill modal inputs
-                    editName.value = name;
-                    editEmail.value = email;
-                    editRegion.value = region;
-                    editContactNumber.value = contactNumber;
-
-                    // Update form action dynamically
-                    editForm.action = `/users/${id}`;
-
-                    // Preselect role radio
-                    document.querySelectorAll('input[name="role"][id^="edit_role_"]').forEach(r => {
-                        r.checked = (String(r.value) === String(roleId));
-                    });
-
-                    // Show modal
-                    editModal.classList.remove("hidden");
-                    document.body.classList.add("overflow-hidden");
-                });
+        @if(session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: '{!! addslashes(session("success")) !!}',
+                timer: 2500,
+                showConfirmButton: false,
+                background: getComputedColor('--card-bg'),
+                color: getComputedColor('--text-dark')
             });
+        @endif
 
-            const closeEditModalFunc = () => { 
-                if(editModal) {
-                    editModal.classList.add("hidden");
-                    document.body.classList.remove("overflow-hidden");
-                }
-            };
-            if (closeEditBtn) closeEditBtn.addEventListener("click", closeEditModalFunc);
-            if (cancelEditBtn) cancelEditBtn.addEventListener("click", closeEditModalFunc);
-
-            if (editModal) {
-                editModal.addEventListener("click", (e) => {
-                    if (e.target === editModal) closeEditModalFunc();
-                });
-            }
-
-            // Delete confirmation
-            document.querySelectorAll('.delete-btn').forEach(function (button) {
-                button.addEventListener('click', function (event) {
-                    event.preventDefault();
-                    const form = this.closest('form');
-
-                    Swal.fire({
-                        title: 'Delete this User?',
-                        text: "This action cannot be undone!",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#ef4444',
-                        cancelButtonColor: '#64748b',
-                        confirmButtonText: 'Confirm',
-                        cancelButtonText: 'Cancel',
-                        background: getComputedColor('--card-bg'),
-                        color: getComputedColor('--text-dark')
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
-                });
+        @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Notice!',
+                text: '{!! addslashes(session("error")) !!}',
+                timer: 3000,
+                showConfirmButton: false,
+                background: getComputedColor('--card-bg'),
+                color: getComputedColor('--text-dark')
             });
-            
-            // Allow closing modals with Escape key
-            document.addEventListener('keydown', function(event) {
-                if (event.key === "Escape") {
-                    closeAddModalFunc();
-                    closeEditModalFunc();
+        @endif
+
+        @if ($errors->any())
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                html: `{!! implode('<br>', $errors->all()) !!}`,
+                showConfirmButton: true,
+                confirmButtonColor: '#4f46e5',
+                background: getComputedColor('--card-bg'),
+                color: getComputedColor('--text-dark')
+            });
+        @endif
+
+        // Add Modal Toggles
+        const addModal = document.getElementById("userModal");
+        const openAddBtn = document.getElementById("openModal");
+        const closeAddBtn = document.getElementById("closeModal");
+        const cancelAddBtn = document.getElementById("cancelAddModal");
+
+        if (openAddBtn && addModal) {
+            openAddBtn.addEventListener("click", () => {
+                addModal.classList.remove("hidden");
+                document.body.classList.add("overflow-hidden");
+            });
+        }
+
+        const closeAddModalFunc = () => { 
+            if(addModal) {
+                addModal.classList.add("hidden");
+                document.body.classList.remove("overflow-hidden");
+            }
+        };
+        if (closeAddBtn) closeAddBtn.addEventListener("click", closeAddModalFunc);
+        if (cancelAddBtn) cancelAddBtn.addEventListener("click", closeAddModalFunc);
+
+        if (addModal) {
+            addModal.addEventListener("click", (e) => {
+                if (e.target === addModal) closeAddModalFunc();
+            });
+        }
+
+        // Password Auto-Generate & Visibility Logic
+        const autoGenCheckbox = document.getElementById('auto_generate_password');
+        const passInput = document.getElementById('password');
+        const passConfirmInput = document.getElementById('password_confirmation');
+        const regenerateBtn = document.getElementById('regenerateBtn');
+
+        function generateRandomPassword(length = 12) {
+            const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*";
+            let password = "";
+            for (let i = 0; i < length; i++) {
+                password += charset.charAt(Math.floor(Math.random() * charset.length));
+            }
+            return password;
+        }
+
+        function applyRandomPassword() {
+            const newPassword = generateRandomPassword(12);
+            passInput.value = newPassword;
+            passConfirmInput.value = newPassword;
+        }
+
+        if (autoGenCheckbox) {
+            autoGenCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    // Switch input types to visible text so administrator can see the generated password
+                    passInput.type = "text";
+                    passConfirmInput.type = "text";
+                    passInput.readOnly = true;
+                    passConfirmInput.readOnly = true;
+                    regenerateBtn.classList.remove('hidden');
+
+                    applyRandomPassword();
+                } else {
+                    // Revert to hidden manual password input
+                    passInput.type = "password";
+                    passConfirmInput.type = "password";
+                    passInput.readOnly = false;
+                    passConfirmInput.readOnly = false;
+                    passInput.value = "";
+                    passConfirmInput.value = "";
+                    regenerateBtn.classList.add('hidden');
                 }
+            });
+        }
+
+        if (regenerateBtn) {
+            regenerateBtn.addEventListener('click', function() {
+                applyRandomPassword();
+            });
+        }
+
+        // Edit Modal Toggles
+        const editModal = document.getElementById("editModal");
+        const closeEditBtn = document.getElementById("closeEditModal");
+        const cancelEditBtn = document.getElementById("cancelEditModal");
+        const editButtons = document.querySelectorAll(".editBtn");
+
+        const editForm = document.getElementById("editForm");
+        const editName = document.getElementById("edit_name");
+        const editRegion = document.getElementById("edit_region");
+        const editEmail = document.getElementById("edit_email");
+        const editContactNumber = document.getElementById("edit_contact_number");
+
+        editButtons.forEach(button => {
+            button.addEventListener("click", (e) => {
+                e.preventDefault();
+
+                const id = button.dataset.id;
+                const name = button.dataset.name;
+                const email = button.dataset.email;
+                const region = button.dataset.region;
+                const contactNumber = button.dataset.contactNumber;
+                const roleId = button.dataset.roleId;
+
+                // Fill modal inputs
+                editName.value = name;
+                editEmail.value = email;
+                editRegion.value = region;
+                editContactNumber.value = contactNumber;
+
+                // Update form action dynamically
+                editForm.action = `/users/${id}`;
+
+                // Preselect role radio
+                document.querySelectorAll('input[name="role"][id^="edit_role_"]').forEach(r => {
+                    r.checked = (String(r.value) === String(roleId));
+                });
+
+                // Show modal
+                editModal.classList.remove("hidden");
+                document.body.classList.add("overflow-hidden");
             });
         });
+
+        const closeEditModalFunc = () => { 
+            if(editModal) {
+                editModal.classList.add("hidden");
+                document.body.classList.remove("overflow-hidden");
+            }
+        };
+        if (closeEditBtn) closeEditBtn.addEventListener("click", closeEditModalFunc);
+        if (cancelEditBtn) cancelEditBtn.addEventListener("click", closeEditModalFunc);
+
+        if (editModal) {
+            editModal.addEventListener("click", (e) => {
+                if (e.target === editModal) closeEditModalFunc();
+            });
+        }
+
+        // Delete confirmation
+        document.querySelectorAll('.delete-btn').forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+                const form = this.closest('form');
+
+                Swal.fire({
+                    title: 'Delete this User?',
+                    text: "This action cannot be undone!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: 'Confirm',
+                    cancelButtonText: 'Cancel',
+                    background: getComputedColor('--card-bg'),
+                    color: getComputedColor('--text-dark')
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+        
+        // Allow closing modals with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                closeAddModalFunc();
+                closeEditModalFunc();
+            }
+        });
+    });
     </script>
 </x-app-layout>

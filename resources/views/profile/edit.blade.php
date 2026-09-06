@@ -1,6 +1,8 @@
 <x-app-layout>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
         /* --- Theme Variables --- */
@@ -79,4 +81,62 @@
             </div>
         </div>
     </div>
+
+    <!-- Hidden form for logging out securely via POST -->
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+        @csrf
+    </form>
+
+    <!-- SweetAlert Notification Listener -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            @if (session('status') === 'password-updated')
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Password Updated Successfully',
+                    text: 'For your security, you will now be logged out. Please log in again with your new password.',
+                    confirmButtonColor: '#0f172a',
+                    allowOutsideClick: false, // Prevents closing by clicking outside
+                    allowEscapeKey: false     // Prevents closing by pressing ESC
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Submit the hidden logout form when they click OK
+                        document.getElementById('logout-form').submit();
+                    }
+                });
+            @elseif (session('status') === 'profile-updated')
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Profile Updated',
+                    text: 'Your profile information has been successfully updated.',
+                    confirmButtonColor: '#0f172a'
+                });
+            @elseif (session('status'))
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Notice',
+                    text: "{{ session('status') }}",
+                    confirmButtonColor: '#0f172a'
+                });
+            @endif
+
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: "{{ session('success') }}",
+                    confirmButtonColor: '#0f172a'
+                });
+            @endif
+
+            @if (session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: "{{ session('error') }}",
+                    confirmButtonColor: '#0f172a'
+                });
+            @endif
+        });
+    </script>
 </x-app-layout>

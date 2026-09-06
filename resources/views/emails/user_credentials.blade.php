@@ -5,32 +5,25 @@
 
     /* Apply Figtree font globally */
     body, h1, h2, h3, h4, h5, h6, p, a, strong, em, span, div {
-        font-family: 'Figtree', sans-serif !important;
-    }
-
-    /* Style for the mail button */
-    .button {
-        font-family: 'Figtree', sans-serif !important;
-        font-weight: 600;
-        text-decoration: none;
+        font-family: 'Figtree', Arial, sans-serif !important;
     }
 </style>
 
-# Account Created
-
-Hello {{ $user->name }},
+# Hello {{ $user->name }},
 
 An account has been created for you. Below are your login credentials:
 
-**Email:** {{ $user->email }}  
-**Password:** {{ $password }}  
+<div style="background-color: #f4f4f4; padding: 15px; border-radius: 5px; margin: 20px 0; color: #333333;">
+    <strong>Email:</strong> {{ $user->email }}<br>
+    <div style="margin-top: 5px;"><strong>Password:</strong> {{ $password }}</div>
+</div>
 
 Please log in and consider changing your password immediately.
 
-@component('mail::button', ['url' => url('/login')])
+@component('mail::button', ['url' => route('login')])
 Log In Now
-@endcomponent
+@endcomponent 
 
-Thanks,  
-CDA ICT Helpdesk System
+Thanks,<br>
+**CDA ICT Helpdesk System**
 @endcomponent

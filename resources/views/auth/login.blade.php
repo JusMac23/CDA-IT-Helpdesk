@@ -50,9 +50,7 @@
     </style>
 
     <div class="login-form-container">
-        {{-- Session Status --}}
-        <x-auth-session-status class="mb-4" :status="session('status')" />
-
+       
         {{-- Login Form --}}
         <form method="POST" action="{{ route('login') }}">
             @csrf
