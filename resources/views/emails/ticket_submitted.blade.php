@@ -16,21 +16,20 @@
     }
 </style>
 
-# Account Created
+# New Ticket Assigned To You
 
-Hello {{ $user->name }},
+Hello {{ $ticket->it_personnel }},
 
-An account has been created for you. Below are your login credentials:
+A new ticket has been assigned to you. Below are the details:
 
-**Email:** {{ $user->email }}  
-**Password:** {{ $password }}  
-
-Please log in and consider changing your password immediately.
+**Ticket Number:** {{ $ticket->ticket_number }}  
+**Name:** {{ $ticket->firstname }} {{ $ticket->lastname }}  
+**Division:** {{ $ticket->division }}  
+**Request:** {{ $ticket->request }}
 
 @component('mail::button', ['url' => url('/login')])
-Log In Now
+View Ticket
 @endcomponent
 
-Thanks,  
-CDA ICT Helpdesk System
+This is an automated notification from the ICT Support Helpdesk System.
 @endcomponent

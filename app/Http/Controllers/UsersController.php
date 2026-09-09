@@ -23,7 +23,8 @@ class UsersController extends Controller
         $query = User::query()->with(['roles.permissions'])
             ->select('users.*')
             ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-            ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id');
+            ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
+            ->distinct(); // Prevent duplicate rows when users have multiple roles
 
         $region = RegionEmail::pluck('region')->toArray();    
 
@@ -44,7 +45,7 @@ class UsersController extends Controller
             });
         }
 
-        $query->orderBy('roles.id', 'asc');
+        $query->orderBy('users.id', 'asc'); // Switched ordering to users.id to prevent issues with distinct() and left joins
 
         if (auth()->user()->hasRole('Super Admin')) {
             $roles = Role::all(); 
@@ -62,27 +63,52 @@ class UsersController extends Controller
     {
         $validated = $request->validate([
             'name'           => 'required|string|max:255',
-            'email'          => 'required|email|max:255|unique:users,email',
+            'email'          => 'required|email|max:255',
             'region'         => 'required|string|max:255',
-            'contact_number' => 'required|string|max:15|unique:users,contact_number',
+            'contact_number' => 'nullable|string|max:15',
             'password'       => 'required|string|min:8|confirmed',
-            'role'           => 'required|exists:roles,id',
+            'roles'          => 'required|array', // Accept multiple roles
+            'roles.*'        => 'exists:roles,id',
         ]);
 
-        $role = Role::findOrFail($validated['role']);
+        // Check if email or contact number already exists
+        $exists = User::where('email', $request->email)
+            ->when($request->contact_number, function($query) use ($request) {
+                $query->orWhere('contact_number', $request->contact_number);
+            })
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()->withInput()->with('error', 'Email or contact number already exists.');
+        }
+
+        // Get the requested roles
+        $roles = Role::whereIn('id', $validated['roles'])->get();
+        $roleNames = $roles->pluck('name')->toArray();
 
         // Super Admin checks
-        if ($role->name === 'Super Admin') {
+        if (in_array('Super Admin', $roleNames)) {
             $superAdminExists = User::whereHas('roles', function ($q) {
                 $q->where('name', 'Super Admin');
             })->exists();
 
             if ($superAdminExists) {
-                return back()->withErrors(['role' => 'A Super Admin already exists.']);
+                return back()->withInput()->with('error', 'Super Admin role already exist.');
             }
 
             if (!auth()->user()->hasRole('Super Admin')) {
-                return back()->withErrors(['role' => 'You are not authorized to assign Super Admin role.']);
+                return back()->withInput()->with('error', 'You are not authorized to assign Super Admin role.');
+            }
+        }
+
+        // DPO checks
+        if (in_array('DPO', $roleNames)) {
+            $dpoExists = User::whereHas('roles', function ($q) {
+                $q->where('name', 'DPO');
+            })->exists();
+
+            if ($dpoExists) {
+                return back()->withInput()->with('error', 'DPO role already exist.');
             }
         }
 
@@ -92,13 +118,14 @@ class UsersController extends Controller
             'region'         => $validated['region'],
             'contact_number' => $validated['contact_number'],
             'password'       => bcrypt($validated['password']),
-            'role'           => $role->id,
+            'role'           => $roles->first()->id, // Setting primary role ID just in case your users table still requires it
             'created_at'     => Carbon::now('Asia/Manila'),
         ]);
 
-        $user->syncRoles([$role->name]);
+        // Sync all multiple roles
+        $user->syncRoles($roleNames);
 
-        if ($role->name === 'DBRT') {
+        if (in_array('DBRT', $roleNames)) {
             $nameParts = explode(' ', trim($validated['name']));
             $firstname = $nameParts[0];
             $lastname  = count($nameParts) > 1 ? array_pop($nameParts) : null;
@@ -117,7 +144,7 @@ class UsersController extends Controller
         Mail::to($user->email)->send(new UserCredentialsMail($user, $validated['password']));
 
         return redirect()->route('users.index')
-            ->with('success', 'User successfully added and login credentials sent via email.');
+            ->with('success', 'User successfully added and account credentials sent via email.');
     }
 
     // Update User
@@ -126,41 +153,63 @@ class UsersController extends Controller
         $user = User::findOrFail($id);
 
         if ($user->hasRole('Super Admin') && !auth()->user()->hasRole('Super Admin')) {
-            return back()->withErrors(['error' => 'You are not authorized to edit the Super Admin.']);
+            return back()->with('error', 'You are not authorized to edit the Super Admin.');
         }
 
         $validated = $request->validate([
-            'name'  => 'required|string|max:255',
-            'email' => [
-                'required',
-                'email',
-                'max:255',
-                Rule::unique('users')->ignore($id),
-            ],
-            'region' => 'required|string|max:255',
-            'contact_number' => [
-                'required',
-                'string',
-                'max:15',
-                Rule::unique('users')->ignore($id),
-            ],
-            'role'  => 'required|exists:roles,id',
+            'name'           => 'required|string|max:255',
+            'email'          => 'required|email|max:255',
+            'region'         => 'required|string|max:255',
+            'contact_number' => 'nullable|string|max:15',
+            'roles'          => 'required|array', 
+            'roles.*'        => 'exists:roles,id',
         ]);
 
-        $role = Role::findOrFail($validated['role']);
-
-        $anotherSuperAdminExists = User::where('id', '!=', $id)
-            ->whereHas('roles', function ($q) {
-                $q->where('name', 'Super Admin');
+        // Check if updated email or contact number already belongs to another user
+        $exists = User::where(function($query) use ($request) {
+                $query->where('email', $request->email)
+                      ->when($request->contact_number, function($q) use ($request) {
+                          $q->orWhere('contact_number', $request->contact_number);
+                      });
             })
+            ->where('id', '!=', $id)
             ->exists();
 
-        if ($role->name === 'Super Admin' && $anotherSuperAdminExists) {
-            return back()->withErrors(['role' => 'Only one Super Admin can exist.']);
+        if ($exists) {
+            return redirect()->back()->withInput()->with('error', 'Email or contact number already exists.');
         }
 
-        if ($role->name === 'Super Admin' && !auth()->user()->hasRole('Super Admin')) {
-            return back()->withErrors(['role' => 'You are not authorized to assign Super Admin role.']);
+        $roles = Role::whereIn('id', $validated['roles'])->get();
+        $roleNames = $roles->pluck('name')->toArray();
+
+        // Super Admin checks
+        if (in_array('Super Admin', $roleNames)) {
+            $anotherSuperAdminExists = User::where('id', '!=', $id)
+                ->whereHas('roles', function ($q) {
+                    $q->where('name', 'Super Admin');
+                })
+                ->exists();
+
+            if ($anotherSuperAdminExists) {
+                return back()->withInput()->with('error', 'Super Admin role already exist.');
+            }
+
+            if (!auth()->user()->hasRole('Super Admin')) {
+                return back()->withInput()->with('error', 'You are not authorized to assign Super Admin role.');
+            }
+        }
+
+        // DPO checks
+        if (in_array('DPO', $roleNames)) {
+            $anotherDpoExists = User::where('id', '!=', $id)
+                ->whereHas('roles', function ($q) {
+                    $q->where('name', 'DPO');
+                })
+                ->exists();
+
+            if ($anotherDpoExists) {
+                return back()->withInput()->with('error', 'DPO role already exist.');
+            }
         }
 
         $user->update([
@@ -168,11 +217,11 @@ class UsersController extends Controller
             'email'          => $validated['email'],
             'region'         => $validated['region'],
             'contact_number' => $validated['contact_number'],
-            'role'           => $role->id, 
+            'role'           => $roles->first()->id, 
             'updated_at'     => Carbon::now('Asia/Manila'),
         ]);
 
-        $user->syncRoles([$role->name]);
+        $user->syncRoles($roleNames);
 
         return redirect()->route('users.index')->with('success', 'User successfully updated.');
     }
@@ -183,7 +232,7 @@ class UsersController extends Controller
         $user = User::findOrFail($id);
 
         if ($user->hasRole('Super Admin')) {
-            return back()->withErrors(['error' => 'Super Admin cannot be deleted.']);
+            return back()->with('error', 'Super Admin cannot be deleted.');
         }
 
         $user->delete();

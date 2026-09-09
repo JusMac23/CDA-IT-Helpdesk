@@ -91,7 +91,7 @@ class TicketResolved extends Mailable
         $pdf->SetFont('Arial', 'B', 8);
         $pdf->Cell(159.2, 7, 'Action Taken/Recommendation:', 'LTR', 1);
         $pdf->SetFont('Arial', '', 8);
-        $pdf->MultiCell(159.2, 21, $t->action ?? 'Pending', 'LRB');
+        $pdf->MultiCell(159.2, 21, $t->action ?? 'Resolved', 'LRB');
         $pdf->Ln(14);
 
         $pdf->SetFont('Arial', 'B', 10);
@@ -116,7 +116,7 @@ class TicketResolved extends Mailable
 
         $pdfData = $pdf->Output('S');
 
-        return $this->subject('A Ticket has been Resolved')
+        return $this->subject('A Ticket has been Resolved - Ticket Number: ' . $t->ticket_number)
                     ->markdown('emails.ticket_resolved')
                     ->attachData($pdfData, 'TSAR.pdf', [
                         'mime' => 'application/pdf',

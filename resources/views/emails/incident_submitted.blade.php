@@ -13,6 +13,5 @@
 {{ $data['brief_summary'] }}
 
 
-Thanks,  
-CDA ICT Helpdesk System
+This is an automated notification from the ICT Support Helpdesk System.
 @endcomponent

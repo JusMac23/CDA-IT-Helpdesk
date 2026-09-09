@@ -117,11 +117,11 @@
         .thumb-img:hover { opacity: 0.8; border-color: var(--text-muted); }
 
         /* Status & Priority Badges */
-        .badge { display: inline-block; padding: 0.4rem 0.85rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-align: center; white-space: nowrap; letter-spacing: 0.025em; transition: background-color 0.3s ease, color 0.3s ease; }
-        .status-resolved { background-color: var(--badge-res-bg); color: var(--badge-res-text); } 
-        .status-pending { background-color: var(--badge-pen-bg); color: var(--badge-pen-text); }
-        .status-reassigned { background-color: var(--badge-rea-bg); color: var(--badge-rea-text); }
-        .status-default { background-color: var(--badge-def-bg); color: var(--badge-def-text); }
+        .badge { display: inline-block; padding: 0.4rem 0.85rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-align: center; white-space: nowrap; letter-spacing: 0.025em; transition: background-color 0.3s ease, color 0.3s ease; }
+        .status-resolved { background-color: var(--badge-res-bg); color: var(--text-dark); } 
+        .status-pending { background-color: var(--badge-pen-bg); color: var(--text-dark); }
+        .status-reassigned { background-color: var(--badge-rea-bg); color: var(--text-dark); }
+        .status-default { background-color: var(--badge-def-bg); color: var(--text-dark); }
 
         .priority-low { background-color: var(--priority-low-bg); color: var(--priority-low-text); }
         .priority-medium { background-color: var(--priority-med-bg); color: var(--priority-med-text); }
@@ -249,16 +249,7 @@
                                     </td>
 
                                     <td class="text-center">
-                                        @php
-                                            $priority = trim($ticket->priority);
-                                            $priorityClass = match($priority) {
-                                                'High' => 'badge status-reassigned',
-                                                'Medium' => 'badge status-pending',
-                                                'Low' => 'badge status-default',
-                                                default => 'badge status-default',
-                                            };
-                                        @endphp
-                                        <span class="{{ $priorityClass }}">
+                                        <span>
                                             {{ $ticket->priority }}
                                         </span>
                                     </td>

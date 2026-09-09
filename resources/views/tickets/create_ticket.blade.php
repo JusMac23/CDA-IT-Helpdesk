@@ -54,7 +54,7 @@
         @keyframes fade-in-down { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in-down { animation: fade-in-down 0.5s ease-out forwards; }
 
-        /* Header Styles (Preserved) */
+        /* Header Styles */
         .app-header { background-color: var(--glass-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--glass-border); }
         .header-gradient { height: 3px; background: linear-gradient(90deg, var(--accent-blue), var(--alert-red)); }
         .container { max-width: 1280px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
@@ -68,8 +68,6 @@
         .nav-links { display: flex; gap: 1rem; align-items: center; font-weight: 600; font-size: 0.95rem; }
         .nav-link { color: #e2e8f0; padding: 0.6rem 1.25rem; border-radius: 8px; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; border: 1px solid transparent; }
         .nav-link:hover { color: #ffffff; background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
-
-        /* Logout Link Specifics */
         .nav-link.nav-link-logout { color: #fca5a5; background: none; cursor: pointer; font: inherit; border: none; }
         .nav-link.nav-link-logout:hover { color: #ffffff; background-color: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.3); }
 
@@ -78,7 +76,7 @@
             .nav-link { padding: 0.6rem 0.8rem; margin: 0 !important; justify-content: center; }
         }
 
-        /* Form Page Container (Derived from .modal-box design without overlay) */
+        /* Form Page Container */
         .page-form-container { position: relative; background-color: var(--card-bg); border-radius: 1rem; border: 1px solid var(--border-light); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08); width: calc(100% - 2rem); max-width: 1150px; margin: 2.5rem auto 4rem; padding: 2rem; transition: background-color 0.3s ease, border-color 0.3s ease; }
 
         @media (max-width: 640px) {
@@ -86,7 +84,7 @@
         }
 
         /* Form Title Design */
-        .form-title { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin-top: 0; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem; padding-right: 2.5rem; letter-spacing: -0.025em; transition: color 0.3s ease, border-color 0.3s ease; display: flex; align-items: center; gap: 0.75rem; }
+        .form-title { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); margin-top: 0; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem; padding-right: 2.5rem; letter-spacing: -0.025em; display: flex; align-items: center; gap: 0.75rem; }
 
         /* Close Button Design */
         .close-btn { position: absolute; top: 1.25rem; right: 1.25rem; color: var(--text-muted); font-size: 2rem; background: none; border: none; cursor: pointer; transition: all 0.2s; line-height: 1; border-radius: 0.25rem; padding: 0 0.5rem; }
@@ -109,6 +107,10 @@
         .form-input, .form-select { height: 44px; padding: 0 1rem; border: 1px solid var(--input-border); border-radius: 0.5rem; font-size: 0.95rem; color: var(--input-text); width: 100%; box-sizing: border-box; outline: none; transition: all 0.2s; background-color: var(--input-bg); font-family: inherit; }
         .form-input:focus, .form-select:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
         textarea.form-input { height: auto; resize: vertical; padding: 0.75rem 1rem; min-height: 100px; }
+
+        /* Validation State Classes */
+        .border-red-500 { border-color: var(--alert-red) !important; }
+        .bg-red-50 { background-color: var(--error-bg) !important; }
 
         /* Fieldset Design */
         fieldset.form-fieldset { border: 1px solid var(--border-light); border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 1.75rem; background: var(--card-bg); transition: background-color 0.3s ease, border-color 0.3s ease; }
@@ -136,7 +138,6 @@
 
         .btn-submit { display: inline-flex; align-items: center; justify-content: center; height: 44px; padding: 0 2rem; background-color: var(--primary-indigo); color: #f8fafc; font-size: 0.95rem; font-weight: 600; border: none; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 1px 2px rgba(79, 70, 229, 0.2); }
         .btn-submit:hover:not(:disabled) { background-color: var(--indigo-hover); color: #f8fafc; transform: translateY(-1px); }
-        .btn-submit:hover { background-color: var(--indigo-hover); color: #f8fafc; transform: translateY(-1px); }
         .btn-submit:disabled { background-color: #cbd5e1; color: #f8fafc; cursor: not-allowed; box-shadow: none; transform: none; }
 
         /* Error Banner */
@@ -235,7 +236,8 @@
                     <label for="email" class="form-label">
                         Email <span class="text-required">*</span>
                     </label>
-                    <input type="email" id="email" name="email" placeholder="e.g., j_delacruz@cda.gov.ph" required class="form-input">
+                    <!-- HTML5 pattern added to enforce @cda.gov.ph domain natively -->
+                    <input type="email" id="email" name="email" placeholder="e.g., j_delacruz@cda.gov.ph" pattern=".*@cda\.gov\.ph$" title="Please use a valid @cda.gov.ph email address." required class="form-input">
                 </div>
             </div>
 
@@ -368,6 +370,16 @@
         });
     @endif
 
+    @if(session('warning'))
+        Swal.fire({
+            icon: 'warning',
+            title: 'Warning!',
+            text: '{{ session('warning') }}',
+            timer: 3000,
+            showConfirmButton: false
+        });
+    @endif
+
     @if(session('error'))
         Swal.fire({
             icon: 'error',
@@ -416,9 +428,27 @@
         regionSelect.addEventListener('change', updatePersonnelAndEmails);
     }
 
-    // Form validation enhancement
+    // Auto-Validate Email Domain Immediately Upon Blur
+    const emailField = document.getElementById('email');
+    emailField.addEventListener('blur', function() {
+        const emailVal = this.value.trim();
+        if (emailVal && !emailVal.toLowerCase().endsWith('@cda.gov.ph')) {
+            this.classList.add('border-red-500', 'bg-red-50');
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid Email Domain',
+                text: 'Only @cda.gov.ph email addresses are permitted to submit a ticket. For example: j_delacruz@cda.gov.ph',
+                confirmButtonColor: '#3085d6'
+            });
+        } else {
+            this.classList.remove('border-red-500', 'bg-red-50');
+        }
+    });
+
+    // Form validation check on Submit
     document.querySelector('form').addEventListener('submit', function(e) {
         let isValid = true;
+        let errorMessage = 'Please fill in all required fields marked with *.';
         const requiredFields = this.querySelectorAll('[required]');
         
         requiredFields.forEach(field => {
@@ -430,18 +460,26 @@
             }
         });
 
+        // Double check email domain before submitting
+        const emailVal = emailField.value.trim();
+        if (emailVal && !emailVal.toLowerCase().endsWith('@cda.gov.ph')) {
+            isValid = false;
+            emailField.classList.add('border-red-500', 'bg-red-50');
+            errorMessage = 'Only @cda.gov.ph email addresses are permitted to submit a ticket. For example: j_delacruz@cda.gov.ph';
+        }
+
         if (!isValid) {
             e.preventDefault();
             Swal.fire({
                 icon: 'error',
-                title: 'Missing Information',
-                text: 'Please fill in all required fields marked with *.',
+                title: 'Validation Error',
+                text: errorMessage,
                 confirmButtonColor: '#3085d6'
             });
         }
     });
 
-    // Real-time validation
+    // Real-time validation for missing fields
     document.querySelectorAll('[required]').forEach(field => {
         field.addEventListener('blur', function() {
             if (!this.value.trim()) {
@@ -454,6 +492,14 @@
         field.addEventListener('input', function() {
             if (this.value.trim()) {
                 this.classList.remove('border-red-500', 'bg-red-50');
+            }
+            // Real-time valid color reset for email specifically
+            if (this.id === 'email') {
+                if (this.value.trim() && !this.value.trim().toLowerCase().endsWith('@cda.gov.ph')) {
+                    this.classList.add('border-red-500', 'bg-red-50');
+                } else {
+                    this.classList.remove('border-red-500', 'bg-red-50');
+                }
             }
         });
     });

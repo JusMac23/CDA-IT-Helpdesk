@@ -9,7 +9,7 @@ use App\PDF\TSARpdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
-class TicketSubmitted extends Mailable
+class NewTicketSubmitted extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -116,7 +116,7 @@ class TicketSubmitted extends Mailable
 
         $pdfData = $pdf->Output('S');
 
-        return $this->subject('New Ticket Assigned to You')
+        return $this->subject('New Ticket Assigned to You - Ticket Number: ' . $t->ticket_number)
                     ->markdown('emails.ticket_submitted')
                     ->attachData($pdfData, 'TSAR.pdf', [
                         'mime' => 'application/pdf',

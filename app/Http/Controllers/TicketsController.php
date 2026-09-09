@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\CreateTicketPrivateController;
-
 use Illuminate\Bus\Queueable;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Mailable;
@@ -27,37 +25,66 @@ use App\Models\User;
 
 use App\Traits\RoundRobinAssignable;
 
-use App\Mail\TicketSubmitted;
 use App\Mail\TicketUpdated;
 use App\Mail\TicketResolved;
 use App\Mail\TicketReassigned;
+use App\Mail\TicketReassignedRequester;
 
 class TicketsController extends Controller
 {   
-    // Helper to safely format IT personnel's full name
     use RoundRobinAssignable; 
+
+    /**
+     * Helper Method: Generates a base ticket query scoped by the user's assigned role and region.
+     */
+    private function getTicketQuery()
+    {
+        $query = Tickets::query();
+        $user = Auth::user();
+
+        if ($user) {
+            // Helper closure to check roles safely (supports both Spatie hasRole and column-based role)
+            $hasRole = function($roleName) use ($user) {
+                return method_exists($user, 'hasRole') 
+                    ? $user->hasRole($roleName) 
+                    : (isset($user->role) && strcasecmp((string)$user->role, $roleName) === 0);
+            };
+
+            $isSuperAdmin = $hasRole('Super Admin');
+            $isIctsAdmin  = $hasRole('ICTS Admin');
+            $isIctd       = $hasRole('ICTD');
+            $isIcts       = $hasRole('ICTS');
+
+            if ($isSuperAdmin) {
+                // 1. Super Admin: View ALL tickets (no filters applied)
+            } elseif ($isIctsAdmin) {
+                // 2. ICTS Admin: View all tickets assigned to their region
+                if (!empty($user->region)) {
+                    $query->where('it_area', $user->region);
+                }
+            } elseif ($isIctd || $isIcts) {
+                // 3. ICTD and ICTS: View ONLY tickets assigned to them
+                $query->where('it_email', $user->email);
+                
+            } else {
+                // 4. Default Fallback for any other roles (scopes to region if they have one)
+                if (!empty($user->region)) {
+                    $query->where('it_area', $user->region);
+                }
+            }
+        }
+
+        return $query;
+    }
 
     public function index(Request $request)
     {
-        // 1. Get logged-in user details safely
-        $user = Auth::user();
-        $loggedInEmail = trim($user->email ?? '');
-
-        // 2. Fetch the role name from the 'roles' table
-        $roleName = DB::table('roles')->where('id', $user->role ?? null)->value('name') ?? '';
-        $userRole = strtoupper(trim($roleName));
-
-        // 3. Initialize base query
-        $query = Tickets::query();
-
-        // 4. Apply Role-Based Access Control
-        if ($userRole === 'ICTS' || $userRole === 'ICTD') {
-            $query->where('it_email', $loggedInEmail);
-        }
+        // 1. Initialize base query scoped by user role/region
+        $query = $this->getTicketQuery();
 
         $currentTime = Carbon::now('Asia/Manila');
 
-        // 5. Load all Technical Services into memory indexed by lowercased service name
+        // 2. Load all Technical Services into memory indexed by lowercased service name
         $allTechServices = TechnicalServices::all()->keyBy(function ($item) {
             return strtolower(trim($item->technical_services));
         });
@@ -72,7 +99,7 @@ class TicketsController extends Controller
             'pending/re-assigned'
         ];
 
-        // 6. SLA Overdue Calculation Closure
+        // 3. SLA Overdue Calculation Closure
         $isTicketOverdue = function ($ticket) use ($allTechServices, $currentTime, $pendingStatuses) {
             $status = trim($ticket->status ?? '');
 
@@ -130,17 +157,17 @@ class TicketsController extends Controller
             return $currentTime->greaterThan($deadline);
         };
 
-        // 7. Calculate total count strictly based on role scope
+        // 4. Calculate total count strictly based on role/regional scope
         $ticketsCount = (clone $query)->count();
 
-        // 8. Fetch pending tickets to compute overdue count
+        // 5. Fetch pending tickets to compute overdue count
         $pendingScopedTickets = (clone $query)
             ->whereIn('status', $pendingStatuses)
             ->get();
 
         $overdueCount = $pendingScopedTickets->filter($isTicketOverdue)->count();
 
-        // 9. Apply Request Filters
+        // 6. Apply Request Filters
         $isOverdueFilterActive = ($request->input('filter') === 'overdue');
 
         if ($request->filled('it_area')) {
@@ -163,7 +190,7 @@ class TicketsController extends Controller
             $query->whereDate('date_created', '<=', $request->input('end_date'));
         }
 
-        // 10. Search Query Filter across schema columns
+        // 7. Search Query Filter across schema columns
         if ($request->filled('search_query')) {
             $search = trim($request->input('search_query'));
             $query->where(function ($q) use ($search) {
@@ -184,7 +211,7 @@ class TicketsController extends Controller
             });
         }
 
-        // 11. CSV Export Handler
+        // 8. CSV Export Handler
         if ($request->input('action') === 'generate') {
             $exportRecords = $query->get();
             if ($isOverdueFilterActive) {
@@ -193,7 +220,7 @@ class TicketsController extends Controller
             return $this->generateCSVReport($exportRecords);
         }
 
-        // 12. Pagination Handling with Primary Key (ticket_id)
+        // 9. Pagination Handling with Primary Key (ticket_id)
         if ($isOverdueFilterActive) {
             $filteredOverdue = $query->get()->filter($isTicketOverdue);
             
@@ -214,7 +241,7 @@ class TicketsController extends Controller
 
         $ticket = null;
 
-        // 13. Fetch Dropdowns & Round-Robin Data required by the embedded Add Ticket Modal
+        // 10. Fetch Dropdowns & Round-Robin Data required by the embedded Add Ticket Modal
         $sections_divisions = Divisions::pluck('sections_divisions')->filter()->toArray();
         $technical_services = TechnicalServices::pluck('technical_services')->filter()->toArray();
 
@@ -257,7 +284,7 @@ class TicketsController extends Controller
                 ])
             )->toArray();
 
-        // 14. Render View
+        // 11. Render View
         return view('tickets.index', compact(
             'request',
             'ticketsCount',
@@ -356,6 +383,7 @@ class TicketsController extends Controller
 
         // Save previous assigned personnel
         $previous_assigned = $ticket->it_personnel ?? 'N/A';
+        $assignedBy = Auth::user()->name;
 
         // 4. Prepare ticket update data
         $updateData = [
@@ -378,7 +406,7 @@ class TicketsController extends Controller
             'ticket_number'     => $ticket->ticket_number,
             'requested_by'      => $ticket->firstname . ' ' . $ticket->lastname,
             'request'           => $ticket->request,
-            'assigned_by'       => Auth::user()->name,
+            'assigned_by'       => $assignedBy,
             'previous_assigned' => $previous_assigned,
             'assigned_to'       => $request->assigned_to,
             'priority'          => $ticket->priority,
@@ -386,12 +414,21 @@ class TicketsController extends Controller
             'assigned_at'       => now(),
         ]);
 
-        // 6. Safe Mail dispatch
+        // 6. Safe Mail dispatch to IT personnel
         if ($ticket->it_email && filter_var($ticket->it_email, FILTER_VALIDATE_EMAIL)) {
             try {
                 Mail::to($ticket->it_email)->send(new TicketReassigned($ticket));
             } catch (\Exception $e) {
-                Log::error('Failed sending ticket reassignment email: ' . $e->getMessage());
+                Log::error('Failed sending ticket reassignment email to IT personnel: ' . $e->getMessage());
+            }
+        }
+
+        // Send email to the Ticket Requester
+        if ($ticket->email && filter_var($ticket->email, FILTER_VALIDATE_EMAIL)) {
+            try {
+                Mail::to($ticket->email)->send(new TicketReassignedRequester($ticket, $assignedBy));
+            } catch (\Exception $e) {
+                Log::error('Failed sending ticket reassignment email to requester: ' . $e->getMessage());
             }
         }
 
@@ -502,5 +539,4 @@ class TicketsController extends Controller
 
         return redirect()->route('tickets.index')->with('success', 'Ticket deleted successfully.');
     }
-
 }

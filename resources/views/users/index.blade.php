@@ -292,7 +292,7 @@
                                 <td class="font-bold-name">{{ $user->name }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td>{{ $user->region }}</td>
-                                <td>{{ $user->contact_number }}</td>
+                                <td>{{ $user->contact_number ?: 'N/A' }}</td>
 
                                 <td>
                                     @if($user->roles->isNotEmpty())
@@ -320,7 +320,7 @@
                                                 data-email="{{ $user->email }}"
                                                 data-region="{{ $user->region }}"
                                                 data-contact-number="{{ $user->contact_number }}"
-                                                data-role-id="{{ optional($user->roles->first())->id }}">
+                                                data-role-ids="{{ $user->roles->pluck('id')->toJson() }}">
                                                 <span class="material-symbols-outlined" style="font-size: 1.25rem; margin-right: 0.2rem;">edit</span> Edit
                                             </button>
                                         @endcan
@@ -379,28 +379,28 @@
                 @csrf
                 <div class="form-grid">
                     <div class="form-group col-span-2">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" name="name" id="name" required placeholder="e.g., Juan A. Dela Cruz" class="form-input" autocomplete="name">
+                        <label for="name" class="form-label">Full Name<span style="color:#ef4444;">*</span></label>
+                        <input type="text" name="name" id="name" required placeholder="e.g., Juan A. Dela Cruz" class="form-input" autocomplete="name" value="{{ old('name') }}">
                     </div>
 
                     <div class="form-group col-span-2">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input type="email" name="email" id="email" required placeholder="e.g., j_delacruz@cda.gov.ph" class="form-input" autocomplete="email">
+                        <label for="email" class="form-label">Email Address<span style="color:#ef4444;">*</span></label>
+                        <input type="email" name="email" id="email" required placeholder="e.g., j_delacruz@cda.gov.ph" class="form-input" autocomplete="email" value="{{ old('email') }}">
                     </div>
 
                     <div class="form-group col-span-2">
                         <label for="region" class="form-label">Region Assignment<span style="color:#ef4444;">*</span></label>
                         <select name="region" id="region" required class="form-select">
-                            <option value="" disabled selected>Select Region</option>
+                            <option value="" disabled {{ old('region') ? '' : 'selected' }}>Select Region</option>
                             @foreach ($region as $area)
-                                <option value="{{ $area }}">{{ $area }}</option>
+                                <option value="{{ $area }}" {{ old('region') == $area ? 'selected' : '' }}>{{ $area }}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <div class="form-group col-span-2">
                         <label for="contact_number" class="form-label">Contact Number</label>
-                        <input type="text" name="contact_number" id="contact_number" required placeholder="e.g., 09123456789" class="form-input" autocomplete="tel">
+                        <input type="text" name="contact_number" id="contact_number" placeholder="e.g., 09123456789" class="form-input" autocomplete="tel" value="{{ old('contact_number') }}">
                     </div>
 
                     <!-- Password Options -->
@@ -412,7 +412,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="password" class="form-label">Password</label>
+                        <label for="password" class="form-label">Password<span style="color:#ef4444;">*</span></label>
                         <div style="position: relative; display: flex; align-items: center;">
                             <input type="password" name="password" id="password" required class="form-input" autocomplete="new-password" style="padding-right: 2.5rem;">
                             <button type="button" id="regenerateBtn" class="hidden" style="position: absolute; right: 0.5rem; background: none; border: none; cursor: pointer; color: #4f46e5;" title="Regenerate Password">
@@ -422,21 +422,21 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="password_confirmation" class="form-label">Confirm Password</label>
+                        <label for="password_confirmation" class="form-label">Confirm Password<span style="color:#ef4444;">*</span></label>
                         <input type="password" name="password_confirmation" id="password_confirmation" required class="form-input" autocomplete="new-password">
                     </div>
 
                     <div class="form-group col-span-2">
-                        <span class="form-label">Select System Role</span>
+                        <span class="form-label">Select System Role(s)<span style="color:#ef4444;">*</span></span>
                         <div class="radio-group">
                             @foreach ($roles as $role)
                                 <label class="radio-label">
-                                    <input type="radio" name="role" id="add_role_{{ $loop->index }}" value="{{ $role->id }}" class="radio-input" {{ old('role') == $role->id ? 'checked' : '' }}>
+                                    <input type="checkbox" name="roles[]" id="add_role_{{ $loop->index }}" value="{{ $role->id }}" class="radio-input" {{ in_array($role->id, old('roles', [])) ? 'checked' : '' }}>
                                     <span>{{ $role->name }}</span>
                                 </label>
                             @endforeach
                         </div>
-                        @error('role')
+                        @error('roles')
                             <p style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem; font-weight: 500;">{{ $message }}</p>
                         @enderror
                     </div>
@@ -499,20 +499,20 @@
 
                     <div class="form-group col-span-2">
                         <label for="edit_contact_number" class="form-label">Contact Number</label>
-                        <input type="text" name="contact_number" id="edit_contact_number" value="" required class="form-input" autocomplete="tel">
+                        <input type="text" name="contact_number" id="edit_contact_number" value="" class="form-input" autocomplete="tel">
                     </div>
 
                     <div class="form-group col-span-2">
-                        <span class="form-label">Select System Role</span>
+                        <span class="form-label">Select System Role(s)<span style="color:#ef4444;">*</span></span>
                         <div class="radio-group">
                             @foreach ($roles as $role)
                                 <label class="radio-label">
-                                    <input type="radio" name="role" id="edit_role_{{ $loop->index }}" value="{{ $role->id }}" class="radio-input">
+                                    <input type="checkbox" name="roles[]" id="edit_role_{{ $loop->index }}" value="{{ $role->id }}" class="radio-input">
                                     <span>{{ $role->name }}</span>
                                 </label>
                             @endforeach
                         </div>
-                        @error('role')
+                        @error('roles')
                             <p style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem; font-weight: 500;">{{ $message }}</p>
                         @enderror
                     </div>
@@ -626,7 +626,6 @@
         if (autoGenCheckbox) {
             autoGenCheckbox.addEventListener('change', function() {
                 if (this.checked) {
-                    // Switch input types to visible text so administrator can see the generated password
                     passInput.type = "text";
                     passConfirmInput.type = "text";
                     passInput.readOnly = true;
@@ -635,7 +634,6 @@
 
                     applyRandomPassword();
                 } else {
-                    // Revert to hidden manual password input
                     passInput.type = "password";
                     passConfirmInput.type = "password";
                     passInput.readOnly = false;
@@ -653,7 +651,7 @@
             });
         }
 
-        // Edit Modal Toggles
+        // Edit Modal Toggles & Existing Role Selection
         const editModal = document.getElementById("editModal");
         const closeEditBtn = document.getElementById("closeEditModal");
         const cancelEditBtn = document.getElementById("cancelEditModal");
@@ -674,23 +672,34 @@
                 const email = button.dataset.email;
                 const region = button.dataset.region;
                 const contactNumber = button.dataset.contactNumber;
-                const roleId = button.dataset.roleId;
+                
+                // Extract role IDs array from dataset
+                let existingRoleIds = [];
+                try {
+                    // Parses JSON format passed from data-role-ids="[1, 2]"
+                    existingRoleIds = JSON.parse(button.dataset.roleIds).map(String);
+                } catch (err) {
+                    // Fallback for comma separated string data-role-ids="1,2"
+                    if (button.dataset.roleIds) {
+                        existingRoleIds = String(button.dataset.roleIds).split(',').map(s => s.trim());
+                    }
+                }
 
-                // Fill modal inputs
+                // Populate form fields
                 editName.value = name;
                 editEmail.value = email;
                 editRegion.value = region;
                 editContactNumber.value = contactNumber;
 
-                // Update form action dynamically
+                // Set dynamic action URL
                 editForm.action = `/users/${id}`;
 
-                // Preselect role radio
-                document.querySelectorAll('input[name="role"][id^="edit_role_"]').forEach(r => {
-                    r.checked = (String(r.value) === String(roleId));
+                // Check existing assigned roles in modal checkboxes
+                document.querySelectorAll('input[name="roles[]"][id^="edit_role_"]').forEach(checkbox => {
+                    checkbox.checked = existingRoleIds.includes(String(checkbox.value));
                 });
 
-                // Show modal
+                // Open Modal
                 editModal.classList.remove("hidden");
                 document.body.classList.add("overflow-hidden");
             });
@@ -736,7 +745,7 @@
             });
         });
         
-        // Allow closing modals with Escape key
+        // Close with Escape key
         document.addEventListener('keydown', function(event) {
             if (event.key === "Escape") {
                 closeAddModalFunc();

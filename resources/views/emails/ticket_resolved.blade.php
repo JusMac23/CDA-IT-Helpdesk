@@ -37,6 +37,5 @@ Feedback Form
 **Division:** {{ $ticket->division }}  
 **Request:** {{ $ticket->request }}
 
-Thanks,  
-CDA ICT Helpdesk System
+This is an automated notification from the ICT Support Helpdesk System.
 @endcomponent

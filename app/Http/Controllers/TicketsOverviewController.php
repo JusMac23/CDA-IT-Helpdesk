@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 use App\Models\Tickets;
@@ -15,37 +16,81 @@ use FPDF;
 
 class TicketsOverviewController extends Controller
 {
+    /**
+     * Helper Method: Generates a base ticket query scoped by the user's role and email/region.
+     */
+    private function getTicketQuery()
+    {
+        $query = Tickets::query();
+        $user = Auth::user();
+
+        if ($user) {
+            // Helper closure to check roles safely (supports both Spatie hasRole and column-based role)
+            $hasRole = function($roleName) use ($user) {
+                return method_exists($user, 'hasRole') 
+                    ? $user->hasRole($roleName) 
+                    : (isset($user->role) && strcasecmp((string)$user->role, $roleName) === 0);
+            };
+
+            $isSuperAdmin = $hasRole('Super Admin');
+            $isIctsAdmin  = $hasRole('ICTS Admin');
+            $isIctd       = $hasRole('ICTD');
+            $isIcts       = $hasRole('ICTS');
+
+            if ($isSuperAdmin) {
+                // 1. Super Admin: Access all tickets without scope restrictions
+            } elseif ($isIctsAdmin) {
+                // 2. ICTS Admin: Scope to user's assigned region
+                if (!empty($user->region)) {
+                    $query->where('it_area', $user->region);
+                }
+            } elseif ($isIctd || $isIcts) {
+                // 3. ICTD and ICTS: Scope strictly to tickets matching their email
+                $query->where('it_email', $user->email);
+            } else {
+                // 4. Fallback for any other non-super admin roles with a region
+                if (!empty($user->region)) {
+                    $query->where('it_area', $user->region);
+                }
+            }
+        }
+
+        return $query;
+    }
+
     public function index()
     {
         // Total ticket counts
-        $total = Tickets::count();
-        $pending = Tickets::whereIn('status', ['Pending', 'Pending/Re-Assigned', 'Pending / Re-Assigned', 'Pending/Reassigned'])->count();
-        $resolved = Tickets::where('status', 'Resolved')->count();
+        $total = $this->getTicketQuery()->count();
+        $pending = $this->getTicketQuery()->whereIn('status', ['Pending', 'Pending/Re-Assigned', 'Pending / Re-Assigned', 'Pending/Reassigned', 'pending', 'pending/re-assigned'])->count();
+        $resolved = $this->getTicketQuery()->where('status', 'Resolved')->count();
 
         // Calculate dynamic overdue tickets
         $overdueCollection = $this->getOverdueTicketsCollection();
         $overdue = $overdueCollection->count();
 
         // Group by IT Area
-        $byItArea = DB::table('tickets')
+        $byItArea = $this->getTicketQuery()
             ->select('it_area', DB::raw('count(*) as total'))
             ->groupBy('it_area')
             ->get();
 
         // Group by IT Personnel
-        $byItPersonnel = DB::table('tickets')
+        $byItPersonnel = $this->getTicketQuery()
             ->select('it_personnel', DB::raw('COUNT(*) as total'))
             ->groupBy('it_personnel')
             ->get();
 
         // Group by Service Type
-        $byService = Tickets::select('service')
+        $byService = $this->getTicketQuery()
+            ->select('service')
             ->selectRaw('COUNT(*) as total')
             ->groupBy('service')
             ->get();
 
         // Recently Resolved (latest 5)
-        $recentlyResolved = Tickets::where('status', 'Resolved')
+        $recentlyResolved = $this->getTicketQuery()
+            ->where('status', 'Resolved')
             ->orderByDesc('date_resolved')
             ->limit(5)
             ->get();
@@ -68,29 +113,50 @@ class TicketsOverviewController extends Controller
 
     public function exportPdf()
     {
+        $user = Auth::user();
+        
+        $hasRole = function($roleName) use ($user) {
+            return $user && (method_exists($user, 'hasRole') 
+                ? $user->hasRole($roleName) 
+                : (isset($user->role) && strcasecmp((string)$user->role, $roleName) === 0));
+        };
+
+        $isSuperAdmin = $hasRole('Super Admin');
+        $isIctd       = $hasRole('ICTD');
+        $isIcts       = $hasRole('ICTS');
+
+        if ($isSuperAdmin) {
+            $scopeText = 'Scope: All CDA Offices';
+        } elseif ($isIctd || $isIcts) {
+            $scopeText = 'Scope: Assigned to ' . ($user->email ?? 'User');
+        } else {
+            $scopeText = empty($user->region) ? 'Scope: All CDA Offices' : 'Scope: ' . $user->region;
+        }
+
         // 1. Fetch Metrics & Data
-        $total    = Tickets::count();
-        $pending  = Tickets::whereIn('status', ['Pending', 'Pending/Re-Assigned', 'Pending / Re-Assigned', 'Pending/Reassigned'])->count();
-        $resolved = Tickets::where('status', 'Resolved')->count();
+        $total    = $this->getTicketQuery()->count();
+        $pending  = $this->getTicketQuery()->whereIn('status', ['Pending', 'Pending/Re-Assigned', 'Pending / Re-Assigned', 'Pending/Reassigned', 'pending', 'pending/re-assigned'])->count();
+        $resolved = $this->getTicketQuery()->where('status', 'Resolved')->count();
 
         // Calculate dynamic overdue tickets
         $overdueCollection = $this->getOverdueTicketsCollection();
         $overdue = $overdueCollection->count();
 
         // Group by IT Area
-        $byItArea = DB::table('tickets')
+        $byItArea = $this->getTicketQuery()
             ->select('it_area', DB::raw('count(*) as total'))
             ->groupBy('it_area')
             ->get();
 
         // Group by IT Personnel
-        $byItPersonnel = DB::table('tickets')
+        $byItPersonnel = $this->getTicketQuery()
             ->select('it_personnel', DB::raw('COUNT(*) as total'))
             ->groupBy('it_personnel')
             ->get();
 
         // Group by Service Type
-        $byService = Tickets::select('service')
+        $byService = $this->getTicketQuery()
+            ->select('service')
             ->selectRaw('COUNT(*) as total')
             ->groupBy('service')
             ->get();
@@ -115,7 +181,7 @@ class TicketsOverviewController extends Controller
         $pdf->SetFont('Arial', '', 8);
         $pdf->SetTextColor(203, 213, 225);
         $pdf->SetXY(120, 13);
-        $pdf->Cell(75, 5, 'Generated: ' . Carbon::now()->format('M d, Y h:i A'), 0, 1, 'R');
+        $pdf->Cell(75, 5, 'Generated: ' . Carbon::now('Asia/Manila')->format('M d, Y h:i A'), 0, 1, 'R');
 
         $pdf->SetFont('Arial', '', 8.5);
         $pdf->SetTextColor(148, 163, 184);
@@ -123,7 +189,7 @@ class TicketsOverviewController extends Controller
         $pdf->Cell(110, 5, 'Cooperative Development Authority - ICT Helpdesk', 0, 0, 'L');
 
         $pdf->SetXY(120, 21);
-        $pdf->Cell(75, 5, 'Scope: All CDA Offices', 0, 1, 'R');
+        $pdf->Cell(75, 5, $scopeText, 0, 1, 'R');
 
         // --- STAT CARDS ROW ---
         $cards = [
@@ -309,6 +375,7 @@ class TicketsOverviewController extends Controller
 
     /**
      * Helper Method: Fetches all Pending tickets that have exceeded their dynamic SLA deadline.
+     * Uses getTicketQuery() so role/email restrictions apply automatically.
      */
     private function getOverdueTicketsCollection()
     {
@@ -328,8 +395,8 @@ class TicketsOverviewController extends Controller
             'pending/re-assigned'
         ];
 
-        // Retrieve pending tickets
-        $pendingTickets = Tickets::whereIn('status', $pendingStatuses)->get();
+        // Retrieve pending tickets with role scope applied
+        $pendingTickets = $this->getTicketQuery()->whereIn('status', $pendingStatuses)->get();
 
         return $pendingTickets->filter(function ($ticket) use ($allTechServices, $currentTime) {
             $serviceName = strtolower(trim($ticket->service ?? ''));

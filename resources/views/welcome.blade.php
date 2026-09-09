@@ -56,7 +56,7 @@
         .hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
         /* Accessibility Focus States */
-        a:focus-visible, button:focus-visible {
+        a:focus-visible, button:focus-visible, summary:focus-visible {
             outline: 2px solid var(--accent-blue);
             outline-offset: 4px;
             border-radius: 4px;
@@ -98,7 +98,9 @@
         /* Header (Glassmorphism) */
         .app-header { background-color: var(--glass-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--glass-border); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); }
         .header-gradient { height: 3px; background: linear-gradient(90deg, var(--accent-blue), #8b5cf6, var(--alert-red)); }
-        .container { max-width: 1280px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Updated: Added width: 100% for proper spanning */
+        .container { width: 100%; max-width: 1280px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
 
         /* Branding */
         .brand { font-size: 1.5rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 0.75rem; letter-spacing: -0.025em; }
@@ -119,7 +121,9 @@
 
         /* Hero Overlay */
         .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(2, 6, 23, 0.7) 0%, rgba(15, 23, 42, 0.45) 100%); z-index: 1; }
-        .hero-content { position: relative; z-index: 10; text-align: center; padding: 5rem 1.5rem; max-width: 900px; }
+        
+        /* Updated: Added width: 100% */
+        .hero-content { width: 100%; position: relative; z-index: 10; text-align: center; padding: 5rem 1.5rem; max-width: 900px; }
 
         /* Status Badge with Border Glow */
         .status-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(96, 165, 250, 0.6); color: #60a5fa; padding: 0.5rem 1.25rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 0.05em; backdrop-filter: blur(8px); box-shadow: 0 0 20px rgba(59, 130, 246, 0.35), inset 0 0 10px rgba(59, 130, 246, 0.15); }
@@ -146,7 +150,9 @@
         /* Services Section */
         .services { padding: 5rem 0; background-color: transparent; position: relative; z-index: 10; }
         .section-title { font-size: clamp(1.75rem, 3vw, 2.25rem); font-weight: 800; text-align: center; margin-bottom: 3.5rem; color: var(--text-main); letter-spacing: -0.01em; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        .service-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 2.5rem; padding: 0 1.5rem; }
+        
+        /* Updated: Removed nested horizontal padding, added width: 100% */
+        .service-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 2.5rem; width: 100%; }
         
         .service-card { flex: 1 1 320px; max-width: 420px; background: rgba(30, 41, 59, 0.65); backdrop-filter: blur(12px); border-radius: 20px; transition: var(--transition-smooth); border: 1px solid var(--glass-border); position: relative; overflow: hidden; text-align: center; padding: 3rem 2rem; }
         .service-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--accent-blue), var(--alert-red)); transform: scaleX(0); transform-origin: left; transition: transform 0.5s ease; }
@@ -159,9 +165,24 @@
         .icon-blue { color: #60a5fa; box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.15); }
         .icon-red { color: #f87171; box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.15); animation-delay: 1s; }
 
-        /* Service Card Text */
         .service-card h4 { font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-main); }
         .service-card p { color: var(--text-muted); font-size: 1.05rem; line-height: 1.6; margin-top: 0.5rem; }
+
+        /* FAQ Section */
+        .faq-section { padding: 3rem 0 6rem 0; position: relative; z-index: 10; }
+        
+        /* Updated: Added width: 100% */
+        .faq-wrapper { width: 100%; max-width: 800px; margin: 0 auto; padding: 0 1.5rem; }
+        
+        .faq-item { background: rgba(30, 41, 59, 0.65); backdrop-filter: blur(12px); border-radius: 12px; border: 1px solid var(--glass-border); margin-bottom: 1rem; overflow: hidden; transition: var(--transition-smooth); }
+        .faq-item:hover { border-color: rgba(59, 130, 246, 0.3); background: rgba(30, 41, 59, 0.85); }
+        
+        .faq-item summary { padding: 1.25rem 1.5rem; font-size: 1.1rem; font-weight: 600; color: var(--text-main); cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none; }
+        .faq-item summary::-webkit-details-marker { display: none; } /* Hide default arrow in webkit */
+        .faq-item summary::after { content: '\e313'; font-family: 'Material Symbols Outlined'; font-size: 1.5rem; transition: transform 0.3s ease; color: var(--text-muted); }
+        .faq-item[open] summary::after { transform: rotate(180deg); color: var(--accent-blue); }
+        
+        .faq-answer { padding: 0 1.5rem 1.5rem; color: var(--text-muted); font-size: 1rem; line-height: 1.6; border-top: 1px solid rgba(255, 255, 255, 0.05); margin-top: 0.25rem; padding-top: 1rem; }
 
         /* Footer (Zero Spacing Architecture) */
         .app-footer { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); text-align: center; padding: 1.5rem 0; color: var(--text-muted); font-size: 0.95rem; border-top: 1px solid var(--glass-border); position: relative; z-index: 10; flex-shrink: 0; margin-bottom: 0; }
@@ -170,16 +191,17 @@
         .scroll-top-btn { position: fixed; bottom: 2rem; right: 2rem; z-index: 40; background-color: rgba(30, 41, 59, 0.8); backdrop-filter: blur(8px); color: var(--text-main); padding: 1rem; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); cursor: pointer; transition: var(--transition-smooth); display: flex; align-items: center; justify-content: center; }
         .scroll-top-btn:hover { background-color: var(--accent-blue); transform: translateY(-5px); border-color: var(--accent-blue); box-shadow: 0 15px 20px -5px rgba(59, 130, 246, 0.4); }
 
-        /* Responsive Media */
+        /* Responsive Media - Fully Synchronized Widths and Paddings */
         @media (max-width: 768px) {
             .nav-text { display: none !important; }
             .nav-link { padding: 0.6rem 0.8rem; margin: 0 !important; justify-content: center; }
-            .hero-content { padding: 3rem 1rem; }
-            .action-buttons { flex-direction: column; gap: 1rem; align-items: stretch; }
+            .hero-content { padding: 3rem 1.5rem; } /* Matched horizonal padding to 1.5rem (same as container/faq) */
+            .action-buttons { flex-direction: column; gap: 1rem; align-items: stretch; width: 100%; }
             .btn { width: 100%; padding: 1rem 1.5rem; }
-            .service-grid { gap: 1.5rem; }
-            .service-card { padding: 2rem 1.5rem; }
+            .service-grid { gap: 1.5rem; width: 100%; }
+            .service-card { padding: 2rem 1.5rem; max-width: 100%; flex: 1 1 100%; } /* Cards fully span to equal width */
             .services { padding: 3rem 0; }
+            .faq-section { padding: 2rem 0 4rem 0; }
         }
     </style>
 </head>
@@ -259,21 +281,108 @@
 
             <div class="service-grid">
                 <article class="service-card">
-                    <div class="icon-wrapper icon-red">
-                        <span class="material-symbols-outlined" style="font-size: 2.5rem;" aria-hidden="true">security</span>
-                    </div>
-                    <h4>Incident Management</h4>
-                    <p>Log, track, and manage potential data breaches instantly. Receive essential guidance on data containment, immediate incident handling, and strict access control.</p>
-                </article>
-
-                <article class="service-card">
                     <div class="icon-wrapper icon-blue">
                         <span class="material-symbols-outlined" style="font-size: 2.5rem;" aria-hidden="true">dns</span>
                     </div>
-                    <h4>ICT Infrastructure Support</h4>
-                    <p>Get priority assistance with database integrity, system backups, Google Workspace security, and other critical ICT services tied to incident resolution.</p>
+                    <h4>Core Infrastructure Support</h4>
+                    <p>Ensure seamless operations with priority support for database integrity, automated system backups, Google Workspace management, and critical IT services.</p>
+                </article>
+                <article class="service-card">
+                    <div class="icon-wrapper icon-red">
+                        <span class="material-symbols-outlined" style="font-size: 2.5rem;" aria-hidden="true">security</span>
+                    </div>
+                    <h4>Rapid Incident Response</h4>
+                    <p>Instantly report and track system disruptions or security threats. Receive expert guidance on threat containment, service restoration, and access control management.</p>
                 </article>
             </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" aria-labelledby="faq-heading">
+        <div class="faq-wrapper">
+            <h3 id="faq-heading" class="section-title">Frequently Asked Questions</h3>
+
+            <details class="faq-item">
+                <summary>How can I track the status of my ticket submission?</summary>
+                <div class="faq-answer">
+                    <ol>
+                        <li>Once you submit a request, you can track its progress by logging in to the portal.</li>
+                        <li>Simply click on <strong>My Requested Tickets</strong> in the sidebar navigation menu to view real-time updates and communications from the ICT support team.</li>
+                    </ol>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>Who is authorized to use this portal?</summary>
+                <div class="faq-answer">
+                    <ol>
+                        <li>This Helpdesk portal is exclusively for authorized CDA personnel across all regional offices and the central office.</li>
+                        <li>You must have a signed-in account using your official Authentik account or @cda.gov.ph email.</li>
+                    </ol>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>What should I do if I can't log in?</summary>
+                <div class="faq-answer">
+                    <ol>
+                        <li>If you are experiencing issues logging into your account, please verify that you are using the correct credentials.</li>
+                        <li>If you are unable to log in, you may manually reset your password by clicking the <strong>Forgot Password</strong> link on the login page.</li>
+                        <li>If the issue persists, please contact your immediate supervisor or email the <strong>ICT Administrator</strong> for assistance with a manual password reset or account unlock.</li>
+                    </ol>
+                </div>
+            </details>
+            
+            <details class="faq-item">
+                <summary>How to request a Zoom link?</summary>
+                <div class="faq-answer">
+                    <ol>
+                        <li>To request a Zoom link for a meeting or training session, please submit a request through the official calendar site at 1calendar.cda.gov.ph.</li>
+                        <li>Kindly click the <strong>"HERE"</strong> button at the top of the page to submit your request.</li>
+                        <li>Once you have submitted the request, create a schedule in your calendar and invite <strong>1calendar.cda.gov.ph</strong> and <strong>videocom@cda.gov.ph</strong> as Event Modifiers.</li>
+                        <li>The ICT Team will provide the Zoom link through the scheduled calendar event.</li>
+                    </ol>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>How to troubleshoot printer connectivity issues?</summary>
+                <div class="faq-answer">
+                    If you are experiencing issues with your printer connectivity, please try the following steps:
+                    <ol>
+                        <li>Ensure the printer is powered on and connected to the network.</li>
+                        <li>Check if the printer is set as the default printer in your device's settings.</li>
+                        <li>Restart both your device and the printer.</li>
+                        <li>If the issue persists, contact the <strong>ICT Administrator</strong> for further assistance.</li>
+                    </ol>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>How to troubleshoot Network Connectivity Issues?</summary>
+                <div class="faq-answer">
+                    If you are experiencing issues with your network connectivity, please try the following steps:
+                    <ol>
+                        <li>Ensure your device is connected to the network whether via Ethernet or Wi-Fi.</li>
+                        <li>Check if other devices on the same network are experiencing similar issues.</li>
+                        <li>Restart your device.</li>
+                        <li>If the issue persists, contact the <strong>ICT Administrator</strong> for further assistance.</li>
+                    </ol>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary>How to access the CDA Workspace?</summary>
+                <div class="faq-answer">
+                    <ol>
+                        <li>Ensure that you have already registered for an account on the CDA Workspace using the registration details sent by the ICT Administrator via email.</li>
+                        <li>Log in to the CDA Workspace using your registered credentials.</li>
+                        <li>For the meantime, please do not log in using OAuth. Use your email address and password instead.</li>
+                        <li>If the issue persists, please contact the <strong>ICT Administrator</strong> for further assistance.</li>
+                    </ol>
+                </div>
+            </details>
         </div>
     </section>
 </main>
@@ -319,6 +428,18 @@
 
         scrollToTopBtn.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        
+        // Close other FAQ items when one is opened
+        const details = document.querySelectorAll('details.faq-item');
+        details.forEach((targetDetail) => {
+            targetDetail.addEventListener('click', () => {
+                details.forEach((detail) => {
+                    if (detail !== targetDetail) {
+                        detail.removeAttribute('open');
+                    }
+                });
+            });
         });
     });
 </script>

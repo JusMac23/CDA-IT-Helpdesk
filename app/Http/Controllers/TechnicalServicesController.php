@@ -36,12 +36,18 @@ class TechnicalServicesController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'technical_services'       => 'required|string|max:255',
-            'low'      => 'nullable|string|max:255',
-            'medium'   => 'nullable|string|max:255',
-            'high'     => 'nullable|string|max:255',
-            'critical' => 'nullable|string|max:255',
+            'technical_services' => 'required|string|max:255',
+            'low'                => 'nullable|string|max:255',
+            'medium'             => 'nullable|string|max:255',
+            'high'               => 'nullable|string|max:255',
+            'critical'           => 'nullable|string|max:255',
         ]);
+
+        // Check if technical service already exists
+        $exists = TechnicalServices::where('technical_services', $request->technical_services)->exists();
+        if ($exists) {
+            return redirect()->back()->withInput()->with('error', 'Technical service already exists.');
+        }
 
         $validatedData['low']      = $validatedData['low'] ?? 'N/A';
         $validatedData['medium']   = $validatedData['medium'] ?? 'N/A';
@@ -58,12 +64,21 @@ class TechnicalServicesController extends Controller
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'technical_services'       => 'required|string|max:255',
-            'low'      => 'nullable|string|max:255',
-            'medium'   => 'nullable|string|max:255',
-            'high'     => 'nullable|string|max:255',
-            'critical' => 'nullable|string|max:255',
+            'technical_services' => 'required|string|max:255',
+            'low'                => 'nullable|string|max:255',
+            'medium'             => 'nullable|string|max:255',
+            'high'               => 'nullable|string|max:255',
+            'critical'           => 'nullable|string|max:255',
         ]);
+
+        // Check if technical service already exists on another record
+        $exists = TechnicalServices::where('technical_services', $request->technical_services)
+                                  ->where('id', '!=', $id)
+                                  ->exists();
+
+        if ($exists) {
+            return redirect()->back()->withInput()->with('error', 'Technical service already exists.');
+        }
 
         $technical_services = TechnicalServices::findOrFail($id);
 

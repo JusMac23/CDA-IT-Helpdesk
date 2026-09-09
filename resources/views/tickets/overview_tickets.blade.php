@@ -2,7 +2,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
     
-    @if(auth()->user()->hasAnyRole(['Super Admin', 'Admin']))
+    @if(auth()->user()->hasAnyRole(['Super Admin', 'ICTS Admin']))
    <style>
         /* --- Theme Variables --- */
         :root {
@@ -136,6 +136,7 @@
         }
     </style>
 
+    @can('view_overview_tickets')
     <div id="main-content" class="page-wrapper">
         <div id="dashboardContent" class="dashboard-wrapper">
             <div class="dashboard-panel">
@@ -182,6 +183,7 @@
                 {{-- IT Area, Personnel, Service, Overdue --}}
                 <div class="tables-grid">
                     
+                    @can('view tickets by region')
                     {{-- Tickets by Region --}}
                     <div class="table-card tc-indigo">
                         <h4 class="table-card-title" style="color: var(--icon-indigo-text);">
@@ -210,11 +212,15 @@
                             </table>
                         </div>
                     </div>
+                    @endcan
 
                     {{-- Tickets by Technical Personnel --}}
                     <div class="table-card tc-green">
                         <h4 class="table-card-title" style="color: var(--icon-green-text);">
-                            Tickets by Technical Personnel
+                            Tickets by Technical Personnel 
+                            <span style="font-size: 0.85em; font-weight: normal; font-style: italic; opacity: 0.85;">
+                                (Including Re-Assigned)
+                            </span>
                         </h4>
                         <div class="table-responsive">
                             <table class="data-table">
@@ -361,5 +367,6 @@
             </div>
         </div>
     </div>
+    @endcan
     @endif
 </x-app-layout>

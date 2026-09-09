@@ -5,19 +5,21 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Auth;
 use App\PDF\TSARpdf;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Mail;
 
-class TicketUpdated extends Mailable
+class TicketReassignedRequester extends Mailable
 {
     use Queueable, SerializesModels;
 
     public $ticket;
+    public $assignedBy;
 
-    public function __construct($ticket)
+    public function __construct($ticket, $assignedBy = null)
     {
         $this->ticket = $ticket;
+        $this->assignedBy = $assignedBy ?? (Auth::check() ? Auth::user()->name : 'System');
     }
 
     public function build()
@@ -61,7 +63,7 @@ class TicketUpdated extends Mailable
         $pdf->Cell(79.6, 7, 'Date Request:', 'LTR', 1);
         $pdf->SetFont('Arial', '', 8);
         $pdf->Cell(79.6, 10, $t->division, 'LR', 0);
-        $pdf->Cell(79.6, 10, \Carbon\Carbon::parse($t->date_created)->format('M d, Y h:i A'), 'LR', 1);
+        $pdf->Cell(79.6, 10, Carbon::parse($t->date_created)->format('M d, Y h:i A'), 'LR', 1);
         $pdf->Cell(159.2, 0, '', 'T', 1);
 
         $pdf->SetFont('Arial', 'B', 8);
@@ -96,7 +98,7 @@ class TicketUpdated extends Mailable
 
         $pdf->SetFont('Arial', 'B', 10);
         $pdf->Cell(79.6, 7, strtoupper($t->firstname . ' ' . $t->lastname . ' ' . Carbon::parse($t->date_created)->format('m/d/Y g:i A')), 0, 0, 'C');
-        $pdf->Cell(79.6, 7, strtoupper($t->it_personnel . ' ' . Carbon::parse($t->date_resolved)->format('m/d/Y g:i A')), 0, 1, 'C');
+        $pdf->Cell(79.6, 7, strtoupper($t->assigned_to), 0, 1, 'C');
         $pdf->SetFont('Arial', '', 8);
         $pdf->Cell(79.6, 7, 'Name/Signature of Responsible Staff/Date', 0, 0, 'C');
         $pdf->Cell(79.6, 7, 'Name/Signature of ICT Personnel/Date', 0, 1, 'C');
@@ -104,21 +106,18 @@ class TicketUpdated extends Mailable
         $pdf->Ln(10);
 
         $pdf->SetFont('Arial', '', 8);
-
         $pdf->SetLineWidth(0.4); 
         $pdf->Line($pdf->GetX(), $pdf->GetY(), $pdf->GetX() + 160, $pdf->GetY()); 
-
         $pdf->SetLineWidth(0.4);
 
         $pdf->Cell(129.6, 7, 'Softcopy ICT coded forms can be downloaded here:', 0, 0, 'R');
         $pdf->SetFont('Arial', 'B', 8);
         $pdf->Cell(29.6, 7, 'https:bit.ly/3NCfJCV', 0, 1);
 
-
         $pdfData = $pdf->Output('S');
 
-        return $this->subject('A Ticket has been Resolved - Ticket Number: ' . $t->ticket_number)
-                    ->markdown('emails.ticket_updated')
+        return $this->subject('Your Ticket has been Re-Assigned - Ticket Number: ' . $t->ticket_number)
+                    ->markdown('emails.ticket_reassigned_requester')
                     ->attachData($pdfData, 'TSAR.pdf', [
                         'mime' => 'application/pdf',
                     ]);

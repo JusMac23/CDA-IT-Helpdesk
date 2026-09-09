@@ -7,7 +7,7 @@
             $logoUrl = route('overview_tickets.index');
         } elseif ($user->hasRole('Client')) {
             $logoUrl = route('myrequested_tickets.index');
-        } elseif ($user->hasAnyRole(['ICTS', 'ICTD'])) {
+        } elseif ($user->hasAnyRole(['ICTD', 'ICTS', 'ICTS Admin'])) {
             $logoUrl = route('tickets.index');
         } elseif ($user->hasAnyRole(['DPO', 'DBRT'])) {
             $logoUrl = route('databreach.index');

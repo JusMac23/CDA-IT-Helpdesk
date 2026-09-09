@@ -18,13 +18,11 @@
 
 # New Ticket Re-Assigned
 
-Hello {{ $ticket->assigned_to }},
+Hello {{ $ticket->firstname }} {{ $ticket->lastname }},
 
-<p>A new ticket has been re-assigned to you by <strong>{{ Auth::user()->name }}</strong>.</p>
+<p>Your ticket has been re-assigned to <strong>{{ $ticket->assigned_to }}</strong> by <strong>{{ $assignedBy }}</strong>.</p>
 
-**Notes:** {{ $ticket->notes }} 
-
-<p>Please check the details below and take the necessary action.</p>
+<p>Please check the details below.</p>
 
 **Ticket Number:** {{ $ticket->ticket_number }}  
 **Name:** {{ $ticket->firstname }} {{ $ticket->lastname }}  

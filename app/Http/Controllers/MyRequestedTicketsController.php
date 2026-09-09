@@ -13,7 +13,7 @@ use Carbon\Carbon;
 use App\Mail\TicketReassigned;
 use App\Mail\TicketResolved;
 use App\Mail\TicketUpdated;
-use App\Mail\TicketSubmitted;
+use App\Mail\NewTicketSubmitted;
 use App\Models\Divisions;
 use App\Models\ITPersonnel;
 use App\Models\ReassignedTicket;
@@ -165,7 +165,7 @@ class MyRequestedTicketsController extends Controller
         // 7. Dispatch Email notification and In-App Alert
         if ($ticket->it_email && filter_var($ticket->it_email, FILTER_VALIDATE_EMAIL)) {
             try {
-                Mail::to($ticket->it_email)->send(new TicketSubmitted($ticket));
+                Mail::to($ticket->it_email)->send(new NewTicketSubmitted($ticket));
             } catch (\Exception $e) {
                 Log::error('Failed sending private ticket notification: ' . $e->getMessage());
             }
@@ -186,7 +186,7 @@ class MyRequestedTicketsController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', 'Ticket submitted successfully.');
+        return redirect()->back()->with('success', 'Ticket submitted successfully. Email notification sent to assigned IT personnel.');
     }
 
     /**

@@ -18,10 +18,16 @@ class RolesController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name',
+            'name' => 'required|string|max:255',
             'permissions' => 'array',
             'permissions.*' => 'integer|exists:permissions,id',
         ]);
+
+        // Check if role name already exists
+        $exists = Role::where('name', $request->name)->exists();
+        if ($exists) {
+            return redirect()->back()->withInput()->with('error', 'Role name already exists');
+        }
 
         $role = Role::create(['name' => $validated['name']]);
 
@@ -37,10 +43,19 @@ class RolesController extends Controller
         $role = Role::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:roles,name,' . $role->id,
+            'name' => 'required|string|max:255',
             'permissions' => 'array',
             'permissions.*' => 'integer|exists:permissions,id',
         ]);
+
+        // Check if another role already uses this name
+        $exists = Role::where('name', $request->name)
+                      ->where('id', '!=', $id)
+                      ->exists();
+
+        if ($exists) {
+            return redirect()->back()->withInput()->with('error', 'Role name already exists');
+        }
 
         $role->update(['name' => $validated['name']]);
 

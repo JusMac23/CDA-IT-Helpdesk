@@ -120,7 +120,7 @@ class TicketReassigned extends Mailable
         
         $pdfData = $pdf->Output('S');
 
-        return $this->subject('New Ticket Assigned to You')
+        return $this->subject('A Ticket has been Re-Assigned to you - Ticket Number: ' . $t->ticket_number)
                     ->markdown('emails.ticket_reassigned')
                     ->attachData($pdfData, 'TSAR.pdf', [
                         'mime' => 'application/pdf',

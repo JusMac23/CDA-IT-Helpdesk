@@ -52,6 +52,12 @@ class TechnicalPersonnelController extends Controller
             'tech_services_category.*'=> 'string',
         ]);
 
+        // Check if the data already exists (using it_email as the unique identifier)
+        $exists = ITPersonnel::where('it_email', $request->it_email)->exists();
+        if ($exists) {
+            return redirect()->back()->withInput()->with('error', 'Email already exists.');
+        }
+
         // Convert array of checkboxes into a comma-separated string
         $validatedData['tech_services_category'] = implode(', ', $request->tech_services_category);
         $validatedData['date_added'] = Carbon::now('Asia/Manila')->format('Y-m-d H:i:s');
@@ -74,6 +80,14 @@ class TechnicalPersonnelController extends Controller
             'tech_services_category' => 'required|array', 
             'tech_services_category.*'=> 'string',
         ]);
+
+        // Check if the updated email already belongs to another existing record
+        $exists = ITPersonnel::where('it_email', $request->it_email)
+                             ->where('id', '!=', $id)
+                             ->exists();
+        if ($exists) {
+            return redirect()->back()->withInput()->with('error', 'Email already exists.');
+        }
 
         // Convert array of checkboxes into a comma-separated string
         $validatedData['tech_services_category'] = implode(', ', $request->tech_services_category);

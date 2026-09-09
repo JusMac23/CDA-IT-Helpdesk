@@ -151,11 +151,11 @@
         .thumb-img:hover { opacity: 0.8; border-color: var(--text-muted); }
 
         /* Status Badges */
-        .badge { display: inline-block; padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-align: center; white-space: nowrap; letter-spacing: 0.025em; transition: background-color 0.3s ease, color 0.3s ease; }
-        .status-resolved { background-color: var(--badge-res-bg); color: var(--badge-res-text); } 
-        .status-pending { background-color: var(--badge-pen-bg); color: var(--badge-pen-text); }
-        .status-reassigned { background-color: var(--badge-rea-bg); color: var(--badge-rea-text); }
-        .status-default { background-color: var(--badge-def-bg); color: var(--badge-def-text); }
+        .badge { display: inline-block; padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-align: center; white-space: nowrap; letter-spacing: 0.025em; transition: background-color 0.3s ease, color 0.3s ease; }
+        .status-resolved { background-color: var(--badge-res-bg); color: var(--text-dark); } 
+        .status-pending { background-color: var(--badge-pen-bg); color: var(--text-dark); }
+        .status-reassigned { background-color: var(--badge-rea-bg); color: var(--text-dark); }
+        .status-default { background-color: var(--badge-def-bg); color: var(--text-dark); }
 
         /* Action Links inside Table */
         .action-group { display: flex; flex-direction: column; gap: 0.5rem; min-width: 140px; }
@@ -390,7 +390,7 @@
                                 <th>Action Taken</th>
                                 <th>Date & Time Created</th>
                                 <th>Date & Time Resolved</th>
-                                <th class="text-center">Photo</th>
+                                <th class="">Photo</th>
                                 <th class="text-center">Status</th>
                                 <th class="text-center">Priority</th>
                                 <th class="text-center">Actions</th>
@@ -450,16 +450,7 @@
                                         </span>
                                     </td>
                                     <td class="text-center">
-                                        @php
-                                            $priority = trim($ticket->priority);
-                                            $priorityClass = match($priority) {
-                                                'High' => 'badge status-reassigned',
-                                                'Medium' => 'badge status-pending',
-                                                'Low' => 'badge status-default',
-                                                default => 'badge status-default',
-                                            };
-                                        @endphp
-                                        <span class="{{ $priorityClass }}">
+                                        <span>
                                             {{ $ticket->priority }}
                                         </span>
                                     </td>
@@ -807,6 +798,18 @@
                 });
             @endif
 
+            @if(session('warning'))
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'warning!',
+                    text: '{!! addslashes(session("warning")) !!}',
+                    timer: 2500,
+                    showConfirmButton: false,
+                    background: getComputedStyle(document.body).getPropertyValue('--card-bg').trim() || '#ffffff',
+                    color: getComputedStyle(document.body).getPropertyValue('--text-dark').trim() || '#000000'
+                });
+            @endif
+
             @if(session('error'))
                 Swal.fire({
                     icon: 'error',
@@ -1031,7 +1034,7 @@
                         // 2. Strict Ownership Check:
                         // Only the CURRENTLY assigned IT personnel can reassign this ticket.
                         // If Person A reassigned it to Person B, Person A can no longer reassign it—only Person B can.
-                        if (currentAssigneeEmail || currentAssigneeName) {
+                        if ((currentAssigneeEmail || currentAssigneeName) && (currentStatus ==='Pending/Re-Assigned')) {
                             const isAssignedUser = (currentUserEmail && currentUserEmail.toLowerCase() === currentAssigneeEmail) || 
                                                 (currentUserName && currentUserName.toLowerCase() === currentAssigneeName.toLowerCase());
 
@@ -1039,7 +1042,7 @@
                                 if (typeof Swal !== 'undefined') {
                                     Swal.fire({
                                         title: 'Access Restricted',
-                                        text: `This ticket is currently assigned to ${currentAssigneeName || 'another personnel'}.`,
+                                        text: `This ticket is currently re-assigned to ${currentAssigneeName || 'another personnel'}.`,
                                         icon: 'error',
                                         confirmButtonColor: '#4f46e5'
                                     });

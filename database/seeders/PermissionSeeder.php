@@ -23,6 +23,7 @@ class PermissionSeeder extends Seeder
             'delete_profile',
 
             'view_all_tickets',
+            'view tickets by region',
             'create_ticket',
             'filter_ticket_by_region',
             'filter_ticket_by_status',
